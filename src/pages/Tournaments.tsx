@@ -1,10 +1,11 @@
 import { useNavigate } from 'react-router-dom';
 import { Plus, Trophy, Users, ChevronRight } from 'lucide-react';
-import { mockTournaments } from '../data/mockData';
+import { useApp } from '../store/store';
 import styles from './Tournaments.module.css';
 
 export default function Tournaments() {
   const navigate = useNavigate();
+  const { tournaments } = useApp();
 
   return (
     <div className={styles.page}>
@@ -16,7 +17,7 @@ export default function Tournaments() {
       </div>
 
       <div className={styles.list}>
-        {mockTournaments.map(t => {
+        {tournaments.map(t => {
           const confirmed = t.participants.filter(p => p.status === 'confirmed').length;
           return (
             <div key={t.id} className={styles.row} onClick={() => navigate(`/tournaments/${t.id}`)}>

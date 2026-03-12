@@ -21,7 +21,9 @@ interface SidebarProps {
 
 export default function Sidebar({ open, onClose }: SidebarProps) {
   const navigate = useNavigate();
-  const { unreadCount = 0 } = useApp();
+  const { unreadCount = 0, settings } = useApp();
+  const { name } = settings.profile;
+  const initials = name.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase();
 
   const handleNav = () => onClose?.();
 
@@ -62,9 +64,9 @@ export default function Sidebar({ open, onClose }: SidebarProps) {
       </nav>
 
       <div className={styles.userCard}>
-        <div className={styles.avatar}>CS</div>
+        <div className={styles.avatar}>{initials}</div>
         <div className={styles.userInfo}>
-          <p className={styles.userName}>Casey Segura</p>
+          <p className={styles.userName}>{name}</p>
           <p className={styles.userRole}>Organizer</p>
         </div>
       </div>

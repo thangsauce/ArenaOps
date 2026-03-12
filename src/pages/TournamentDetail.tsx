@@ -1,6 +1,6 @@
 import { useParams, useNavigate } from 'react-router-dom';
 import { ArrowLeft, Users, MapPin, Clock, Zap, CheckCircle2, Circle, XCircle } from 'lucide-react';
-import { mockTournaments } from '../data/mockData';
+import { useApp } from '../store/store';
 import type { Match, Participant } from '../types';
 import styles from './TournamentDetail.module.css';
 
@@ -55,7 +55,8 @@ const participantStatusIcon = (status: Participant['status']) => {
 export default function TournamentDetail() {
   const { id } = useParams();
   const navigate = useNavigate();
-  const tournament = mockTournaments.find(t => t.id === id);
+  const { tournaments } = useApp();
+  const tournament = tournaments.find(t => t.id === id);
 
   if (!tournament) {
     return (
@@ -124,7 +125,7 @@ export default function TournamentDetail() {
           <div className={styles.participantList}>
             {tournament.participants.map(p => (
               <div key={p.id} className={styles.participantRow}>
-                {p.seed && <span className={styles.seed}>#{p.seed}</span>}
+                {p.seed != null && <span className={styles.seed}>#{p.seed}</span>}
                 {participantStatusIcon(p.status)}
                 <div className={styles.participantInfo}>
                   <span className={styles.participantName2}>{p.name}</span>

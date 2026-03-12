@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { MapPin, Users, CheckCircle2, XCircle, AlertTriangle, Clock } from 'lucide-react';
 import { useApp } from '../store/store';
 import styles from './RoomBooking.module.css';
@@ -11,6 +11,13 @@ export default function RoomBooking() {
   const [selectedRoom, setSelectedRoom] = useState<string | null>(null);
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [justBooked, setJustBooked] = useState<string | null>(null);
+  const bookedTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  useEffect(() => {
+    return () => { if (bookedTimerRef.current) clearTimeout(bookedTimerRef.current); };
+  }, []);
+
+  if (!tournament) return <div className={styles.page}><p style={{ padding: '2rem' }}>No tournaments available.</p></div>;
 
   const getConflicts = (locationId: string, matchId: string) => {
     // Check if any other match is already using this room in the same time block
@@ -30,7 +37,8 @@ export default function RoomBooking() {
     setConfirmOpen(false);
     setSelectedMatch(null);
     setSelectedRoom(null);
-    setTimeout(() => setJustBooked(null), 3000);
+    if (bookedTimerRef.current) clearTimeout(bookedTimerRef.current);
+    bookedTimerRef.current = setTimeout(() => setJustBooked(null), 3000);
   };
 
   const getParticipantName = (id: string | null) => {

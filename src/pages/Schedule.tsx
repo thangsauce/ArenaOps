@@ -2,7 +2,6 @@ import { useState } from 'react';
 import { useApp } from '../store/store';
 import { formatTimeRange } from '../utils/time';
 import { ChevronLeft, ChevronRight, MapPin, Zap, Clock, AlertTriangle } from 'lucide-react';
-import { mockTournaments } from '../data/mockData';
 import type { Match, Tournament } from '../types';
 import styles from './Schedule.module.css';
 
@@ -21,12 +20,12 @@ const statusConfig = {
 export default function Schedule() {
   const [view, setView] = useState<'grid' | 'list'>('grid');
   const [selectedDate, setSelectedDate] = useState('2026-03-15');
-  const [reportDelayMatch, setReportDelayMatch] = useState<string | null>(null);
-  const { timePrefs } = useApp();
+  const [reportDelayMatch, setReportDelayMatch] = useState<{ matchId: string; tournamentId: string } | null>(null);
+  const { tournaments, timePrefs, startMatch, reportDelay } = useApp();
 
-  const t = mockTournaments[0];
+  const t = tournaments[0];
 
-  const allMatches: ScheduledMatch[] = mockTournaments.flatMap(tour =>
+  const allMatches: ScheduledMatch[] = tournaments.flatMap(tour =>
     tour.matches.filter(m => m.timeBlockId).map(m => ({ ...m, tournament: tour }))
   );
 
@@ -36,6 +35,12 @@ export default function Schedule() {
   const liveMatches = allMatches.filter(m => m.status === 'live');
   const delayedMatches = allMatches.filter(m => m.status === 'delayed');
 
+  const shiftDate = (days: number) => {
+    const d = new Date(selectedDate + 'T12:00:00');
+    d.setDate(d.getDate() + days);
+    setSelectedDate(d.toISOString().split('T')[0]);
+  };
+
   // For grid: cell lookup by [locationId][timeBlockId]
   const cellMap: Record<string, Record<string, ScheduledMatch[]>> = {};
   allMatches.forEach(m => {
@@ -44,6 +49,8 @@ export default function Schedule() {
     if (!cellMap[m.locationId][m.timeBlockId]) cellMap[m.locationId][m.timeBlockId] = [];
     cellMap[m.locationId][m.timeBlockId].push(m);
   });
+
+  if (!t) return <div className={styles.page}><p style={{ padding: '2rem' }}>No tournaments available.</p></div>;
 
   return (
     <div className={styles.page}>
@@ -81,14 +88,14 @@ export default function Schedule() {
       )}
 
       <div className={styles.dateNav}>
-        <button className={styles.dateBtn} onClick={() => setSelectedDate('2026-03-14')}><ChevronLeft size={16} /></button>
+        <button className={styles.dateBtn} onClick={() => shiftDate(-1)}><ChevronLeft size={16} /></button>
         <div className={styles.dateDisplay}>
           <span className={styles.dateFull}>
             {new Date(selectedDate + 'T12:00:00').toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })}
           </span>
           {selectedDate === '2026-03-15' && <span className={styles.todayBadge}>Tournament Day</span>}
         </div>
-        <button className={styles.dateBtn} onClick={() => setSelectedDate('2026-03-16')}><ChevronRight size={16} /></button>
+        <button className={styles.dateBtn} onClick={() => shiftDate(1)}><ChevronRight size={16} /></button>
       </div>
 
       {view === 'grid' ? (
@@ -141,7 +148,7 @@ export default function Schedule() {
                                   <span className={styles.chipPlayers}>{p1}<span className={styles.chipVs}>vs</span>{p2}</span>
                                   <span className={styles.chipStatus}>{st.label}</span>
                                   {m.status === 'live' && (
-                                    <button className={styles.chipDelay} onClick={() => setReportDelayMatch(m.id)}>
+                                    <button className={styles.chipDelay} onClick={() => setReportDelayMatch({ matchId: m.id, tournamentId: m.tournament.id })}>
                                       <AlertTriangle size={10} />
                                     </button>
                                   )}
@@ -203,12 +210,14 @@ export default function Schedule() {
                           {st.label}
                         </div>
                         {m.status === 'live' && (
-                          <button className={styles.delayBtn} onClick={() => setReportDelayMatch(m.id)}>
+                          <button className={styles.delayBtn} onClick={() => setReportDelayMatch({ matchId: m.id, tournamentId: m.tournament.id })}>
                             <AlertTriangle size={12} /> Delay
                           </button>
                         )}
                         {m.status === 'scheduled' && (
-                          <button className={styles.startBtn}><Zap size={12} /> Start</button>
+                          <button className={styles.startBtn} onClick={() => startMatch(m.tournament.id, m.id)}>
+                            <Zap size={12} /> Start
+                          </button>
                         )}
                       </div>
                     );
@@ -253,8 +262,17 @@ export default function Schedule() {
             <h2 className={styles.modalTitle}>Report Delay</h2>
             <p className={styles.modalSub}>How long is the expected delay?</p>
             <div className={styles.delayOptions}>
-              {['5 min', '10 min', '15 min', '30 min', '1 hour'].map(d => (
-                <button key={d} className={styles.delayOption} onClick={() => setReportDelayMatch(null)}>{d}</button>
+              {[5, 10, 15, 30, 60].map(mins => (
+                <button
+                  key={mins}
+                  className={styles.delayOption}
+                  onClick={() => {
+                    reportDelay(reportDelayMatch.tournamentId, reportDelayMatch.matchId, mins);
+                    setReportDelayMatch(null);
+                  }}
+                >
+                  {mins < 60 ? `${mins} min` : '1 hour'}
+                </button>
               ))}
             </div>
             <p className={styles.autoNote}>⚡ ArenaOPS will auto-reschedule downstream matches and notify participants.</p>

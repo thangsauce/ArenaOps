@@ -23,12 +23,16 @@ export default function LiveControl() {
   const delayed = tournament.matches.filter(m => m.status === 'delayed');
   const done = tournament.matches.filter(m => m.status === 'completed');
 
+  if (!tournament) return <div className={styles.page}><p style={{ padding: '2rem' }}>No tournaments available.</p></div>;
+
   const handleComplete = () => {
     if (!scoreModal) return;
     const s1 = parseInt(score1) || 0;
     const s2 = parseInt(score2) || 0;
+    if (s1 === s2) return; // tied — require a clear winner
     const m = tournament.matches.find(x => x.id === scoreModal.matchId)!;
-    const winnerId = s1 > s2 ? m.participant1Id! : m.participant2Id!;
+    const winnerId = s1 > s2 ? m.participant1Id : m.participant2Id;
+    if (!winnerId) return;
     completeMatch(tournament.id, scoreModal.matchId, winnerId, s1, s2);
     setScoreModal(null);
     setScore1(''); setScore2('');
@@ -195,14 +199,15 @@ export default function LiveControl() {
                   <input className={styles.scoreBigInput} type="number" min="0" value={score2} onChange={e => setScore2(e.target.value)} placeholder="0" />
                 </div>
               </div>
-              {score1 !== '' && score2 !== '' && (
-                <p className={styles.winnerPreview}>
-                  Winner: <strong style={{ color: 'var(--accent)' }}>{parseInt(score1) > parseInt(score2) ? getName(m.participant1Id) : getName(m.participant2Id)}</strong>
-                </p>
-              )}
+              {score1 !== '' && score2 !== '' && (() => {
+                const s1 = parseInt(score1), s2 = parseInt(score2);
+                return s1 === s2
+                  ? <p className={styles.winnerPreview} style={{ color: '#ffaa00' }}>Tie — adjust scores to determine a winner</p>
+                  : <p className={styles.winnerPreview}>Winner: <strong style={{ color: 'var(--accent)' }}>{s1 > s2 ? getName(m.participant1Id) : getName(m.participant2Id)}</strong></p>;
+              })()}
               <div className={styles.modalActions}>
                 <button className={styles.cancelBtn} onClick={() => setScoreModal(null)}>Cancel</button>
-                <button className={styles.confirmBtn} onClick={handleComplete} disabled={score1 === '' || score2 === ''}>
+                <button className={styles.confirmBtn} onClick={handleComplete} disabled={score1 === '' || score2 === '' || parseInt(score1) === parseInt(score2)}>
                   <CheckCircle2 size={14} /> Confirm Result
                 </button>
               </div>
@@ -220,8 +225,8 @@ export default function LiveControl() {
               <h2 className={styles.modalTitle}>Report No-Show</h2>
               <p className={styles.modalSub}>Select the player who did not appear.</p>
               <div className={styles.noShowOptions}>
-                {[m.participant1Id, m.participant2Id].map(pid => (
-                  <button key={pid} className={styles.noShowOption} onClick={() => { reportNoShow(tournament.id, m.id, pid!); setNoShowModal(null); }}>
+                {([m.participant1Id, m.participant2Id].filter((pid): pid is string => pid !== null)).map(pid => (
+                  <button key={pid} className={styles.noShowOption} onClick={() => { reportNoShow(tournament.id, m.id, pid); setNoShowModal(null); }}>
                     <UserX size={14} /> {getName(pid)}
                   </button>
                 ))}

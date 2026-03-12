@@ -1,5 +1,5 @@
-import { useState, useCallback, type ReactNode } from 'react';
-import type { Match } from '../types';
+import { useState, useCallback, useMemo, type ReactNode } from 'react';
+import type { Match, Tournament } from '../types';
 import { mockTournaments } from '../data/mockData';
 import { DEFAULT_SETTINGS, type AppSettings, type TimePrefs, type Notification } from './settings';
 import { AppContext } from './context';
@@ -15,7 +15,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const [notifications, setNotifications] = useState<Notification[]>(initialNotifications);
   const [settings, setSettings] = useState<AppSettings>(DEFAULT_SETTINGS);
 
-  const unreadCount = notifications.filter(n => !n.read).length;
+  const unreadCount = useMemo(() => notifications.filter(n => !n.read).length, [notifications]);
 
   const updateSettings = useCallback((patch: Partial<AppSettings>) => {
     setSettings(prev => ({ ...prev, ...patch }));
@@ -38,60 +38,48 @@ export function AppProvider({ children }: { children: ReactNode }) {
     }));
   }, []);
 
+  const addTournament = useCallback((tournament: Tournament) => {
+    setTournaments(prev => [...prev, tournament]);
+  }, []);
+
   const startMatch = useCallback((tournamentId: string, matchId: string) => {
     updateMatch(tournamentId, matchId, { status: 'live' });
-    setTournaments(prev => {
-      const t = prev.find(x => x.id === tournamentId);
-      const m = t?.matches.find(x => x.id === matchId);
-      if (!t || !m) return prev;
-      const p1 = t.participants.find(p => p.id === m.participant1Id)?.name ?? 'TBD';
-      const p2 = t.participants.find(p => p.id === m.participant2Id)?.name ?? 'TBD';
-      addNotification({ type: 'match_change', title: 'Match started', message: `${p1} vs ${p2} is now live in ${t.name}.`, tournamentId, matchId });
-      return prev;
-    });
-  }, [updateMatch, addNotification]);
+    const t = tournaments.find(x => x.id === tournamentId);
+    const m = t?.matches.find(x => x.id === matchId);
+    const p1 = t?.participants.find(p => p.id === m?.participant1Id)?.name ?? 'TBD';
+    const p2 = t?.participants.find(p => p.id === m?.participant2Id)?.name ?? 'TBD';
+    addNotification({ type: 'match_change', title: 'Match started', message: `${p1} vs ${p2} is now live in ${t?.name ?? ''}.`, tournamentId, matchId });
+  }, [tournaments, updateMatch, addNotification]);
 
   const completeMatch = useCallback((tournamentId: string, matchId: string, winnerId: string, score1: number, score2: number) => {
     updateMatch(tournamentId, matchId, { status: 'completed', winnerId, score1, score2 });
-    setTournaments(prev => {
-      const t = prev.find(x => x.id === tournamentId);
-      const winner = t?.participants.find(p => p.id === winnerId)?.name ?? 'Unknown';
-      addNotification({ type: 'match_change', title: 'Match completed', message: `${winner} advances. Score: ${score1}–${score2}.`, tournamentId, matchId });
-      return prev;
-    });
-  }, [updateMatch, addNotification]);
+    const t = tournaments.find(x => x.id === tournamentId);
+    const winner = t?.participants.find(p => p.id === winnerId)?.name ?? 'Unknown';
+    addNotification({ type: 'match_change', title: 'Match completed', message: `${winner} advances. Score: ${score1}–${score2}.`, tournamentId, matchId });
+  }, [tournaments, updateMatch, addNotification]);
 
   const reportNoShow = useCallback((tournamentId: string, matchId: string, participantId: string) => {
     updateMatch(tournamentId, matchId, { status: 'delayed' });
-    setTournaments(prev => {
-      const t = prev.find(x => x.id === tournamentId);
-      const name = t?.participants.find(p => p.id === participantId)?.name ?? 'Participant';
-      addNotification({ type: 'no_show', title: 'No-show reported', message: `${name} did not appear. Match rescheduled automatically.`, tournamentId, matchId });
-      return prev;
-    });
-  }, [updateMatch, addNotification]);
+    const t = tournaments.find(x => x.id === tournamentId);
+    const name = t?.participants.find(p => p.id === participantId)?.name ?? 'Participant';
+    addNotification({ type: 'no_show', title: 'No-show reported', message: `${name} did not appear. Match rescheduled automatically.`, tournamentId, matchId });
+  }, [tournaments, updateMatch, addNotification]);
 
   const reportDelay = useCallback((tournamentId: string, matchId: string, minutes: number) => {
     updateMatch(tournamentId, matchId, { status: 'delayed' });
-    setTournaments(prev => {
-      const t = prev.find(x => x.id === tournamentId);
-      const m = t?.matches.find(x => x.id === matchId);
-      const p1 = t?.participants.find(p => p.id === m?.participant1Id)?.name ?? 'TBD';
-      const p2 = t?.participants.find(p => p.id === m?.participant2Id)?.name ?? 'TBD';
-      addNotification({ type: 'delay', title: `Match delayed ${minutes} min`, message: `${p1} vs ${p2} pushed back. Downstream matches auto-adjusted.`, tournamentId, matchId });
-      return prev;
-    });
-  }, [updateMatch, addNotification]);
+    const t = tournaments.find(x => x.id === tournamentId);
+    const m = t?.matches.find(x => x.id === matchId);
+    const p1 = t?.participants.find(p => p.id === m?.participant1Id)?.name ?? 'TBD';
+    const p2 = t?.participants.find(p => p.id === m?.participant2Id)?.name ?? 'TBD';
+    addNotification({ type: 'delay', title: `Match delayed ${minutes} min`, message: `${p1} vs ${p2} pushed back. Downstream matches auto-adjusted.`, tournamentId, matchId });
+  }, [tournaments, updateMatch, addNotification]);
 
   const bookRoom = useCallback((tournamentId: string, matchId: string, locationId: string) => {
     updateMatch(tournamentId, matchId, { locationId });
-    setTournaments(prev => {
-      const t = prev.find(x => x.id === tournamentId);
-      const loc = t?.locations.find(l => l.id === locationId);
-      addNotification({ type: 'room_change', title: 'Room assigned', message: `Match assigned to ${loc?.name ?? 'room'} in ${loc?.building ?? ''}.`, tournamentId, matchId });
-      return prev;
-    });
-  }, [updateMatch, addNotification]);
+    const t = tournaments.find(x => x.id === tournamentId);
+    const loc = t?.locations.find(l => l.id === locationId);
+    addNotification({ type: 'room_change', title: 'Room assigned', message: `Match assigned to ${loc?.name ?? 'room'} in ${loc?.building ?? ''}.`, tournamentId, matchId });
+  }, [tournaments, updateMatch, addNotification]);
 
   return (
     <AppContext.Provider value={{
@@ -100,6 +88,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
       timePrefs: settings.timePrefs, setTimePrefs,
       addNotification, markAllRead, markRead,
       updateMatch, reportNoShow, reportDelay, startMatch, completeMatch, bookRoom,
+      addTournament,
     }}>
       {children}
     </AppContext.Provider>

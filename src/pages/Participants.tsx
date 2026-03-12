@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { CheckCircle2, Circle, XCircle, Search, Plus, Mail, Trash2, ChevronDown } from 'lucide-react';
-import { mockTournaments } from '../data/mockData';
+import { useApp } from '../store/store';
 import type { Participant, ParticipantStatus } from '../types';
 import styles from './Participants.module.css';
 
@@ -24,16 +24,18 @@ interface ParticipantWithTournament extends Participant {
 }
 
 export default function Participants() {
+  const { tournaments } = useApp();
   const [search, setSearch] = useState('');
   const [filter, setFilter] = useState<FilterStatus>('all');
   const [showInviteModal, setShowInviteModal] = useState(false);
   const [inviteEmail, setInviteEmail] = useState('');
   const [inviteName, setInviteName] = useState('');
-  const [selectedTournament, setSelectedTournament] = useState(mockTournaments[0].id);
+  const [selectedTournament, setSelectedTournament] = useState(tournaments[0]?.id ?? '');
   const [expandedRow, setExpandedRow] = useState<string | null>(null);
+  const [rowStatuses, setRowStatuses] = useState<Record<string, ParticipantStatus>>({});
 
   // Flatten all participants across tournaments
-  const allParticipants: ParticipantWithTournament[] = mockTournaments.flatMap(t =>
+  const allParticipants: ParticipantWithTournament[] = tournaments.flatMap(t =>
     t.participants.map(p => ({ ...p, tournamentName: t.name, tournamentId: t.id }))
   );
 
@@ -52,12 +54,19 @@ export default function Participants() {
     declined: allParticipants.filter(p => p.status === 'declined').length,
   };
 
+  const handleSendInvite = () => {
+    if (!inviteName.trim() || !inviteEmail.trim()) return;
+    setShowInviteModal(false);
+    setInviteName('');
+    setInviteEmail('');
+  };
+
   return (
     <div className={styles.page}>
       <div className={styles.header}>
         <div>
           <h1 className={styles.title}>Participants</h1>
-          <p className={styles.sub}>{counts.all} total across {mockTournaments.length} tournaments</p>
+          <p className={styles.sub}>{counts.all} total across {tournaments.length} tournaments</p>
         </div>
         <button className={styles.inviteBtn} onClick={() => setShowInviteModal(true)}>
           <Plus size={15} /> Invite Player
@@ -103,65 +112,73 @@ export default function Participants() {
           <div className={styles.empty}>No participants match your search.</div>
         )}
 
-        {filtered.map(p => (
-          <div key={`${p.id}-${p.tournamentId}`} className={styles.tableGroup}>
-            <div
-              className={styles.tableRow}
-              onClick={() => setExpandedRow(expandedRow === `${p.id}-${p.tournamentId}` ? null : `${p.id}-${p.tournamentId}`)}
-            >
-              <div className={styles.playerCell}>
-                <div className={styles.avatar}>{p.name.split(' ').map(n => n[0]).join('').slice(0, 2)}</div>
-                <div>
-                  <p className={styles.playerName}>{p.name}</p>
-                  <p className={styles.playerEmail}>{p.email}</p>
+        {filtered.map(p => {
+          const rowKey = `${p.id}-${p.tournamentId}`;
+          const currentStatus = rowStatuses[rowKey] ?? p.status;
+          return (
+            <div key={rowKey} className={styles.tableGroup}>
+              <div
+                className={styles.tableRow}
+                onClick={() => setExpandedRow(expandedRow === rowKey ? null : rowKey)}
+              >
+                <div className={styles.playerCell}>
+                  <div className={styles.avatar}>{p.name.split(' ').map(n => n[0]).join('').slice(0, 2)}</div>
+                  <div>
+                    <p className={styles.playerName}>{p.name}</p>
+                    <p className={styles.playerEmail}>{p.email}</p>
+                  </div>
+                </div>
+                <span className={styles.tournamentName}>{p.tournamentName}</span>
+                <div className={styles.statusCell}>
+                  {statusIcon(currentStatus)}
+                  <span data-status={currentStatus}>{statusLabel[currentStatus]}</span>
+                </div>
+                <div className={styles.availCell}>
+                  {p.availability.length > 0 ? (
+                    <span className={styles.availBadge}>{p.availability.length} slot{p.availability.length !== 1 ? 's' : ''}</span>
+                  ) : (
+                    <span className={styles.noAvail}>Not set</span>
+                  )}
+                </div>
+                <div className={styles.rowActions}>
+                  <ChevronDown
+                    size={14}
+                    className={`${styles.chevron} ${expandedRow === rowKey ? styles.chevronOpen : ''}`}
+                  />
                 </div>
               </div>
-              <span className={styles.tournamentName}>{p.tournamentName}</span>
-              <div className={styles.statusCell}>
-                {statusIcon(p.status)}
-                <span data-status={p.status}>{statusLabel[p.status]}</span>
-              </div>
-              <div className={styles.availCell}>
-                {p.availability.length > 0 ? (
-                  <span className={styles.availBadge}>{p.availability.length} slot{p.availability.length !== 1 ? 's' : ''}</span>
-                ) : (
-                  <span className={styles.noAvail}>Not set</span>
-                )}
-              </div>
-              <div className={styles.rowActions}>
-                <ChevronDown
-                  size={14}
-                  className={`${styles.chevron} ${expandedRow === `${p.id}-${p.tournamentId}` ? styles.chevronOpen : ''}`}
-                />
-              </div>
-            </div>
 
-            {expandedRow === `${p.id}-${p.tournamentId}` && (
-              <div className={styles.expandedRow}>
-                <div className={styles.expandedSection}>
-                  <p className={styles.expandedLabel}>Seed</p>
-                  <p className={styles.expandedValue}>{p.seed ? `#${p.seed}` : '—'}</p>
+              {expandedRow === rowKey && (
+                <div className={styles.expandedRow}>
+                  <div className={styles.expandedSection}>
+                    <p className={styles.expandedLabel}>Seed</p>
+                    <p className={styles.expandedValue}>{p.seed != null ? `#${p.seed}` : '—'}</p>
+                  </div>
+                  <div className={styles.expandedSection}>
+                    <p className={styles.expandedLabel}>Status</p>
+                    <select
+                      className={styles.statusSelect}
+                      value={currentStatus}
+                      onChange={e => setRowStatuses(prev => ({ ...prev, [rowKey]: e.target.value as ParticipantStatus }))}
+                    >
+                      <option value="confirmed">Confirmed</option>
+                      <option value="pending">Pending</option>
+                      <option value="declined">Declined</option>
+                    </select>
+                  </div>
+                  <div className={styles.expandedActions}>
+                    <button className={styles.actionBtn}>
+                      <Mail size={13} /> Send Reminder
+                    </button>
+                    <button className={styles.actionBtn} style={{ color: 'var(--red)' }}>
+                      <Trash2 size={13} /> Remove
+                    </button>
+                  </div>
                 </div>
-                <div className={styles.expandedSection}>
-                  <p className={styles.expandedLabel}>Status</p>
-                  <select className={styles.statusSelect} defaultValue={p.status}>
-                    <option value="confirmed">Confirmed</option>
-                    <option value="pending">Pending</option>
-                    <option value="declined">Declined</option>
-                  </select>
-                </div>
-                <div className={styles.expandedActions}>
-                  <button className={styles.actionBtn}>
-                    <Mail size={13} /> Send Reminder
-                  </button>
-                  <button className={styles.actionBtn} style={{ color: 'var(--red)' }}>
-                    <Trash2 size={13} /> Remove
-                  </button>
-                </div>
-              </div>
-            )}
-          </div>
-        ))}
+              )}
+            </div>
+          );
+        })}
       </div>
 
       {/* Invite Modal */}
@@ -182,13 +199,17 @@ export default function Participants() {
             <div className={styles.modalField}>
               <label>Tournament</label>
               <select className={styles.modalInput} value={selectedTournament} onChange={e => setSelectedTournament(e.target.value)}>
-                {mockTournaments.map(t => <option key={t.id} value={t.id}>{t.name}</option>)}
+                {tournaments.map(t => <option key={t.id} value={t.id}>{t.name}</option>)}
               </select>
             </div>
 
             <div className={styles.modalActions}>
               <button className={styles.cancelBtn} onClick={() => setShowInviteModal(false)}>Cancel</button>
-              <button className={styles.sendBtn} onClick={() => setShowInviteModal(false)}>
+              <button
+                className={styles.sendBtn}
+                onClick={handleSendInvite}
+                disabled={!inviteName.trim() || !inviteEmail.trim()}
+              >
                 <Mail size={14} /> Send Invite
               </button>
             </div>

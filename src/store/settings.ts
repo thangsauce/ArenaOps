@@ -124,4 +124,5 @@ export interface AppState {
   startMatch: (tournamentId: string, matchId: string) => void;
   completeMatch: (tournamentId: string, matchId: string, winnerId: string, score1: number, score2: number) => void;
   bookRoom: (tournamentId: string, matchId: string, locationId: string) => void;
+  addTournament: (tournament: Tournament) => void;
 }

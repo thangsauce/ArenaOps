@@ -1,21 +1,41 @@
 import { useState } from 'react';
+import { useParams } from 'react-router-dom';
 import { CheckCircle2, Clock, MapPin, Zap } from 'lucide-react';
-import { mockTournaments } from '../data/mockData';
+import { useApp } from '../store/store';
 import styles from './AvailabilityConfirm.module.css';
-
-const tournament = mockTournaments[0];
-// Simulate being "Morgan Davis" - the pending participant
-const participant = tournament.participants.find(p => p.status === 'pending')!;
 
 type Step = 'intro' | 'availability' | 'confirm' | 'done';
 
 export default function AvailabilityConfirm() {
+  const { token } = useParams<{ token: string }>();
+  const { tournaments } = useApp();
   const [step, setStep] = useState<Step>('intro');
   const [selected, setSelected] = useState<string[]>([]);
+
+  const tournament = tournaments[0];
+  // Find participant by token (participant id) or fall back to first pending
+  const participant = tournament?.participants.find(p => p.id === token)
+    ?? tournament?.participants.find(p => p.status === 'pending');
 
   const toggleSlot = (id: string) => {
     setSelected(prev => prev.includes(id) ? prev.filter(x => x !== id) : [...prev, id]);
   };
+
+  if (!tournament || !participant) {
+    return (
+      <div className={styles.page}>
+        <div className={styles.card}>
+          <div className={styles.brand}>
+            <Zap size={18} className={styles.brandIcon} />
+            <span className={styles.brandName}>ArenaOPS</span>
+          </div>
+          <div className={styles.content}>
+            <p>This invitation link is invalid or has expired.</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className={styles.page}>

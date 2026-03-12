@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, CheckCircle2 } from 'lucide-react';
 import type { TournamentFormat } from '../types';
+import { useApp } from '../store/store';
 import styles from './CreateTournament.module.css';
 
 const formats: { value: TournamentFormat; label: string; desc: string }[] = [
@@ -13,6 +14,7 @@ const formats: { value: TournamentFormat; label: string; desc: string }[] = [
 
 export default function CreateTournament() {
   const navigate = useNavigate();
+  const { addTournament } = useApp();
   const [step, setStep] = useState(1);
   const [form, setForm] = useState({
     name: '',
@@ -24,7 +26,8 @@ export default function CreateTournament() {
     organizerName: '',
   });
 
-  const set = (field: string, value: string) => setForm(f => ({ ...f, [field]: value }));
+  type FormField = keyof typeof form;
+  const set = (field: FormField, value: string) => setForm(f => ({ ...f, [field]: value }));
 
   const canNext1 = form.name && form.game && form.format;
   const canNext2 = form.maxParticipants && form.startDate && form.organizerName;
@@ -163,8 +166,44 @@ export default function CreateTournament() {
           </div>
 
           <div className={styles.actionRow}>
-            <button className={styles.draftBtn} onClick={() => navigate('/')}>Save as Draft</button>
-            <button className={styles.launchBtn} onClick={() => navigate('/')}>
+            <button className={styles.draftBtn} onClick={() => {
+              addTournament({
+                id: `t${Date.now()}`,
+                name: form.name,
+                game: form.game,
+                format: form.format as TournamentFormat,
+                maxParticipants: parseInt(form.maxParticipants),
+                startDate: form.startDate,
+                organizerName: form.organizerName,
+                description: form.description,
+                createdAt: new Date().toISOString(),
+                status: 'draft',
+                participants: [],
+                matches: [],
+                locations: [],
+                timeBlocks: [],
+              });
+              navigate('/');
+            }}>Save as Draft</button>
+            <button className={styles.launchBtn} onClick={() => {
+              addTournament({
+                id: `t${Date.now()}`,
+                name: form.name,
+                game: form.game,
+                format: form.format as TournamentFormat,
+                maxParticipants: parseInt(form.maxParticipants),
+                startDate: form.startDate,
+                organizerName: form.organizerName,
+                description: form.description,
+                createdAt: new Date().toISOString(),
+                status: 'active' as const,
+                participants: [],
+                matches: [],
+                locations: [],
+                timeBlocks: [],
+              });
+              navigate('/');
+            }}>
               🚀 Launch Tournament
             </button>
           </div>
