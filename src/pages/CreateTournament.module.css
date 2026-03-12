@@ -1,6 +1,6 @@
 .page {
   padding: 28px 40px;
-  max-width: 640px;
+  width: 100%;
   animation: fadeIn 0.3s ease;
 }
 

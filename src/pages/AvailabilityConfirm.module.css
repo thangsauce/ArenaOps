@@ -12,7 +12,7 @@
   border: 1px solid var(--border-2);
   border-radius: var(--radius-lg);
   width: 100%;
-  max-width: 480px;
+  width: 100%;
   padding: 32px;
   animation: fadeIn 0.3s ease;
 }
@@ -72,7 +72,7 @@
 .doneContent { display: flex; flex-direction: column; align-items: center; text-align: center; gap: 16px; padding: 16px 0; animation: fadeIn 0.3s ease; }
 .doneIcon { font-size: 3rem; }
 .doneTitle { font-family: var(--font-display); font-size: 2rem; letter-spacing: 0.03em; color: var(--accent); }
-.doneMessage { font-size: 0.9rem; color: var(--text-2); line-height: 1.6; max-width: 340px; }
+.doneMessage { font-size: 0.9rem; color: var(--text-2); line-height: 1.6; width: 100%; }
 .doneSlots { display: flex; flex-wrap: wrap; gap: 6px; justify-content: center; }
 .doneSlotBadge { display: flex; align-items: center; gap: 4px; background: var(--accent-dim); color: var(--accent); font-size: 0.75rem; font-weight: 600; padding: 4px 10px; border-radius: 20px; }
 .donePowered { font-size: 0.75rem; color: var(--text-3); margin-top: 8px; }

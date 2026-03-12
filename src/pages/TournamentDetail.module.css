@@ -1,6 +1,6 @@
 .page {
   padding: 28px 40px;
-  max-width: 1000px;
+  width: 100%;
   animation: fadeIn 0.3s ease;
 }
 
@@ -176,7 +176,7 @@
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  max-width: 120px;
+  width: 100%;
 }
 
 .score {
