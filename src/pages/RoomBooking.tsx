@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { MapPin, Users, CheckCircle2, XCircle, AlertTriangle, Clock } from 'lucide-react';
-import { useApp } from '../store/AppContext';
+import { useApp } from '../store/store';
 import styles from './RoomBooking.module.css';
 
 export default function RoomBooking() {

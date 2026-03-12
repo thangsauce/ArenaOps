@@ -1,6 +1,6 @@
 import { useNavigate } from 'react-router-dom';
 import { Trophy, Users, Zap, Clock, ChevronRight, ArrowUpRight } from 'lucide-react';
-import { useApp } from '../store/AppContext';
+import { useApp } from '../store/store';
 import type { Tournament } from '../types';
 import styles from './Dashboard.module.css';
 

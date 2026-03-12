@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Zap, AlertTriangle, CheckCircle2, Clock, MapPin, UserX, Trophy, Play, SkipForward } from 'lucide-react';
-import { useApp } from '../store/AppContext';
+import { useApp } from '../store/store';
 import styles from './LiveControl.module.css';
 
 export default function LiveControl() {

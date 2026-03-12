@@ -8,7 +8,7 @@ import {
   type TimeFormat, type Timezone, type Theme, type Density,
   type DefaultFormat, type DefaultMaxParticipants, type WeekStart,
   type DefaultScheduleView, type ParticipantSort,
-} from '../store/AppContext';
+} from '../store/store';
 import { formatTime } from '../utils/time';
 import styles from './Settings.module.css';
 

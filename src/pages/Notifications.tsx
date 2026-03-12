@@ -1,5 +1,5 @@
 import { Bell, CheckCheck, Zap, AlertTriangle, Calendar, MapPin, Info, CheckCircle2 } from 'lucide-react';
-import { useApp } from '../store/AppContext';
+import { useApp } from '../store/store';
 import styles from './Notifications.module.css';
 
 const typeConfig = {

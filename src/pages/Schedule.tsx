@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useApp } from '../store/AppContext';
+import { useApp } from '../store/store';
 import { formatTimeRange } from '../utils/time';
 import { ChevronLeft, ChevronRight, MapPin, Zap, Clock, AlertTriangle } from 'lucide-react';
 import { mockTournaments } from '../data/mockData';
