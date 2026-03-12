@@ -1,6 +1,6 @@
 import { NavLink, useNavigate } from 'react-router-dom';
 import { Trophy, LayoutGrid, Users, Calendar, Bell, Settings, Plus, Zap, MapPin, X } from 'lucide-react';
-import { useApp } from '../../store/useApp';
+import { useApp } from '../../store/store';
 import styles from './Sidebar.module.css';
 
 const navItems = [
@@ -66,7 +66,7 @@ export default function Sidebar({ open, onClose }: SidebarProps) {
       <div className={styles.userCard}>
         <div className={styles.avatar}>{initials}</div>
         <div className={styles.userInfo}>
-          <p className={styles.userName}>{name}</p>
+          <p className={styles.userName} title={name}>{name}</p>
           <p className={styles.userRole}>Organizer</p>
         </div>
       </div>

@@ -107,10 +107,19 @@ export interface Notification {
   matchId?: string;
 }
 
+export interface Toast {
+  id: string;
+  type: Notification['type'];
+  title: string;
+  message: string;
+}
+
 export interface AppState {
   tournaments: Tournament[];
   notifications: Notification[];
   unreadCount: number;
+  toasts: Toast[];
+  dismissToast: (id: string) => void;
   settings: AppSettings;
   updateSettings: (patch: Partial<AppSettings>) => void;
   timePrefs: TimePrefs;

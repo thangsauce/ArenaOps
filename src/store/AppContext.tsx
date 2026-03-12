@@ -1,7 +1,7 @@
 import { useState, useCallback, useMemo, type ReactNode } from 'react';
 import type { Match, Tournament } from '../types';
 import { mockTournaments } from '../data/mockData';
-import { DEFAULT_SETTINGS, type AppSettings, type TimePrefs, type Notification } from './settings';
+import { DEFAULT_SETTINGS, type AppSettings, type TimePrefs, type Notification, type Toast } from './settings';
 import { AppContext } from './context';
 
 const initialNotifications: Notification[] = [
@@ -14,8 +14,13 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const [tournaments, setTournaments] = useState(mockTournaments);
   const [notifications, setNotifications] = useState<Notification[]>(initialNotifications);
   const [settings, setSettings] = useState<AppSettings>(DEFAULT_SETTINGS);
+  const [toasts, setToasts] = useState<Toast[]>([]);
 
   const unreadCount = useMemo(() => notifications.filter(n => !n.read).length, [notifications]);
+
+  const dismissToast = useCallback((id: string) => {
+    setToasts(prev => prev.filter(t => t.id !== id));
+  }, []);
 
   const updateSettings = useCallback((patch: Partial<AppSettings>) => {
     setSettings(prev => ({ ...prev, ...patch }));
@@ -26,7 +31,9 @@ export function AppProvider({ children }: { children: ReactNode }) {
   }, [updateSettings]);
 
   const addNotification = useCallback((n: Omit<Notification, 'id' | 'timestamp' | 'read'>) => {
-    setNotifications(prev => [{ ...n, id: `n${Date.now()}`, timestamp: new Date(), read: false }, ...prev]);
+    const id = `n${Date.now()}`;
+    setNotifications(prev => [{ ...n, id, timestamp: new Date(), read: false }, ...prev]);
+    setToasts(prev => [...prev, { id, type: n.type, title: n.title, message: n.message }]);
   }, []);
 
   const markAllRead = useCallback(() => setNotifications(prev => prev.map(n => ({ ...n, read: true }))), []);
@@ -84,6 +91,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
   return (
     <AppContext.Provider value={{
       tournaments, notifications, unreadCount,
+      toasts, dismissToast,
       settings, updateSettings,
       timePrefs: settings.timePrefs, setTimePrefs,
       addNotification, markAllRead, markRead,

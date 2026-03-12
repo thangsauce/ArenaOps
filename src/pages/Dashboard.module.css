@@ -4,10 +4,7 @@
   animation: fadeIn 0.3s ease;
 }
 
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(8px); }
-  to { opacity: 1; transform: translateY(0); }
-}
+/* fadeIn lives in index.css — no duplicate here */
 
 .hero {
   display: flex;
@@ -48,6 +45,8 @@
 }
 
 .heroBtn:hover { opacity: 0.9; transform: translateY(-1px); }
+.heroBtn:active { opacity: 0.8; transform: translateY(0); }
+.heroBtn:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
 
 .statsRow {
   display: grid;
@@ -78,6 +77,9 @@
   line-height: 1;
   color: var(--text);
 }
+
+.statValueAccent { color: var(--accent); }
+.statValueRed    { color: var(--red); }
 
 .section { margin-bottom: 36px; }
 
@@ -115,6 +117,11 @@
   box-shadow: 0 8px 24px rgba(0,0,0,0.3);
 }
 
+.card:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
 .cardHeader {
   display: flex;
   justify-content: space-between;
@@ -148,6 +155,12 @@
   flex-shrink: 0;
 }
 
+/* Status colors via data attribute — no inline style objects needed */
+.status[data-status="active"]       { color: var(--accent); background: rgba(232,255,71,0.1); }
+.status[data-status="registration"] { color: var(--blue);   background: rgba(79,172,254,0.1); }
+.status[data-status="draft"]        { color: var(--text-3); background: rgba(255,255,255,0.05); }
+.status[data-status="completed"]    { color: var(--text-3); background: rgba(255,255,255,0.05); }
+
 .liveBlip {
   width: 6px;
   height: 6px;
@@ -158,7 +171,7 @@
 
 @keyframes pulse {
   0%, 100% { opacity: 1; transform: scale(1); }
-  50% { opacity: 0.5; transform: scale(0.7); }
+  50%       { opacity: 0.5; transform: scale(0.7); }
 }
 
 .cardStats {
@@ -174,6 +187,8 @@
   font-size: 0.78rem;
   color: var(--text-2);
 }
+
+.statLive { color: var(--red); }
 
 .progressBar {
   height: 3px;
@@ -212,4 +227,22 @@
 .card:hover .arrow {
   transform: translateX(3px);
   color: var(--text-2);
+}
+
+/* ── Responsive ── */
+@media (max-width: 900px) {
+  .statsRow { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (max-width: 600px) {
+  .page { padding: 20px 16px; }
+  .statsRow { grid-template-columns: 1fr 1fr; }
+  .hero { flex-direction: column; align-items: flex-start; gap: 16px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .page { animation: none; }
+  .liveBlip { animation: none; }
+  .card { transition: none; }
+  .progressFill { transition: none; }
 }

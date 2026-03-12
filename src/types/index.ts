@@ -3,6 +3,21 @@ export type TournamentStatus = 'draft' | 'registration' | 'active' | 'completed'
 export type MatchStatus = 'scheduled' | 'live' | 'completed' | 'delayed' | 'cancelled';
 export type ParticipantStatus = 'confirmed' | 'pending' | 'declined';
 
+export const TOURNAMENT_STATUS_LABELS: Record<TournamentStatus, string> = {
+  draft: 'Draft',
+  registration: 'Registration',
+  active: 'Active',
+  completed: 'Completed',
+};
+
+export const MATCH_STATUS_LABELS: Record<MatchStatus, string> = {
+  scheduled: 'Scheduled',
+  live: 'Live',
+  completed: 'Completed',
+  delayed: 'Delayed',
+  cancelled: 'Cancelled',
+};
+
 export interface Participant {
   id: string;
   name: string;

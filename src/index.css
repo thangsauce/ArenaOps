@@ -15,12 +15,18 @@
   --blue-dim: rgba(79, 172, 254, 0.15);
   --text: #f0f0f5;
   --text-2: #8888a0;
-  --text-3: #555568;
+  /* Raised from #555568 → #6e6e88 for WCAG AA contrast on dark bg */
+  --text-3: #6e6e88;
   --font-display: 'Bebas Neue', sans-serif;
   --font-body: 'DM Sans', sans-serif;
   --radius: 10px;
   --radius-sm: 6px;
   --radius-lg: 16px;
+  /* Z-index scale */
+  --z-sidebar: 100;
+  --z-overlay: 99;
+  --z-modal: 100;
+  --z-toast: 200;
 }
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
 html{font-size:16px;}

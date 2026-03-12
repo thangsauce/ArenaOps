@@ -1,42 +1,62 @@
-import { useState } from 'react';
-import { Zap, AlertTriangle, CheckCircle2, Clock, MapPin, UserX, Trophy, Play, SkipForward } from 'lucide-react';
+import { useState, useEffect, useRef, useMemo } from 'react';
+import { Zap, AlertTriangle, CheckCircle2, Clock, MapPin, UserX, Trophy, Play, X, SkipForward } from 'lucide-react';
 import { useApp } from '../store/store';
+import { useFocusTrap } from '../hooks/useFocusTrap';
 import styles from './LiveControl.module.css';
+
+type ModalState =
+  | { type: 'score';  matchId: string }
+  | { type: 'noShow'; matchId: string }
+  | { type: 'delay';  matchId: string }
+  | null;
 
 export default function LiveControl() {
   const { tournaments, startMatch, completeMatch, reportNoShow, reportDelay } = useApp();
   const tournament = tournaments[0];
 
-  const [scoreModal, setScoreModal] = useState<{ matchId: string } | null>(null);
-  const [noShowModal, setNoShowModal] = useState<{ matchId: string } | null>(null);
-  const [delayModal, setDelayModal] = useState<{ matchId: string } | null>(null);
+  const [modal, setModal] = useState<ModalState>(null);
   const [score1, setScore1] = useState('');
   const [score2, setScore2] = useState('');
+  const modalRef = useRef<HTMLDivElement>(null);
 
-  const getP = (id: string | null) => id ? tournament.participants.find(p => p.id === id) : null;
+  useFocusTrap(modalRef, modal !== null);
+
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') closeModal(); };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, []);
+
+  const closeModal = () => { setModal(null); setScore1(''); setScore2(''); };
+
+  const getP    = (id: string | null) => id ? tournament.participants.find(p => p.id === id) : null;
   const getName = (id: string | null) => getP(id)?.name ?? 'TBD';
-  const getLoc = (id?: string) => tournament.locations.find(l => l.id === id);
+  const getLoc  = (id?: string) => tournament.locations.find(l => l.id === id);
   const getSlot = (id?: string) => tournament.timeBlocks.find(t => t.id === id);
 
-  const live = tournament.matches.filter(m => m.status === 'live');
-  const upcoming = tournament.matches.filter(m => m.status === 'scheduled');
-  const delayed = tournament.matches.filter(m => m.status === 'delayed');
-  const done = tournament.matches.filter(m => m.status === 'completed');
+  const { live, upcoming, delayed, done } = useMemo(() => ({
+    live:     tournament?.matches.filter(m => m.status === 'live')      ?? [],
+    upcoming: tournament?.matches.filter(m => m.status === 'scheduled') ?? [],
+    delayed:  tournament?.matches.filter(m => m.status === 'delayed')   ?? [],
+    done:     tournament?.matches.filter(m => m.status === 'completed') ?? [],
+  }), [tournament]);
 
   if (!tournament) return <div className={styles.page}><p style={{ padding: '2rem' }}>No tournaments available.</p></div>;
 
   const handleComplete = () => {
-    if (!scoreModal) return;
+    if (!modal || modal.type !== 'score') return;
     const s1 = parseInt(score1) || 0;
     const s2 = parseInt(score2) || 0;
-    if (s1 === s2) return; // tied — require a clear winner
-    const m = tournament.matches.find(x => x.id === scoreModal.matchId)!;
+    if (s1 === s2) return;
+    const m = tournament.matches.find(x => x.id === modal.matchId)!;
     const winnerId = s1 > s2 ? m.participant1Id : m.participant2Id;
     if (!winnerId) return;
-    completeMatch(tournament.id, scoreModal.matchId, winnerId, s1, s2);
-    setScoreModal(null);
-    setScore1(''); setScore2('');
+    completeMatch(tournament.id, modal.matchId, winnerId, s1, s2);
+    closeModal();
   };
+
+  const scoreMatch  = modal?.type === 'score'  ? tournament.matches.find(x => x.id === modal.matchId) : null;
+  const noShowMatch = modal?.type === 'noShow' ? tournament.matches.find(x => x.id === modal.matchId) : null;
 
   return (
     <div className={styles.page}>
@@ -69,24 +89,28 @@ export default function LiveControl() {
                 </div>
                 <div className={styles.matchup}>
                   <div className={styles.player}>
-                    <span className={styles.playerName}>{getName(m.participant1Id)}</span>
+                    <label className={styles.playerName} htmlFor={`score-${m.id}-1`}>{getName(m.participant1Id)}</label>
                     <input
+                      id={`score-${m.id}-1`}
                       className={styles.scoreInput}
                       type="number"
                       min="0"
                       defaultValue={m.score1 ?? 0}
                       placeholder="0"
+                      aria-label={`Score for ${getName(m.participant1Id)}`}
                     />
                   </div>
-                  <span className={styles.vs}>VS</span>
+                  <span className={styles.vs} aria-hidden="true">VS</span>
                   <div className={styles.player}>
-                    <span className={styles.playerName}>{getName(m.participant2Id)}</span>
+                    <label className={styles.playerName} htmlFor={`score-${m.id}-2`}>{getName(m.participant2Id)}</label>
                     <input
+                      id={`score-${m.id}-2`}
                       className={styles.scoreInput}
                       type="number"
                       min="0"
                       defaultValue={m.score2 ?? 0}
                       placeholder="0"
+                      aria-label={`Score for ${getName(m.participant2Id)}`}
                     />
                   </div>
                 </div>
@@ -95,14 +119,14 @@ export default function LiveControl() {
                   {slot && <span><Clock size={11} />{slot.start}</span>}
                 </div>
                 <div className={styles.matchActions}>
-                  <button className={styles.noShowBtn} onClick={() => setNoShowModal({ matchId: m.id })}>
-                    <UserX size={13} /> No-show
+                  <button className={styles.noShowBtn} onClick={() => setModal({ type: 'noShow', matchId: m.id })}>
+                    <UserX size={13} aria-hidden="true" /> No-show
                   </button>
-                  <button className={styles.delayBtn} onClick={() => setDelayModal({ matchId: m.id })}>
-                    <Clock size={13} /> Delay
+                  <button className={styles.delayBtn} onClick={() => setModal({ type: 'delay', matchId: m.id })}>
+                    <Clock size={13} aria-hidden="true" /> Delay
                   </button>
-                  <button className={styles.completeBtn} onClick={() => setScoreModal({ matchId: m.id })}>
-                    <CheckCircle2 size={13} /> Complete
+                  <button className={styles.completeBtn} onClick={() => setModal({ type: 'score', matchId: m.id })}>
+                    <CheckCircle2 size={13} aria-hidden="true" /> Complete
                   </button>
                 </div>
               </div>
@@ -181,78 +205,81 @@ export default function LiveControl() {
       </section>
 
       {/* Complete match modal */}
-      {scoreModal && (() => {
-        const m = tournament.matches.find(x => x.id === scoreModal.matchId)!;
-        return (
-          <div className={styles.overlay} onClick={() => setScoreModal(null)}>
-            <div className={styles.modal} onClick={e => e.stopPropagation()}>
-              <h2 className={styles.modalTitle}>Record Result</h2>
-              <p className={styles.modalSub}>Enter final scores to complete the match.</p>
-              <div className={styles.scoreEntry}>
-                <div className={styles.scorePlayer}>
-                  <p className={styles.scorePlayerName}>{getName(m.participant1Id)}</p>
-                  <input className={styles.scoreBigInput} type="number" min="0" value={score1} onChange={e => setScore1(e.target.value)} placeholder="0" />
-                </div>
-                <span className={styles.scoreDash}>—</span>
-                <div className={styles.scorePlayer}>
-                  <p className={styles.scorePlayerName}>{getName(m.participant2Id)}</p>
-                  <input className={styles.scoreBigInput} type="number" min="0" value={score2} onChange={e => setScore2(e.target.value)} placeholder="0" />
-                </div>
+      {modal?.type === 'score' && scoreMatch && (
+        <div className={styles.overlay} onClick={closeModal} role="dialog" aria-modal="true" aria-labelledby="score-modal-title">
+          <div className={styles.modal} ref={modalRef} onClick={e => e.stopPropagation()}>
+            <div className={styles.modalHeader}>
+              <h2 id="score-modal-title" className={styles.modalTitle}>Record Result</h2>
+              <button className={styles.modalClose} onClick={closeModal} aria-label="Close dialog"><X size={18} /></button>
+            </div>
+            <p className={styles.modalSub}>Enter final scores to complete the match.</p>
+            <div className={styles.scoreEntry}>
+              <div className={styles.scorePlayer}>
+                <p className={styles.scorePlayerName}>{getName(scoreMatch.participant1Id)}</p>
+                <input className={styles.scoreBigInput} type="number" min="0" value={score1} onChange={e => setScore1(e.target.value)} placeholder="0" aria-label={`Score for ${getName(scoreMatch.participant1Id)}`} />
               </div>
-              {score1 !== '' && score2 !== '' && (() => {
-                const s1 = parseInt(score1), s2 = parseInt(score2);
-                return s1 === s2
-                  ? <p className={styles.winnerPreview} style={{ color: '#ffaa00' }}>Tie — adjust scores to determine a winner</p>
-                  : <p className={styles.winnerPreview}>Winner: <strong style={{ color: 'var(--accent)' }}>{s1 > s2 ? getName(m.participant1Id) : getName(m.participant2Id)}</strong></p>;
-              })()}
-              <div className={styles.modalActions}>
-                <button className={styles.cancelBtn} onClick={() => setScoreModal(null)}>Cancel</button>
-                <button className={styles.confirmBtn} onClick={handleComplete} disabled={score1 === '' || score2 === '' || parseInt(score1) === parseInt(score2)}>
-                  <CheckCircle2 size={14} /> Confirm Result
-                </button>
+              <span className={styles.scoreDash} aria-hidden="true">—</span>
+              <div className={styles.scorePlayer}>
+                <p className={styles.scorePlayerName}>{getName(scoreMatch.participant2Id)}</p>
+                <input className={styles.scoreBigInput} type="number" min="0" value={score2} onChange={e => setScore2(e.target.value)} placeholder="0" aria-label={`Score for ${getName(scoreMatch.participant2Id)}`} />
               </div>
             </div>
+            {score1 !== '' && score2 !== '' && (() => {
+              const s1 = parseInt(score1), s2 = parseInt(score2);
+              return s1 === s2
+                ? <p className={styles.winnerPreview} style={{ color: '#ffaa00' }}>Tie — adjust scores to determine a winner</p>
+                : <p className={styles.winnerPreview}>Winner: <strong style={{ color: 'var(--accent)' }}>{s1 > s2 ? getName(scoreMatch.participant1Id) : getName(scoreMatch.participant2Id)}</strong></p>;
+            })()}
+            <div className={styles.modalActions}>
+              <button className={styles.cancelBtn} onClick={closeModal}>Cancel</button>
+              <button className={styles.confirmBtn} onClick={handleComplete} disabled={score1 === '' || score2 === '' || parseInt(score1) === parseInt(score2)}>
+                <CheckCircle2 size={14} aria-hidden="true" /> Confirm Result
+              </button>
+            </div>
           </div>
-        );
-      })()}
+        </div>
+      )}
 
       {/* No-show modal */}
-      {noShowModal && (() => {
-        const m = tournament.matches.find(x => x.id === noShowModal.matchId)!;
-        return (
-          <div className={styles.overlay} onClick={() => setNoShowModal(null)}>
-            <div className={styles.modal} onClick={e => e.stopPropagation()}>
-              <h2 className={styles.modalTitle}>Report No-Show</h2>
-              <p className={styles.modalSub}>Select the player who did not appear.</p>
-              <div className={styles.noShowOptions}>
-                {([m.participant1Id, m.participant2Id].filter((pid): pid is string => pid !== null)).map(pid => (
-                  <button key={pid} className={styles.noShowOption} onClick={() => { reportNoShow(tournament.id, m.id, pid); setNoShowModal(null); }}>
-                    <UserX size={14} /> {getName(pid)}
-                  </button>
-                ))}
-              </div>
-              <p className={styles.autoNote}>⚡ ArenaOPS will auto-reschedule and notify all affected participants.</p>
-              <button className={styles.cancelBtn} onClick={() => setNoShowModal(null)}>Cancel</button>
+      {modal?.type === 'noShow' && noShowMatch && (
+        <div className={styles.overlay} onClick={closeModal} role="dialog" aria-modal="true" aria-labelledby="noshow-modal-title">
+          <div className={styles.modal} ref={modalRef} onClick={e => e.stopPropagation()}>
+            <div className={styles.modalHeader}>
+              <h2 id="noshow-modal-title" className={styles.modalTitle}>Report No-Show</h2>
+              <button className={styles.modalClose} onClick={closeModal} aria-label="Close dialog"><X size={18} /></button>
             </div>
+            <p className={styles.modalSub}>Select the player who did not appear.</p>
+            <div className={styles.noShowOptions}>
+              {([noShowMatch.participant1Id, noShowMatch.participant2Id].filter((pid): pid is string => pid !== null)).map(pid => (
+                <button key={pid} className={styles.noShowOption} onClick={() => { reportNoShow(tournament.id, noShowMatch.id, pid); closeModal(); }}>
+                  <UserX size={14} aria-hidden="true" /> {getName(pid)}
+                </button>
+              ))}
+            </div>
+            <p className={styles.autoNote}>⚡ ArenaOPS will auto-reschedule and notify all affected participants.</p>
+            <button className={styles.cancelBtn} onClick={closeModal}>Cancel</button>
           </div>
-        );
-      })()}
+        </div>
+      )}
 
       {/* Delay modal */}
-      {delayModal && (
-        <div className={styles.overlay} onClick={() => setDelayModal(null)}>
-          <div className={styles.modal} onClick={e => e.stopPropagation()}>
-            <h2 className={styles.modalTitle}>Report Delay</h2>
+      {modal?.type === 'delay' && (
+        <div className={styles.overlay} onClick={closeModal} role="dialog" aria-modal="true" aria-labelledby="delay-modal-title">
+          <div className={styles.modal} ref={modalRef} onClick={e => e.stopPropagation()}>
+            <div className={styles.modalHeader}>
+              <h2 id="delay-modal-title" className={styles.modalTitle}>Report Delay</h2>
+              <button className={styles.modalClose} onClick={closeModal} aria-label="Close dialog"><X size={18} /></button>
+            </div>
             <p className={styles.modalSub}>How long is the expected delay?</p>
             <div className={styles.delayOptions}>
               {[5, 10, 15, 30, 60].map(mins => (
-                <button key={mins} className={styles.delayOption} onClick={() => { reportDelay(tournament.id, delayModal.matchId, mins); setDelayModal(null); }}>
+                <button key={mins} className={styles.delayOption} onClick={() => { reportDelay(tournament.id, modal.matchId, mins); closeModal(); }}>
                   {mins < 60 ? `${mins} min` : '1 hour'}
                 </button>
               ))}
             </div>
             <p className={styles.autoNote}>⚡ Downstream matches will be automatically adjusted and participants notified.</p>
-            <button className={styles.cancelBtn} onClick={() => setDelayModal(null)}>Cancel</button>
+            <button className={styles.cancelBtn} onClick={closeModal}>Cancel</button>
           </div>
         </div>
       )}

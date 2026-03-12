@@ -16,4 +16,5 @@ export {
   type AppSettings,
   type AppState,
   type Notification,
+  type Toast,
 } from './settings';

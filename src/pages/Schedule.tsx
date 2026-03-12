@@ -1,8 +1,9 @@
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useApp } from '../store/store';
 import { formatTimeRange } from '../utils/time';
-import { ChevronLeft, ChevronRight, MapPin, Zap, Clock, AlertTriangle } from 'lucide-react';
+import { ChevronLeft, ChevronRight, MapPin, Zap, Clock, AlertTriangle, X } from 'lucide-react';
 import type { Match, Tournament } from '../types';
+import { useFocusTrap } from '../hooks/useFocusTrap';
 import styles from './Schedule.module.css';
 
 interface ScheduledMatch extends Match {
@@ -19,9 +20,18 @@ const statusConfig = {
 
 export default function Schedule() {
   const [view, setView] = useState<'grid' | 'list'>('grid');
-  const [selectedDate, setSelectedDate] = useState('2026-03-15');
-  const [reportDelayMatch, setReportDelayMatch] = useState<{ matchId: string; tournamentId: string } | null>(null);
   const { tournaments, timePrefs, startMatch, reportDelay } = useApp();
+  const [selectedDate, setSelectedDate] = useState(() => tournaments[0]?.startDate ?? new Date().toISOString().split('T')[0]);
+  const [reportDelayMatch, setReportDelayMatch] = useState<{ matchId: string; tournamentId: string } | null>(null);
+  const modalRef = useRef<HTMLDivElement>(null);
+
+  useFocusTrap(modalRef, reportDelayMatch !== null);
+
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') setReportDelayMatch(null); };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, []);
 
   const t = tournaments[0];
 
@@ -93,7 +103,7 @@ export default function Schedule() {
           <span className={styles.dateFull}>
             {new Date(selectedDate + 'T12:00:00').toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })}
           </span>
-          {selectedDate === '2026-03-15' && <span className={styles.todayBadge}>Tournament Day</span>}
+          {selectedDate === (tournaments[0]?.startDate ?? '') && <span className={styles.todayBadge}>Tournament Day</span>}
         </div>
         <button className={styles.dateBtn} onClick={() => shiftDate(1)}><ChevronRight size={16} /></button>
       </div>
@@ -257,9 +267,12 @@ export default function Schedule() {
       )}
 
       {reportDelayMatch && (
-        <div className={styles.modalOverlay} onClick={() => setReportDelayMatch(null)}>
-          <div className={styles.modal} onClick={e => e.stopPropagation()}>
-            <h2 className={styles.modalTitle}>Report Delay</h2>
+        <div className={styles.modalOverlay} onClick={() => setReportDelayMatch(null)} role="dialog" aria-modal="true" aria-labelledby="schedule-delay-title">
+          <div className={styles.modal} ref={modalRef} onClick={e => e.stopPropagation()}>
+            <div className={styles.modalHeader}>
+              <h2 id="schedule-delay-title" className={styles.modalTitle}>Report Delay</h2>
+              <button className={styles.modalClose} onClick={() => setReportDelayMatch(null)} aria-label="Close dialog"><X size={18} /></button>
+            </div>
             <p className={styles.modalSub}>How long is the expected delay?</p>
             <div className={styles.delayOptions}>
               {[5, 10, 15, 30, 60].map(mins => (
