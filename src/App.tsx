@@ -14,7 +14,7 @@ import Settings from './pages/Settings';
 
 export default function App() {
   return (
-    <BrowserRouter>
+    <BrowserRouter basename="/ArenaOps">
       <Routes>
         <Route path="/confirm/:token" element={<AvailabilityConfirm />} />
         <Route element={<AppLayout />}>
