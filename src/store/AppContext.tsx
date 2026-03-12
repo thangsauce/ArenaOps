@@ -105,3 +105,23 @@ export function AppProvider({ children }: { children: ReactNode }) {
     </AppContext.Provider>
   );
 }
+
+// Re-exports so pages can import everything from one place
+export { useApp } from './useApp';
+export { AppContext } from './context';
+export {
+  TIMEZONES,
+  type TimeFormat,
+  type Timezone,
+  type Theme,
+  type Density,
+  type DefaultFormat,
+  type DefaultMaxParticipants,
+  type WeekStart,
+  type DefaultScheduleView,
+  type ParticipantSort,
+  type TimePrefs,
+  type AppSettings,
+  type AppState,
+  type Notification,
+} from './settings';
