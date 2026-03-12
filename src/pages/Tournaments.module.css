@@ -3,7 +3,7 @@
 
 .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; padding-bottom: 20px; border-bottom: 1px solid var(--border); }
 .title { font-family: var(--font-display); font-size: 2rem; letter-spacing: 0.02em; }
-.createBtn { display: flex; align-items: center; gap: 6px; background: var(--accent); color: #0a0a0f; font-weight: 700; font-size: 0.82rem; padding: 8px 16px; border-radius: var(--radius); }
+.createBtn { display: flex; align-items: center; gap: 6px; background: var(--accent); color: var(--accent-fg); font-weight: 700; font-size: 0.82rem; padding: 8px 16px; border-radius: var(--radius); }
 .createBtn:hover { opacity: 0.9; }
 
 .list { display: flex; flex-direction: column; gap: 6px; }

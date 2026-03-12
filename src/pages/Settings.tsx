@@ -87,7 +87,7 @@ function Toggle({ checked, onChange }: { checked: boolean; onChange: (v: boolean
 
 // ── Section wrapper ───────────────────────────────────────────────────────────
 function Section({
-  icon: Icon, title, desc, children, defaultOpen = true,
+  icon: Icon, title, desc, children, defaultOpen = false,
 }: {
   icon: React.ElementType; title: string; desc: string; children: React.ReactNode; defaultOpen?: boolean;
 }) {

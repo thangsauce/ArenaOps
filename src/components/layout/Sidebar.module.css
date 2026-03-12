@@ -38,7 +38,7 @@
   align-items: center;
   gap: 8px;
   background: var(--accent);
-  color: #0a0a0f;
+  color: var(--accent-fg);
   font-weight: 600;
   font-size: 0.82rem;
   padding: 9px 14px;

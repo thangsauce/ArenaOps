@@ -60,6 +60,15 @@
 .summaryChip[data-status="scheduled"] { background: var(--blue-dim); color: var(--blue); }
 .summaryChip[data-status="delayed"] { background: rgba(255,170,0,0.12); color: #ffaa00; }
 
+@media (max-width: 768px) {
+  .page { padding: 20px 16px; }
+  .header { flex-direction: column; gap: 10px; align-items: flex-start; }
+  .layout { grid-template-columns: 1fr; }
+  .roomGrid { grid-template-columns: 1fr; }
+  .summaryRow { flex-direction: column; align-items: flex-start; gap: 6px; }
+  .modal { margin: 0 8px; }
+}
+
 .overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.6); display: flex; align-items: center; justify-content: center; z-index: 100; backdrop-filter: blur(4px); }
 .modal { background: var(--bg-2); border: 1px solid var(--border-2); border-radius: var(--radius-lg); padding: 28px; width: 100%; width: 100%; animation: slideUp 0.2s ease; }
 @keyframes slideUp { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
@@ -72,5 +81,5 @@
 .modalActions { display: flex; gap: 10px; }
 .cancelBtn { flex: 1; background: var(--surface); border: 1px solid var(--border-2); color: var(--text-2); font-size: 0.85rem; padding: 10px; border-radius: var(--radius); cursor: pointer; }
 .cancelBtn:hover { background: var(--surface-2); }
-.bookBtn { flex: 2; background: var(--accent); color: #0a0a0f; font-weight: 700; font-size: 0.88rem; padding: 10px; border-radius: var(--radius); cursor: pointer; transition: opacity 0.15s; }
+.bookBtn { flex: 2; background: var(--accent); color: var(--accent-fg); font-weight: 700; font-size: 0.88rem; padding: 10px; border-radius: var(--radius); cursor: pointer; transition: opacity 0.15s; }
 .bookBtn:hover { opacity: 0.9; }

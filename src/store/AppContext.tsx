@@ -1,4 +1,4 @@
-import { useState, useCallback, useMemo, type ReactNode } from 'react';
+import { useState, useCallback, useMemo, useEffect, type ReactNode } from 'react';
 import type { Match, Tournament } from '../types';
 import { mockTournaments } from '../data/mockData';
 import { DEFAULT_SETTINGS, type AppSettings, type TimePrefs, type Notification } from './settings';
@@ -16,6 +16,20 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const [settings, setSettings] = useState<AppSettings>(DEFAULT_SETTINGS);
 
   const unreadCount = useMemo(() => notifications.filter(n => !n.read).length, [notifications]);
+
+  // Apply theme to <html> element whenever it changes
+  useEffect(() => {
+    const theme = settings.appearance.theme;
+    if (theme !== 'system') {
+      document.documentElement.setAttribute('data-theme', theme);
+      return;
+    }
+    const mq = window.matchMedia('(prefers-color-scheme: dark)');
+    const apply = () => document.documentElement.setAttribute('data-theme', mq.matches ? 'dark' : 'light');
+    apply();
+    mq.addEventListener('change', apply);
+    return () => mq.removeEventListener('change', apply);
+  }, [settings.appearance.theme]);
 
   const updateSettings = useCallback((patch: Partial<AppSettings>) => {
     setSettings(prev => ({ ...prev, ...patch }));

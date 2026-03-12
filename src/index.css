@@ -16,15 +16,38 @@
   --text: #f0f0f5;
   --text-2: #8888a0;
   --text-3: #555568;
+  --accent-fg: #0a0a0f;
   --font-display: 'Bebas Neue', sans-serif;
   --font-body: 'DM Sans', sans-serif;
   --radius: 10px;
   --radius-sm: 6px;
   --radius-lg: 16px;
 }
+/* ── Light Mode ──────────────────────────────────────────────────────────── */
+[data-theme="light"] {
+  --bg: #f4f5f7;
+  --bg-2: #e8eaee;
+  --bg-3: #dde0e6;
+  --surface: #ffffff;
+  --surface-2: #f0f1f5;
+  --border: rgba(0,0,0,0.08);
+  --border-2: rgba(0,0,0,0.13);
+  --accent: #6366f1;
+  --accent-dim: rgba(99,102,241,0.1);
+  --accent-glow: rgba(99,102,241,0.22);
+  --red: #e8324a;
+  --red-dim: rgba(232,50,74,0.12);
+  --blue: #2e86e0;
+  --blue-dim: rgba(46,134,224,0.12);
+  --text: #0f0f18;
+  --text-2: #4a4a62;
+  --text-3: #8888a0;
+  --accent-fg: #ffffff;
+}
+
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
 html{font-size:16px;}
-body{font-family:var(--font-body);background:var(--bg);color:var(--text);line-height:1.5;min-height:100vh;overflow-x:hidden;}
+body{font-family:var(--font-body);background:var(--bg);color:var(--text);line-height:1.5;min-height:100vh;overflow-x:clip;}
 ::-webkit-scrollbar{width:6px;}
 ::-webkit-scrollbar-track{background:var(--bg-2);}
 ::-webkit-scrollbar-thumb{background:var(--border-2);border-radius:3px;}

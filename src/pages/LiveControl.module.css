@@ -35,7 +35,7 @@
 .noShowBtn { display: flex; align-items: center; gap: 4px; font-size: 0.72rem; color: #ffaa00; background: rgba(255,170,0,0.1); border: 1px solid rgba(255,170,0,0.25); border-radius: var(--radius-sm); padding: 6px 10px; cursor: pointer; transition: all 0.15s; flex: 1; justify-content: center; }
 .noShowBtn:hover { background: rgba(255,170,0,0.18); }
 .delayBtn { display: flex; align-items: center; gap: 4px; font-size: 0.72rem; color: var(--blue); background: var(--blue-dim); border: 1px solid rgba(79,172,254,0.25); border-radius: var(--radius-sm); padding: 6px 10px; cursor: pointer; flex: 1; justify-content: center; }
-.completeBtn { display: flex; align-items: center; gap: 4px; font-size: 0.72rem; font-weight: 600; color: #0a0a0f; background: var(--accent); border-radius: var(--radius-sm); padding: 6px 12px; cursor: pointer; transition: opacity 0.15s; flex: 1; justify-content: center; }
+.completeBtn { display: flex; align-items: center; gap: 4px; font-size: 0.72rem; font-weight: 600; color: var(--accent-fg); background: var(--accent); border-radius: var(--radius-sm); padding: 6px 12px; cursor: pointer; transition: opacity 0.15s; flex: 1; justify-content: center; }
 .completeBtn:hover { opacity: 0.9; }
 
 /* Delay card */
@@ -54,7 +54,7 @@
 .queuePlayers { font-size: 0.875rem; font-weight: 500; color: var(--text); }
 .queueMeta { display: flex; gap: 12px; }
 .queueMeta span { display: flex; align-items: center; gap: 4px; font-size: 0.72rem; color: var(--text-3); }
-.startBtn { display: flex; align-items: center; gap: 5px; font-size: 0.78rem; font-weight: 600; color: #0a0a0f; background: var(--accent); padding: 8px 14px; border-radius: var(--radius-sm); cursor: pointer; transition: opacity 0.15s; white-space: nowrap; }
+.startBtn { display: flex; align-items: center; gap: 5px; font-size: 0.78rem; font-weight: 600; color: var(--accent-fg); background: var(--accent); padding: 8px 14px; border-radius: var(--radius-sm); cursor: pointer; transition: opacity 0.15s; white-space: nowrap; }
 .startBtn:hover { opacity: 0.9; }
 
 /* Done */
@@ -92,6 +92,6 @@
 .modalActions { display: flex; gap: 10px; }
 .cancelBtn { flex: 1; background: var(--surface); border: 1px solid var(--border-2); color: var(--text-2); font-size: 0.85rem; font-weight: 500; padding: 10px; border-radius: var(--radius); cursor: pointer; transition: all 0.15s; }
 .cancelBtn:hover { background: var(--surface-2); }
-.confirmBtn { flex: 2; display: flex; align-items: center; justify-content: center; gap: 6px; background: var(--accent); color: #0a0a0f; font-weight: 700; font-size: 0.88rem; padding: 10px; border-radius: var(--radius); cursor: pointer; transition: opacity 0.15s; }
+.confirmBtn { flex: 2; display: flex; align-items: center; justify-content: center; gap: 6px; background: var(--accent); color: var(--accent-fg); font-weight: 700; font-size: 0.88rem; padding: 10px; border-radius: var(--radius); cursor: pointer; transition: opacity 0.15s; }
 .confirmBtn:hover:not(:disabled) { opacity: 0.9; }
 .confirmBtn:disabled { opacity: 0.35; cursor: not-allowed; }

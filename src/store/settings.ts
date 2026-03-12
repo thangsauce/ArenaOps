@@ -82,8 +82,8 @@ export interface AppSettings {
 
 export const DEFAULT_SETTINGS: AppSettings = {
   timePrefs: {
-    timezone: 'UTC',
-    format: '24h',
+    timezone: 'America/New_York',
+    format: '12h',
   },
   appearance: { theme: 'dark', density: 'comfortable' },
   notifications: { matchStart: true, delays: true, noShows: true, roomChanges: true, sound: false },
