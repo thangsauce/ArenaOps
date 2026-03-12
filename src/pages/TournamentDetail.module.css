@@ -1,0 +1,251 @@
+.page {
+  padding: 28px 40px;
+  max-width: 1000px;
+  animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.notFound { padding: 60px; text-align: center; color: var(--text-2); }
+
+.topBar { margin-bottom: 20px; }
+
+.back {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.82rem;
+  color: var(--text-2);
+  transition: color 0.15s;
+}
+.back:hover { color: var(--text); }
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 20px;
+  padding-bottom: 24px;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 28px;
+}
+
+.title {
+  font-family: var(--font-display);
+  font-size: 2.4rem;
+  letter-spacing: 0.02em;
+  color: var(--text);
+  line-height: 1;
+}
+
+.sub {
+  margin-top: 6px;
+  font-size: 0.85rem;
+  color: var(--text-2);
+  text-transform: capitalize;
+}
+
+.headerMeta {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 6px;
+}
+
+.metaItem {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.8rem;
+  color: var(--text-2);
+}
+
+.content { display: flex; flex-direction: column; gap: 36px; }
+
+.section {}
+
+.sectionTitle {
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-3);
+  margin-bottom: 14px;
+}
+
+/* Bracket */
+.bracket {
+  display: flex;
+  gap: 20px;
+  overflow-x: auto;
+  padding-bottom: 8px;
+}
+
+.round { min-width: 200px; }
+
+.roundLabel {
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-3);
+  margin-bottom: 10px;
+}
+
+.roundMatches { display: flex; flex-direction: column; gap: 10px; }
+
+.matchCard {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 12px 14px;
+  transition: border-color 0.15s;
+}
+
+.matchLive {
+  border-color: rgba(255,71,87,0.4);
+  background: rgba(255,71,87,0.04);
+}
+
+.matchHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.matchNum {
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  color: var(--text-3);
+}
+
+.matchStatus {
+  font-size: 0.68rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.liveDot {
+  width: 5px;
+  height: 5px;
+  background: var(--red);
+  border-radius: 50%;
+  animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
+}
+
+.matchups { display: flex; flex-direction: column; gap: 4px; }
+
+.vs {
+  font-size: 0.6rem;
+  font-weight: 700;
+  color: var(--text-3);
+  text-align: center;
+  letter-spacing: 0.1em;
+}
+
+.matchup {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 4px 6px;
+  border-radius: 4px;
+  transition: background 0.1s;
+}
+
+.winner {
+  background: var(--accent-dim);
+}
+
+.winner .participantName { color: var(--accent); font-weight: 600; }
+
+.participantName {
+  font-size: 0.8rem;
+  color: var(--text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 120px;
+}
+
+.score {
+  font-family: var(--font-display);
+  font-size: 1rem;
+  color: var(--text);
+  min-width: 20px;
+  text-align: right;
+}
+
+/* Participants */
+.participantList { display: flex; flex-direction: column; gap: 6px; }
+
+.participantRow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 10px 14px;
+}
+
+.seed {
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: var(--text-3);
+  min-width: 24px;
+  font-family: var(--font-display);
+}
+
+.participantInfo { flex: 1; }
+.participantName2 { font-size: 0.85rem; font-weight: 500; color: var(--text); }
+.participantEmail { font-size: 0.72rem; color: var(--text-3); }
+
+.availBadge {
+  font-size: 0.7rem;
+  color: var(--text-3);
+  background: var(--bg-3);
+  padding: 2px 8px;
+  border-radius: 20px;
+}
+
+.empty {
+  font-size: 0.85rem;
+  color: var(--text-3);
+  background: var(--surface);
+  border: 1px dashed var(--border-2);
+  border-radius: var(--radius);
+  padding: 20px;
+  text-align: center;
+}
+
+/* Locations */
+.locationGrid { display: flex; flex-direction: column; gap: 8px; }
+
+.locationCard {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 10px 14px;
+  color: var(--text-2);
+}
+
+.unavailable { opacity: 0.5; }
+
+.locName { font-size: 0.85rem; font-weight: 500; color: var(--text); }
+.locBuilding { font-size: 0.72rem; color: var(--text-3); }
+.locStatus { margin-left: auto; font-size: 0.72rem; font-weight: 600; }

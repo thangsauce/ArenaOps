@@ -1,0 +1,84 @@
+.page { padding: 32px 40px; max-width: 1000px; animation: fadeIn 0.3s ease; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+
+.header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 24px; padding-bottom: 20px; border-bottom: 1px solid var(--border); }
+.title { font-family: var(--font-display); font-size: 2rem; letter-spacing: 0.02em; }
+.sub { font-size: 0.82rem; color: var(--text-3); margin-top: 4px; }
+.inviteBtn { display: flex; align-items: center; gap: 6px; background: var(--accent); color: #0a0a0f; font-weight: 700; font-size: 0.82rem; padding: 9px 16px; border-radius: var(--radius); transition: opacity 0.15s; }
+.inviteBtn:hover { opacity: 0.9; }
+
+.summaryRow { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 20px; }
+.summaryCard { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 14px 16px; text-align: left; cursor: pointer; transition: all 0.15s; }
+.summaryCard:hover { border-color: var(--border-2); }
+.summaryActive { border-color: var(--accent) !important; background: var(--accent-dim) !important; }
+.summaryCount { display: block; font-family: var(--font-display); font-size: 1.8rem; line-height: 1; margin-bottom: 2px; }
+.summaryCount[data-status="all"] { color: var(--text); }
+.summaryCount[data-status="confirmed"] { color: var(--accent); }
+.summaryCount[data-status="pending"] { color: var(--blue); }
+.summaryCount[data-status="declined"] { color: var(--red); }
+.summaryLabel { font-size: 0.72rem; color: var(--text-3); font-weight: 500; text-transform: uppercase; letter-spacing: 0.06em; }
+
+.searchBar { position: relative; margin-bottom: 16px; }
+.searchIcon { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: var(--text-3); }
+.searchInput { width: 100%; background: var(--surface); border: 1px solid var(--border-2); border-radius: var(--radius); padding: 10px 14px 10px 38px; color: var(--text); font-size: 0.88rem; outline: none; transition: border-color 0.15s; }
+.searchInput:focus { border-color: var(--accent); }
+.searchInput::placeholder { color: var(--text-3); }
+
+.table { border: 1px solid var(--border); border-radius: var(--radius-lg); overflow: hidden; }
+.tableHead { display: grid; grid-template-columns: 2fr 1.5fr 1fr 1fr 40px; padding: 10px 16px; background: var(--bg-2); font-size: 0.68rem; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-3); border-bottom: 1px solid var(--border); }
+.tableGroup { border-bottom: 1px solid var(--border); }
+.tableGroup:last-child { border-bottom: none; }
+
+.tableRow { display: grid; grid-template-columns: 2fr 1.5fr 1fr 1fr 40px; padding: 12px 16px; align-items: center; cursor: pointer; transition: background 0.12s; }
+.tableRow:hover { background: var(--surface); }
+
+.playerCell { display: flex; align-items: center; gap: 10px; }
+.avatar { width: 32px; height: 32px; background: var(--bg-3); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 0.7rem; font-weight: 700; color: var(--text-2); flex-shrink: 0; }
+.playerName { font-size: 0.875rem; font-weight: 500; color: var(--text); }
+.playerEmail { font-size: 0.72rem; color: var(--text-3); margin-top: 2px; display: block; }
+
+.tournamentName { font-size: 0.8rem; color: var(--text-2); }
+
+.statusCell { display: flex; align-items: center; gap: 6px; font-size: 0.78rem; }
+.statusCell span[data-status="confirmed"] { color: var(--accent); }
+.statusCell span[data-status="pending"] { color: var(--blue); }
+.statusCell span[data-status="declined"] { color: var(--red); }
+.iconConfirmed { color: var(--accent); }
+.iconPending { color: var(--blue); }
+.iconDeclined { color: var(--red); }
+
+.availCell {}
+.availBadge { font-size: 0.72rem; background: var(--bg-3); color: var(--text-2); padding: 3px 8px; border-radius: 20px; }
+.noAvail { font-size: 0.72rem; color: var(--text-3); }
+
+.rowActions { display: flex; justify-content: center; }
+.chevron { color: var(--text-3); transition: transform 0.2s; }
+.chevronOpen { transform: rotate(180deg); }
+
+.expandedRow { padding: 14px 16px 16px; background: var(--bg-2); border-top: 1px solid var(--border); display: flex; align-items: center; gap: 28px; }
+.expandedSection {}
+.expandedLabel { font-size: 0.68rem; color: var(--text-3); font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 4px; }
+.expandedValue { font-size: 0.85rem; color: var(--text); }
+.statusSelect { background: var(--surface); border: 1px solid var(--border-2); border-radius: var(--radius-sm); padding: 5px 10px; color: var(--text); font-size: 0.82rem; outline: none; cursor: pointer; }
+
+.expandedActions { display: flex; gap: 8px; margin-left: auto; }
+.actionBtn { display: flex; align-items: center; gap: 5px; font-size: 0.78rem; color: var(--text-2); background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 6px 12px; transition: all 0.15s; cursor: pointer; }
+.actionBtn:hover { background: var(--surface-2); border-color: var(--border-2); }
+
+.empty { padding: 40px; text-align: center; color: var(--text-3); font-size: 0.88rem; }
+
+/* Modal */
+.modalOverlay { position: fixed; inset: 0; background: rgba(0,0,0,0.6); display: flex; align-items: center; justify-content: center; z-index: 100; backdrop-filter: blur(4px); animation: fadeIn 0.15s ease; }
+.modal { background: var(--bg-2); border: 1px solid var(--border-2); border-radius: var(--radius-lg); padding: 28px; width: 100%; max-width: 440px; display: flex; flex-direction: column; gap: 16px; animation: slideUp 0.2s ease; }
+@keyframes slideUp { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+.modalTitle { font-family: var(--font-display); font-size: 1.5rem; letter-spacing: 0.02em; }
+.modalSub { font-size: 0.82rem; color: var(--text-3); margin-top: -10px; }
+.modalField { display: flex; flex-direction: column; gap: 6px; }
+.modalField label { font-size: 0.78rem; font-weight: 500; color: var(--text-2); }
+.modalInput { background: var(--surface); border: 1px solid var(--border-2); border-radius: var(--radius); padding: 9px 13px; color: var(--text); font-size: 0.88rem; outline: none; transition: border-color 0.15s; }
+.modalInput:focus { border-color: var(--accent); }
+.modalActions { display: flex; gap: 10px; margin-top: 4px; }
+.cancelBtn { flex: 1; background: var(--surface); border: 1px solid var(--border-2); color: var(--text-2); font-size: 0.85rem; font-weight: 500; padding: 10px; border-radius: var(--radius); cursor: pointer; transition: all 0.15s; }
+.cancelBtn:hover { background: var(--surface-2); }
+.sendBtn { flex: 2; display: flex; align-items: center; justify-content: center; gap: 6px; background: var(--accent); color: #0a0a0f; font-weight: 700; font-size: 0.88rem; padding: 10px; border-radius: var(--radius); cursor: pointer; transition: opacity 0.15s; }
+.sendBtn:hover { opacity: 0.9; }

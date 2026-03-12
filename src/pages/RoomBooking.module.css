@@ -1,0 +1,76 @@
+.page { padding: 32px 40px; max-width: 1100px; animation: fadeIn 0.3s ease; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+
+.header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 20px; padding-bottom: 20px; border-bottom: 1px solid var(--border); }
+.title { font-family: var(--font-display); font-size: 2rem; letter-spacing: 0.02em; }
+.sub { font-size: 0.82rem; color: var(--text-3); margin-top: 4px; }
+.tournamentPill { display: flex; align-items: center; gap: 7px; background: var(--surface); border: 1px solid var(--border); padding: 7px 14px; border-radius: 20px; font-size: 0.8rem; color: var(--text-2); }
+.pillDot { width: 7px; height: 7px; background: var(--accent); border-radius: 50%; animation: pulse 1.5s infinite; }
+@keyframes pulse { 0%,100% { opacity:1; } 50% { opacity:0.4; } }
+
+.successBanner { display: flex; align-items: center; gap: 8px; background: rgba(232,255,71,0.1); border: 1px solid rgba(232,255,71,0.3); color: var(--accent); font-size: 0.85rem; font-weight: 500; padding: 12px 16px; border-radius: var(--radius); margin-bottom: 20px; animation: fadeIn 0.2s ease; }
+
+.layout { display: grid; grid-template-columns: 340px 1fr; gap: 20px; align-items: start; }
+.panel {}
+.panelTitle { font-size: 0.72rem; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-3); margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+.selectHint { color: var(--accent); font-weight: 500; font-size: 0.7rem; margin-left: 4px; }
+
+.matchList { display: flex; flex-direction: column; gap: 8px; }
+.matchCard { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 12px 14px; cursor: pointer; transition: all 0.15s; }
+.matchCard:hover:not(.matchDone) { border-color: var(--border-2); background: var(--surface-2); }
+.matchSelected { border-color: var(--accent) !important; background: var(--accent-dim) !important; }
+.matchDone { opacity: 0.45; cursor: default; }
+.matchTop { display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px; }
+.matchLabel { font-size: 0.68rem; font-weight: 600; color: var(--text-3); letter-spacing: 0.06em; text-transform: uppercase; }
+.matchStatus { font-size: 0.68rem; font-weight: 600; padding: 2px 7px; border-radius: 20px; text-transform: capitalize; }
+.matchStatus[data-status="completed"] { background: var(--bg-3); color: var(--text-3); }
+.matchStatus[data-status="live"] { background: rgba(255,71,87,0.15); color: var(--red); }
+.matchStatus[data-status="scheduled"] { background: var(--blue-dim); color: var(--blue); }
+.matchStatus[data-status="delayed"] { background: rgba(255,170,0,0.12); color: #ffaa00; }
+.matchPlayers { font-size: 0.875rem; font-weight: 500; color: var(--text); margin-bottom: 6px; }
+.matchPlayers span { color: var(--text-3); font-size: 0.75rem; margin: 0 4px; }
+.matchMeta { display: flex; gap: 12px; }
+.metaItem { display: flex; align-items: center; gap: 4px; font-size: 0.72rem; color: var(--text-3); }
+
+.roomGrid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px; }
+.roomCard { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 14px 16px; cursor: pointer; transition: all 0.15s; display: flex; flex-direction: column; gap: 8px; }
+.roomCard:hover:not(.roomUnavailable):not(.roomConflict) { border-color: var(--border-2); transform: translateY(-1px); }
+.roomUnavailable { opacity: 0.5; cursor: not-allowed; }
+.roomConflict { border-color: rgba(255,170,0,0.35) !important; background: rgba(255,170,0,0.04) !important; cursor: not-allowed; }
+.roomSelected { border-color: var(--accent) !important; background: var(--accent-dim) !important; }
+.roomHeader { display: flex; justify-content: space-between; align-items: flex-start; }
+.roomName { font-size: 0.9rem; font-weight: 600; color: var(--text); }
+.roomBuilding { font-size: 0.72rem; color: var(--text-3); margin-top: 2px; }
+.roomMeta { display: flex; justify-content: space-between; align-items: center; }
+.roomCap { display: flex; align-items: center; gap: 4px; font-size: 0.75rem; color: var(--text-2); }
+.roomUsage { font-size: 0.72rem; color: var(--text-3); }
+.conflictWarning { display: flex; align-items: center; gap: 5px; font-size: 0.7rem; color: #ffaa00; background: rgba(255,170,0,0.1); padding: 5px 8px; border-radius: 4px; }
+.roomStatusLabel { font-size: 0.7rem; font-weight: 600; color: var(--text-3); margin-top: 2px; }
+.roomStatusLabel[data-available="true"] { color: var(--accent); }
+
+.bookingSummary { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px; }
+.summaryTitle { font-size: 0.72rem; font-weight: 600; color: var(--text-3); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 12px; }
+.summaryRow { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 7px 0; border-bottom: 1px solid var(--border); }
+.summaryRow:last-child { border-bottom: none; }
+.summaryRoom { display: flex; align-items: center; gap: 5px; font-size: 0.8rem; color: var(--text-2); }
+.summaryMatches { display: flex; gap: 4px; flex-wrap: wrap; }
+.summaryChip { font-size: 0.68rem; font-weight: 600; padding: 2px 7px; border-radius: 4px; }
+.summaryChip[data-status="completed"] { background: var(--bg-3); color: var(--text-3); }
+.summaryChip[data-status="live"] { background: rgba(255,71,87,0.15); color: var(--red); }
+.summaryChip[data-status="scheduled"] { background: var(--blue-dim); color: var(--blue); }
+.summaryChip[data-status="delayed"] { background: rgba(255,170,0,0.12); color: #ffaa00; }
+
+.overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.6); display: flex; align-items: center; justify-content: center; z-index: 100; backdrop-filter: blur(4px); }
+.modal { background: var(--bg-2); border: 1px solid var(--border-2); border-radius: var(--radius-lg); padding: 28px; width: 100%; max-width: 420px; animation: slideUp 0.2s ease; }
+@keyframes slideUp { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+.modalTitle { font-family: var(--font-display); font-size: 1.5rem; margin-bottom: 18px; }
+.confirmDetails { display: flex; flex-direction: column; gap: 10px; background: var(--surface); border-radius: var(--radius); padding: 14px; margin-bottom: 14px; }
+.confirmRow { display: flex; justify-content: space-between; font-size: 0.85rem; }
+.confirmRow span { color: var(--text-3); }
+.confirmRow strong { color: var(--text); }
+.confirmNote { font-size: 0.78rem; color: var(--text-3); background: var(--bg-3); padding: 10px 12px; border-radius: var(--radius-sm); margin-bottom: 16px; }
+.modalActions { display: flex; gap: 10px; }
+.cancelBtn { flex: 1; background: var(--surface); border: 1px solid var(--border-2); color: var(--text-2); font-size: 0.85rem; padding: 10px; border-radius: var(--radius); cursor: pointer; }
+.cancelBtn:hover { background: var(--surface-2); }
+.bookBtn { flex: 2; background: var(--accent); color: #0a0a0f; font-weight: 700; font-size: 0.88rem; padding: 10px; border-radius: var(--radius); cursor: pointer; transition: opacity 0.15s; }
+.bookBtn:hover { opacity: 0.9; }

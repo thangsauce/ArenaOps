@@ -1,0 +1,27 @@
+.page { padding: 32px 40px; max-width: 800px; animation: fadeIn 0.3s ease; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+
+.header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; padding-bottom: 20px; border-bottom: 1px solid var(--border); }
+.title { font-family: var(--font-display); font-size: 2rem; letter-spacing: 0.02em; }
+.createBtn { display: flex; align-items: center; gap: 6px; background: var(--accent); color: #0a0a0f; font-weight: 700; font-size: 0.82rem; padding: 8px 16px; border-radius: var(--radius); }
+.createBtn:hover { opacity: 0.9; }
+
+.list { display: flex; flex-direction: column; gap: 6px; }
+
+.row { display: flex; align-items: center; gap: 14px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 14px 16px; cursor: pointer; transition: all 0.15s; }
+.row:hover { background: var(--surface-2); border-color: var(--border-2); }
+
+.rowIcon { width: 34px; height: 34px; background: var(--bg-3); border-radius: 8px; display: flex; align-items: center; justify-content: center; color: var(--text-2); flex-shrink: 0; }
+.rowInfo { flex: 1; }
+.rowName { font-size: 0.9rem; font-weight: 600; color: var(--text); }
+.rowMeta { font-size: 0.75rem; color: var(--text-3); margin-top: 2px; text-transform: capitalize; }
+.rowStats { display: flex; align-items: center; gap: 12px; }
+.stat { display: flex; align-items: center; gap: 5px; font-size: 0.78rem; color: var(--text-2); }
+.arrow { color: var(--text-3); transition: transform 0.15s; }
+.row:hover .arrow { transform: translateX(3px); }
+
+.statusChip { font-size: 0.68rem; font-weight: 600; padding: 3px 8px; border-radius: 20px; text-transform: capitalize; }
+.statusChip[data-status="active"] { background: var(--accent-dim); color: var(--accent); }
+.statusChip[data-status="registration"] { background: var(--blue-dim); color: var(--blue); }
+.statusChip[data-status="completed"] { background: var(--bg-3); color: var(--text-3); }
+.statusChip[data-status="draft"] { background: var(--bg-3); color: var(--text-3); }
