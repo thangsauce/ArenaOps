@@ -3,7 +3,7 @@ export type Timezone =
   | 'America/New_York' | 'America/Chicago' | 'America/Denver'
   | 'America/Los_Angeles' | 'America/Phoenix' | 'Pacific/Honolulu'
   | 'America/Anchorage' | 'Europe/London' | 'Europe/Paris'
-  | 'Asia/Tokyo' | 'Asia/Shanghai' | 'Australia/Sydney';
+  | 'Asia/Tokyo' | 'Asia/Shanghai' | 'Australia/Sydney' | 'UTC';
 
 export const TIMEZONES: { value: Timezone; label: string; abbr: string }[] = [
   { value: 'America/New_York',    label: 'Eastern Time',   abbr: 'ET'   },
@@ -17,6 +17,7 @@ export const TIMEZONES: { value: Timezone; label: string; abbr: string }[] = [
   { value: 'Europe/Paris',        label: 'Central Europe', abbr: 'CET'  },
   { value: 'Asia/Tokyo',          label: 'Japan',          abbr: 'JST'  },
   { value: 'Asia/Shanghai',       label: 'China',          abbr: 'CST'  },
+  { value: 'UTC',                  label: 'UTC',            abbr: 'UTC'  },
   { value: 'Australia/Sydney',    label: 'Sydney',         abbr: 'AEST' },
 ];
 
@@ -30,7 +31,7 @@ export type ParticipantSort = 'seed' | 'name' | 'status';
 
 export type TimePrefs = {
   // Define your time preferences structure here, e.g.:
-  timezone: string;
+  timezone: Timezone;
   format: '12h' | '24h';
 };
 
