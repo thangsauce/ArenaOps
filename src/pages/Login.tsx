@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { Zap, Mail, Lock, Eye, EyeOff, ArrowRight } from 'lucide-react';
+import { Zap, Mail, Lock, Eye, EyeOff, ArrowRight, ArrowLeft } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 export default function Login() {
@@ -27,6 +27,12 @@ export default function Login() {
 
   return (
     <div className="min-h-screen flex flex-col md:flex-row bg-arena-bg font-sans text-gray-100 overflow-hidden">
+      <button
+        onClick={() => navigate('/')}
+        className="fixed top-4 left-4 z-50 flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium text-arena-text-muted hover:text-arena-text bg-arena-surface border border-arena-border hover:border-arena-border transition-all"
+      >
+        <ArrowLeft size={15} /> Home
+      </button>
       {/* Left Panel */}
       <div className="hidden md:flex md:w-5/12 lg:w-1/2 relative p-12 flex-col justify-center overflow-hidden border-r border-arena-border bg-[#0d0d14]">
         {/* Decorative Grid */}

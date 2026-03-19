@@ -67,7 +67,7 @@
 
 /* Modals */
 .overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.6); display: flex; align-items: center; justify-content: center; z-index: 100; backdrop-filter: blur(4px); }
-.modal { background: var(--bg-2); border: 1px solid var(--border-2); border-radius: var(--radius-lg); padding: 28px; width: 100%; width: 100%; display: flex; flex-direction: column; gap: 16px; animation: slideUp 0.2s ease; }
+.modal { background: var(--bg-2); border: 1px solid var(--border-2); border-radius: var(--radius-lg); padding: 24px; width: 100%; max-width: 420px; display: flex; flex-direction: column; gap: 12px; animation: slideUp 0.2s ease; }
 @keyframes slideUp { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
 .modalTitle { font-family: var(--font-display); font-size: 1.5rem; }
 .modalSub { font-size: 0.82rem; color: var(--text-3); margin-top: -10px; }
