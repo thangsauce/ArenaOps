@@ -1,14 +1,5 @@
-# ArenaOPS
-
-A full-featured tournament management platform built for university esports clubs. Manage tournaments, live matches, schedules, participants, room bookings, and notifications — all from one sleek interface.
-
-**Live demo:** [https://thangsauce.github.io/ArenaOps/](https://thangsauce.github.io/ArenaOps/)
-
----
-
-## Features
-
 ### Tournament Management
+
 - Create and manage **single-elimination, double-elimination, round-robin, and swiss** brackets
 - Per-tournament detail view with bracket visualization and match list
 - Set default formats, max participants, and organizer name in Settings
@@ -83,8 +74,8 @@ A full-featured tournament management platform built for university esports club
 ### Installation
 
 ```bash
-git clone https://github.com/thangsauce/ArenaOps.git
 cd ArenaOps
+cd frontend
 npm install
 ```
 
@@ -94,7 +85,7 @@ npm install
 npm run dev
 ```
 
-Open [http://localhost:5173/ArenaOps/](http://localhost:5173/ArenaOps/) in your browser.
+Open [http://localhost:5173](http://localhost:5173) in your browser.
 
 ### Build
 
@@ -112,32 +103,22 @@ npm run lint
 
 ## Project Structure
 
-```
-src/
-├── components/
-│   └── layout/             # AppLayout, Sidebar (with global search)
-├── data/
-│   └── mockData.ts         # Mock tournament, match, and participant data
-├── pages/                  # Route-level page components
-│   ├── Dashboard.tsx
-│   ├── Tournaments.tsx
-│   ├── TournamentDetail.tsx
-│   ├── Participants.tsx
-│   ├── Schedule.tsx
-│   ├── LiveControl.tsx
-│   ├── RoomBooking.tsx
-│   ├── Notifications.tsx
-│   ├── Settings.tsx
-│   ├── Landing.tsx
-│   ├── Login.tsx / Register.tsx
-│   └── AvailabilityConfirm.tsx
-├── store/                  # React Context, state, hooks, settings types
-├── types/                  # Shared TypeScript interfaces
-└── utils/                  # Time formatting helpers
+```text
+frontend/
+├── src/
+│   ├── components/
+│   │   └── layout/         # App layout and sidebar
+│   ├── data/               # Mock tournament and participant data
+│   ├── pages/              # Route-level pages
+│   ├── store/              # React Context and state helpers
+│   ├── types/              # Shared TypeScript types
+│   └── utils/              # Utility helpers
+├── public/
+└── package.json
 ```
 
 ---
 
 ## Author
 
-Thang Le — [github.com/thangsauce](https://github.com/thangsauce)
+Thang Le - [github.com/thangsauce](https://github.com/thangsauce)
