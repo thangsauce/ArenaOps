@@ -16,7 +16,9 @@
   --animate-fade-in: fadeIn 0.5s ease-out forwards;
   --animate-slide-up: slideUp 0.6s ease-out forwards;
   --animate-glow-pulse: glowPulse 3s infinite;
-  
+  --animate-marquee-left: marqueeLeft 35s linear infinite;
+  --animate-marquee-right: marqueeRight 45s linear infinite;
+
   @keyframes fadeIn {
     0% { opacity: 0; }
     100% { opacity: 1; }
@@ -28,6 +30,14 @@
   @keyframes glowPulse {
     0%, 100% { box-shadow: 0 0 20px rgba(var(--accent-rgb), 0.15); }
     50% { box-shadow: 0 0 40px rgba(var(--accent-rgb), 0.3); }
+  }
+  @keyframes marqueeLeft {
+    from { transform: translateX(0); }
+    to { transform: translateX(-50%); }
+  }
+  @keyframes marqueeRight {
+    from { transform: translateX(-50%); }
+    to { transform: translateX(0); }
   }
 }
 
@@ -110,6 +120,10 @@
   .text-accent-gradient {
     @apply bg-clip-text text-transparent bg-gradient-to-r from-arena-accent to-[#b5d61f] dark:to-[#b5d61f];
   }
+}
+
+.marquee-track:hover {
+  animation-play-state: paused;
 }
 
 /* Custom Scrollbar */
