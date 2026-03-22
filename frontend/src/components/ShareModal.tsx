@@ -17,7 +17,7 @@ export default function ShareModal({ tournament, onClose }: Props) {
   const [qrDataUrl, setQrDataUrl] = useState('');
   const [copied, setCopied]     = useState<string | null>(null);
 
-  const shareUrl = window.location.href;
+  const shareUrl = `${window.location.origin}/tournaments/${tournament.id}`;
   const confirmed = tournament.participants.filter(p => p.status === 'confirmed').length;
   const formattedStartDate = formatDate(tournament.startDate);
 
@@ -52,9 +52,25 @@ export default function ShareModal({ tournament, onClose }: Props) {
   }, [shareUrl]);
 
   const copy = async (text: string, key: string) => {
-    await navigator.clipboard.writeText(text);
-    setCopied(key);
-    setTimeout(() => setCopied(null), 2200);
+    try {
+      if (navigator.clipboard?.writeText) {
+        await navigator.clipboard.writeText(text);
+      } else {
+        const area = document.createElement('textarea');
+        area.value = text;
+        area.setAttribute('readonly', '');
+        area.style.position = 'absolute';
+        area.style.left = '-9999px';
+        document.body.appendChild(area);
+        area.select();
+        document.execCommand('copy');
+        document.body.removeChild(area);
+      }
+      setCopied(key);
+      setTimeout(() => setCopied(null), 2200);
+    } catch {
+      setCopied(null);
+    }
   };
 
   const downloadQR = () => {

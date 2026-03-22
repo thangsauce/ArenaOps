@@ -653,3 +653,95 @@
 .locName { font-size: 0.85rem; font-weight: 500; color: var(--text); }
 .locBuilding { font-size: 0.72rem; color: var(--text-3); }
 .locStatus { margin-left: auto; font-size: 0.72rem; font-weight: 600; }
+
+@media (max-width: 768px) {
+  .page {
+    padding: 20px 16px;
+  }
+
+  .header {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 14px;
+    padding-bottom: 18px;
+    margin-bottom: 22px;
+  }
+
+  .headerRight,
+  .headerMeta {
+    align-items: flex-start;
+  }
+
+  .bracketHeader {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .viewSwitcher {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .viewBtn {
+    flex: 1;
+    justify-content: center;
+    padding: 8px 10px;
+  }
+
+  .listView {
+    gap: 16px;
+  }
+
+  .listRoundLabel {
+    margin-bottom: 10px;
+  }
+
+  .listMatches {
+    gap: 10px;
+  }
+
+  .listMatchRow {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    grid-template-areas:
+      "match status"
+      "p1 p1"
+      "vs vs"
+      "p2 p2";
+    align-items: stretch;
+    gap: 10px;
+    padding: 12px;
+  }
+
+  .listMatchNum {
+    grid-area: match;
+    min-width: 0;
+  }
+
+  .listStatus {
+    grid-area: status;
+    justify-self: end;
+    min-width: 0;
+  }
+
+  .listParticipant {
+    padding: 8px 10px;
+  }
+
+  .listParticipant:first-of-type {
+    grid-area: p1;
+  }
+
+  .listParticipant:last-of-type {
+    grid-area: p2;
+  }
+
+  .listVs {
+    grid-area: vs;
+    justify-self: center;
+  }
+
+  .listName {
+    font-size: 0.78rem;
+  }
+}

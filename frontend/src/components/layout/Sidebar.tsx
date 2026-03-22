@@ -12,11 +12,10 @@ import {
   X,
   LogOut,
   Search,
-  Clock,
 } from "lucide-react";
 import { useApp } from "../../store/useApp";
 import { useState, useRef, useEffect } from "react";
-import { formatTimeRange } from "../../utils/time";
+import { buildAppSearchResults } from "../../utils/appSearch";
 
 const navItems = [
   { to: "/dashboard", icon: LayoutGrid, label: "Dashboard" },
@@ -60,12 +59,18 @@ export default function Sidebar({ open, onClose }: SidebarProps) {
 
   const handleNav = () => onClose?.();
 
-  const [query, setQuery] = useState("");
   const [showResults, setShowResults] = useState(false);
   const searchRef = useRef<HTMLDivElement>(null);
-  const { tournaments, notifications } = useApp() || {
+  const {
+    tournaments,
+    notifications,
+    appSearchQuery,
+    setAppSearchQuery,
+  } = useApp() || {
     tournaments: [],
     notifications: [],
+    appSearchQuery: "",
+    setAppSearchQuery: () => {},
   };
 
   useEffect(() => {
@@ -77,187 +82,12 @@ export default function Sidebar({ open, onClose }: SidebarProps) {
     return () => document.removeEventListener("mousedown", handler);
   }, []);
 
-  const q = query.toLowerCase().trim();
-
-  const settingsSections = [
-    "Profile",
-    "Appearance",
-    "Time & Timezone",
-    "Notifications",
-    "Schedule Preferences",
-    "Participant Preferences",
-    "Tournament Defaults",
-  ];
-
-  const results =
-    q.length < 1
-      ? []
-      : [
-          // Dashboard
-          ...(["dashboard", "overview", "stats", "home"].some((k) =>
-            k.includes(q),
-          )
-            ? [
-                {
-                  label: "Dashboard",
-                  sub: "Overview & stats",
-                  icon: LayoutGrid,
-                  path: "/dashboard",
-                },
-              ]
-            : []),
-          // Tournaments
-          ...(tournaments ?? [])
-            .filter(
-              (t) =>
-                t.name.toLowerCase().includes(q) ||
-                t.game.toLowerCase().includes(q) ||
-                t.format.toLowerCase().includes(q) ||
-                t.status.toLowerCase().includes(q),
-            )
-            .map((t) => ({
-              label: t.name,
-              sub: `${t.game} · ${t.status}`,
-              icon: Trophy,
-              path: `/tournaments/${t.id}`,
-            })),
-          // Participants
-          ...(tournaments ?? []).flatMap((t) =>
-            t.participants
-              .filter(
-                (p) =>
-                  p.name.toLowerCase().includes(q) ||
-                  p.email.toLowerCase().includes(q) ||
-                  p.status.toLowerCase().includes(q),
-              )
-              .map((p) => ({
-                label: p.name,
-                sub: p.email,
-                icon: Users,
-                path: "/participants",
-              })),
-          ),
-          // Schedule / matches
-          ...(tournaments ?? []).flatMap((t) =>
-            t.matches
-              .filter((m) => {
-                const p1 =
-                  t.participants.find((p) => p.id === m.participant1Id)?.name ??
-                  "";
-                const p2 =
-                  t.participants.find((p) => p.id === m.participant2Id)?.name ??
-                  "";
-                return (
-                  p1.toLowerCase().includes(q) ||
-                  p2.toLowerCase().includes(q) ||
-                  m.status.toLowerCase().includes(q)
-                );
-              })
-              .map((m) => {
-                const p1 =
-                  t.participants.find((p) => p.id === m.participant1Id)?.name ??
-                  "TBD";
-                const p2 =
-                  t.participants.find((p) => p.id === m.participant2Id)?.name ??
-                  "TBD";
-                return {
-                  label: `${p1} vs ${p2}`,
-                  sub: `Schedule · ${m.status}`,
-                  icon: Calendar,
-                  path: "/schedule",
-                };
-              }),
-          ),
-          // Live Control — live/delayed matches
-          ...(tournaments ?? []).flatMap((t) =>
-            t.matches
-              .filter(
-                (m) =>
-                  (m.status === "live" || m.status === "delayed") &&
-                  (["live", "delay", "control"].some((k) => k.includes(q)) ||
-                    (
-                      t.participants.find((p) => p.id === m.participant1Id)
-                        ?.name ?? ""
-                    )
-                      .toLowerCase()
-                      .includes(q) ||
-                    (
-                      t.participants.find((p) => p.id === m.participant2Id)
-                        ?.name ?? ""
-                    )
-                      .toLowerCase()
-                      .includes(q)),
-              )
-              .map((m) => {
-                const p1 =
-                  t.participants.find((p) => p.id === m.participant1Id)?.name ??
-                  "TBD";
-                const p2 =
-                  t.participants.find((p) => p.id === m.participant2Id)?.name ??
-                  "TBD";
-                return {
-                  label: `${p1} vs ${p2}`,
-                  sub: `Live Control · ${m.status}`,
-                  icon: Zap,
-                  path: "/live",
-                };
-              }),
-          ),
-          // Room Booking — locations
-          ...(tournaments ?? []).flatMap((t) =>
-            t.locations
-              .filter(
-                (l) =>
-                  l.name.toLowerCase().includes(q) ||
-                  l.building.toLowerCase().includes(q),
-              )
-              .map((l) => ({
-                label: l.name,
-                sub: `Room Booking · ${l.building}`,
-                icon: MapPin,
-                path: "/rooms",
-              })),
-          ),
-          // Notifications
-          ...(notifications ?? [])
-            .filter(
-              (n) =>
-                n.title.toLowerCase().includes(q) ||
-                n.message.toLowerCase().includes(q),
-            )
-            .map((n) => ({
-              label: n.title,
-              sub: n.message.slice(0, 50),
-              icon: Bell,
-              path: "/notifications",
-            })),
-          // Settings sections
-          ...settingsSections
-            .filter((s) => s.toLowerCase().includes(q))
-            .map((s) => ({
-              label: s,
-              sub: "Settings",
-              icon: Settings,
-              path: "/settings",
-            })),
-          // Time blocks
-          ...(tournaments ?? []).flatMap((t) =>
-            t.timeBlocks
-              .filter((tb) => tb.label.toLowerCase().includes(q))
-              .map((tb) => ({
-                label: tb.label,
-                sub: `Schedule · ${formatTimeRange(tb.start, tb.end, tb.date, timePrefs.format, timePrefs.timezone)}`,
-                icon: Clock,
-                path: "/schedule",
-              })),
-          ),
-        ]
-          .filter(
-            (r, i, arr) =>
-              arr.findIndex((x) => x.label === r.label && x.path === r.path) ===
-              i,
-          )
-          .slice(0, 8);
+  const results = buildAppSearchResults({
+    query: appSearchQuery,
+    tournaments,
+    notifications,
+    timePrefs,
+  });
 
   return (
     <aside
@@ -309,9 +139,9 @@ export default function Sidebar({ open, onClose }: SidebarProps) {
           <input
             className="w-full bg-arena-surface-hover border border-arena-border rounded-lg pl-8 pr-3 py-2 text-xs text-arena-text placeholder-arena-text-muted outline-none focus:border-arena-accent/50 transition-colors"
             placeholder="Search tournaments, players..."
-            value={query}
+            value={appSearchQuery}
             onChange={(e) => {
-              setQuery(e.target.value);
+              setAppSearchQuery(e.target.value);
               setShowResults(true);
             }}
             onFocus={() => setShowResults(true)}
@@ -324,7 +154,7 @@ export default function Sidebar({ open, onClose }: SidebarProps) {
                   className="w-full flex items-center gap-2 px-3 py-2 hover:bg-arena-surface-hover transition-colors text-left border-b border-arena-border last:border-0"
                   onClick={() => {
                     navigate(r.path);
-                    setQuery("");
+                    setAppSearchQuery("");
                     setShowResults(false);
                     handleNav();
                   }}
@@ -345,9 +175,9 @@ export default function Sidebar({ open, onClose }: SidebarProps) {
               ))}
             </div>
           )}
-          {showResults && q.length > 0 && results.length === 0 && (
+          {showResults && appSearchQuery.trim().length > 0 && results.length === 0 && (
             <div className="absolute left-0 right-0 top-full mt-1 z-50 bg-arena-surface border border-arena-border rounded-lg shadow-2xl px-3 py-3 text-xs text-arena-text-muted">
-              No results for "{query}"
+              No results for "{appSearchQuery}"
             </div>
           )}
         </div>

@@ -14,21 +14,30 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const [tournaments, setTournaments] = useState(mockTournaments);
   const [notifications, setNotifications] = useState<Notification[]>(initialNotifications);
   const [settings, setSettings] = useState<AppSettings>(DEFAULT_SETTINGS);
+  const [appSearchQuery, setAppSearchQuery] = useState('');
 
   const unreadCount = useMemo(() => notifications.filter(n => !n.read).length, [notifications]);
 
   // Apply theme to <html> element whenever it changes
   useEffect(() => {
-    const theme = settings.appearance.theme;
-    if (theme !== 'system') {
-      document.documentElement.setAttribute('data-theme', theme);
+    const root = document.documentElement;
+    const mq = window.matchMedia('(prefers-color-scheme: dark)');
+
+    const applyTheme = (resolvedTheme: 'dark' | 'light') => {
+      root.setAttribute('data-theme', resolvedTheme);
+      root.classList.toggle('dark', resolvedTheme === 'dark');
+      root.style.colorScheme = resolvedTheme;
+    };
+
+    if (settings.appearance.theme !== 'system') {
+      applyTheme(settings.appearance.theme);
       return;
     }
-    const mq = window.matchMedia('(prefers-color-scheme: dark)');
-    const apply = () => document.documentElement.setAttribute('data-theme', mq.matches ? 'dark' : 'light');
-    apply();
-    mq.addEventListener('change', apply);
-    return () => mq.removeEventListener('change', apply);
+
+    const applySystemTheme = () => applyTheme(mq.matches ? 'dark' : 'light');
+    applySystemTheme();
+    mq.addEventListener('change', applySystemTheme);
+    return () => mq.removeEventListener('change', applySystemTheme);
   }, [settings.appearance.theme]);
 
   const updateSettings = useCallback((patch: Partial<AppSettings>) => {
@@ -72,6 +81,12 @@ export function AppProvider({ children }: { children: ReactNode }) {
 
   const addTournament = useCallback((tournament: Tournament) => {
     setTournaments(prev => [...prev, tournament]);
+  }, []);
+
+  const updateTournamentStatus = useCallback((tournamentId: string, status: Tournament['status']) => {
+    setTournaments(prev =>
+      prev.map(t => (t.id === tournamentId ? { ...t, status } : t))
+    );
   }, []);
 
   const startMatch = useCallback((tournamentId: string, matchId: string) => {
@@ -124,11 +139,12 @@ export function AppProvider({ children }: { children: ReactNode }) {
   return (
     <AppContext.Provider value={{
       tournaments, notifications, unreadCount,
+      appSearchQuery, setAppSearchQuery,
       settings, updateSettings,
       timePrefs: settings.timePrefs, setTimePrefs,
       addNotification, markAllRead, markRead,
       updateMatch, reportNoShow, reportDelay, startMatch, completeMatch, bookRoom,
-      addTournament,
+      addTournament, updateTournamentStatus,
     }}>
       {children}
     </AppContext.Provider>

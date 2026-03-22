@@ -1,21 +1,23 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Plus, Trophy, Users, User, ChevronRight, LayoutGrid, Gamepad2, Dumbbell, Brain } from 'lucide-react';
+import { Plus, Trophy, Users, User, ChevronRight, LayoutGrid, Gamepad2, Dumbbell, Brain, Diamond } from 'lucide-react';
 import { useApp } from '../store/store';
 import { formatDate } from '../utils/time';
 import styles from './Tournaments.module.css';
 
 const GAME_CATEGORIES: Record<string, string[]> = {
-  'E-Sports':     ['valorant', 'league of legends', 'cs2', 'rocket league', 'overwatch 2', 'apex legends', 'smash bros', 'street fighter 6', 'fortnite', 'tekken 8'],
-  'Sports':       ['soccer', 'american football', 'basketball', 'tennis', 'volleyball', 'badminton', 'table tennis', 'baseball'],
-  'Board & Card': ['chess', 'checkers', 'poker', 'magic: the gathering', 'hearthstone', 'go'],
+  'E-Sports': ['valorant', 'league of legends', 'cs2', 'rocket league', 'overwatch 2', 'apex legends', 'smash bros', 'street fighter 6', 'fortnite', 'tekken 8'],
+  'Sports': ['soccer', 'american football', 'basketball', 'tennis', 'volleyball', 'badminton', 'table tennis', 'baseball'],
+  'Board': ['chess', 'checkers', 'go', 'mahjong', 'scrabble', 'monopoly', 'backgammon'],
+  'Card': ['poker', 'uno', 'blackjack', 'magic: the gathering', 'yu-gi-oh', 'hearthstone'],
 };
 
 const CATEGORY_TABS = [
   { label: 'All',          Icon: LayoutGrid },
   { label: 'E-Sports',     Icon: Gamepad2 },
   { label: 'Sports',       Icon: Dumbbell },
-  { label: 'Board & Card', Icon: Brain },
+  { label: 'Board',        Icon: Brain },
+  { label: 'Card',         Icon: Diamond },
 ];
 
 const INDIVIDUAL_GAMES = new Set([

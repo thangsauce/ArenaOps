@@ -1,11 +1,12 @@
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Trophy, Users, User, Zap, Clock, ChevronRight, ArrowUpRight, Gamepad2, Dumbbell, Brain, LayoutGrid } from 'lucide-react';
+import { Trophy, Users, User, Zap, Clock, ChevronRight, ArrowUpRight, Gamepad2, Dumbbell, Brain, Diamond, LayoutGrid, Search, CheckCircle2 } from 'lucide-react';
 import { useApp } from '../store/store';
 import type { Tournament } from '../types';
 import { motion } from 'framer-motion';
 import type { Variants } from 'framer-motion';
 import { formatDate } from '../utils/time';
+import { buildAppSearchResults } from '../utils/appSearch';
 
 const statusColors: Record<string, string> = {
   active: 'text-arena-accent',
@@ -55,6 +56,7 @@ const INDIVIDUAL_GAMES = new Set([
 
 function TournamentCard({ t }: { t: Tournament }) {
   const navigate = useNavigate();
+  const { updateTournamentStatus } = useApp();
   const isIndividualGame = INDIVIDUAL_GAMES.has(t.game.toLowerCase());
   const confirmed = t.participants.filter(p => p.status === 'confirmed').length;
   const liveMatches = t.matches.filter(m => m.status === 'live').length;
@@ -106,6 +108,20 @@ function TournamentCard({ t }: { t: Tournament }) {
            </div>
         )}
 
+        {t.status === 'draft' && (
+          <button
+            type="button"
+            className="mb-4 w-full inline-flex items-center justify-center gap-2 rounded-xl border border-arena-accent/30 bg-arena-accent/10 px-4 py-2.5 text-sm font-bold text-arena-accent transition-all hover:bg-arena-accent hover:text-arena-bg active:scale-[0.98]"
+            onClick={(e) => {
+              e.stopPropagation();
+              updateTournamentStatus(t.id, 'registration');
+            }}
+          >
+            <CheckCircle2 size={16} />
+            <span>Register Now</span>
+          </button>
+        )}
+
         <div className="flex items-center justify-between mt-auto pt-4 border-t border-arena-border">
           <span className="flex items-center gap-1.5 text-xs font-semibold text-arena-text-muted uppercase tracking-widest">
             <Clock size={14} />
@@ -121,33 +137,65 @@ function TournamentCard({ t }: { t: Tournament }) {
 }
 
 const GAME_CATEGORIES: Record<string, string[]> = {
-  'E-Sports':     ['valorant', 'league of legends', 'cs2', 'rocket league', 'overwatch 2', 'apex legends', 'smash bros', 'street fighter 6', 'fortnite', 'tekken 8'],
-  'Sports':       ['soccer', 'american football', 'basketball', 'tennis', 'volleyball', 'badminton', 'table tennis', 'baseball'],
-  'Board & Card': ['chess', 'checkers', 'poker', 'magic: the gathering', 'hearthstone', 'go'],
+  'E-Sports': ['valorant', 'league of legends', 'cs2', 'rocket league', 'overwatch 2', 'apex legends', 'smash bros', 'street fighter 6', 'fortnite', 'tekken 8'],
+  'Sports': ['soccer', 'american football', 'basketball', 'tennis', 'volleyball', 'badminton', 'table tennis', 'baseball'],
+  'Board': ['chess', 'checkers', 'go', 'mahjong', 'scrabble', 'monopoly', 'backgammon'],
+  'Card': ['poker', 'uno', 'blackjack', 'magic: the gathering', 'yu-gi-oh', 'hearthstone'],
 };
 
 const CATEGORY_TABS = [
-  { label: 'All',          Icon: LayoutGrid },
-  { label: 'E-Sports',     Icon: Gamepad2   },
-  { label: 'Sports',       Icon: Dumbbell   },
-  { label: 'Board & Card', Icon: Brain      },
+  { label: 'All', Icon: LayoutGrid },
+  { label: 'E-Sports', Icon: Gamepad2 },
+  { label: 'Sports', Icon: Dumbbell },
+  { label: 'Board', Icon: Brain },
+  { label: 'Card', Icon: Diamond },
 ];
 
 export default function Dashboard() {
   const navigate = useNavigate();
   const state = useApp();
   const tournaments = state?.tournaments || [];
+  const notifications = state?.notifications || [];
+  const settings = state?.settings;
+  const appSearchQuery = state?.appSearchQuery ?? '';
+  const setAppSearchQuery = state?.setAppSearchQuery ?? (() => {});
+  const timePrefs = settings?.timePrefs ?? {
+    format: '12h',
+    timezone: 'America/New_York',
+  };
 
   const [categoryFilter, setCategoryFilter] = useState('All');
+  const [mobileSearchOpen, setMobileSearchOpen] = useState(false);
+  const [showSearchResults, setShowSearchResults] = useState(false);
+  const searchRef = useRef<HTMLDivElement>(null);
 
-  const filtered = categoryFilter === 'All'
+  const categoryFiltered = categoryFilter === 'All'
     ? tournaments
     : tournaments.filter((t: Tournament) =>
         (GAME_CATEGORIES[categoryFilter] ?? []).includes(t.game.toLowerCase())
       );
-  const active   = filtered.filter((t: Tournament) => t.status === 'active');
-  const upcoming = filtered.filter((t: Tournament) => t.status === 'registration');
-  const all      = filtered;
+  const all = categoryFiltered;
+  const active   = all.filter((t: Tournament) => t.status === 'active');
+  const upcoming = all.filter((t: Tournament) => t.status === 'registration');
+  const drafts   = all.filter((t: Tournament) => t.status === 'draft');
+  const other    = all.filter((t: Tournament) => t.status !== 'active' && t.status !== 'registration' && t.status !== 'draft');
+
+  useEffect(() => {
+    const handler = (e: MouseEvent) => {
+      if (searchRef.current && !searchRef.current.contains(e.target as Node)) {
+        setShowSearchResults(false);
+      }
+    };
+    document.addEventListener('mousedown', handler);
+    return () => document.removeEventListener('mousedown', handler);
+  }, []);
+
+  const searchResults = buildAppSearchResults({
+    query: appSearchQuery,
+    tournaments,
+    notifications,
+    timePrefs,
+  });
 
   const teamTournaments = all.filter((t: Tournament) => !INDIVIDUAL_GAMES.has(t.game.toLowerCase())).length;
   const individualTournaments = all.filter((t: Tournament) => INDIVIDUAL_GAMES.has(t.game.toLowerCase())).length;
@@ -161,10 +209,66 @@ export default function Dashboard() {
         className="flex flex-col md:flex-row md:items-end justify-between gap-6 data-[density=compact]:gap-3 mb-10 data-[density=compact]:mb-4 mt-4 xl:mt-8"
       >
         <div>
-          <h1 className="font-display text-4xl md:text-5xl font-bold uppercase tracking-tight text-arena-text flex items-center gap-3">
-            Arena<span className="text-accent-gradient drop-shadow-md">OPS</span>
-          </h1>
+          <div className="flex items-start justify-between gap-4 md:block">
+            <h1 className="font-display text-4xl md:text-5xl font-bold uppercase tracking-tight text-arena-text flex items-center gap-3">
+              Arena<span className="text-accent-gradient drop-shadow-md">OPS</span>
+            </h1>
+            <button
+              type="button"
+              aria-label={mobileSearchOpen ? 'Close search' : 'Open search'}
+              className="md:hidden inline-flex h-11 shrink-0 items-center justify-center gap-2 rounded-full border border-arena-border bg-arena-surface px-4 text-arena-text-muted shadow-sm transition-colors active:scale-95"
+              onClick={() => setMobileSearchOpen((open) => !open)}
+            >
+              <Search size={18} />
+              <span className="text-sm font-semibold">Search</span>
+            </button>
+          </div>
           <p className="text-arena-text-muted text-lg sm:text-xl font-medium mt-1">Tournament overview & operation center</p>
+          {mobileSearchOpen && (
+            <div className="md:hidden mt-4 relative" ref={searchRef}>
+              <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-arena-text-muted pointer-events-none" />
+              <input
+                autoFocus
+                type="text"
+                value={appSearchQuery}
+                onChange={(e) => {
+                  setAppSearchQuery(e.target.value);
+                  setShowSearchResults(true);
+                }}
+                onFocus={() => setShowSearchResults(true)}
+                placeholder="Search tournaments, players, rooms..."
+                className="w-full rounded-xl border border-arena-border bg-arena-surface pl-10 pr-4 py-3 text-sm text-arena-text placeholder:text-arena-text-muted outline-none focus:border-arena-accent/50 focus:ring-2 focus:ring-arena-accent/15"
+              />
+              {showSearchResults && searchResults.length > 0 && (
+                <div className="absolute left-0 right-0 top-full mt-2 z-40 overflow-hidden rounded-xl border border-arena-border bg-arena-surface shadow-2xl">
+                  {searchResults.map((r, i) => (
+                    <button
+                      key={`${r.path}-${r.label}-${i}`}
+                      type="button"
+                      className="flex w-full items-center gap-3 border-b border-arena-border px-4 py-3 text-left transition-colors hover:bg-arena-surface-hover last:border-0"
+                      onClick={() => {
+                        navigate(r.path);
+                        setAppSearchQuery('');
+                        setShowSearchResults(false);
+                        setMobileSearchOpen(false);
+                      }}
+                    >
+                      <r.icon size={15} className="shrink-0 text-arena-accent" />
+                      <div className="min-w-0">
+                        <p className="truncate text-sm font-semibold text-arena-text">{r.label}</p>
+                        <p className="truncate text-xs text-arena-text-muted">{r.sub}</p>
+                      </div>
+                    </button>
+                  ))}
+                </div>
+              )}
+              {showSearchResults && appSearchQuery.trim().length > 0 && searchResults.length === 0 && (
+                <div className="absolute left-0 right-0 top-full mt-2 z-40 rounded-xl border border-arena-border bg-arena-surface px-4 py-3 text-sm text-arena-text-muted shadow-2xl">
+                  No results for "{appSearchQuery}"
+                </div>
+              )}
+            </div>
+          )}
         </div>
         <button 
           className="group flex items-center justify-center gap-2 px-6 py-3.5 bg-arena-accent hover:bg-arena-accent-hover text-arena-bg font-bold rounded-xl shadow-[0_0_15px_rgba(232,255,71,0.15)] hover:shadow-[0_0_25px_rgba(232,255,71,0.3)] transition-all active:scale-95"
@@ -239,14 +343,26 @@ export default function Dashboard() {
         </section>
       )}
 
-      {all.filter(t => t.status !== 'active' && t.status !== 'registration').length > 0 && (
+      {drafts.length > 0 && (
+        <section className="mb-12 data-[density=compact]:mb-6">
+          <h2 className="text-xl font-bold text-arena-text flex items-center gap-2 mb-6 data-[density=compact]:mb-3">
+            <div className="w-2 h-6 bg-gray-500 rounded-full" />
+            {drafts.length === 1 ? 'Draft Tournament' : 'Draft Tournaments'}
+          </h2>
+          <motion.div variants={staggerContainer} initial="hidden" animate="show" className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 data-[density=compact]:gap-3">
+            {drafts.map((t: Tournament) => <TournamentCard key={t.id} t={t} />)}
+          </motion.div>
+        </section>
+      )}
+
+      {other.length > 0 && (
         <section className="mb-12 data-[density=compact]:mb-6">
           <h2 className="text-xl font-bold text-arena-text flex items-center gap-2 mb-6 data-[density=compact]:mb-3">
             <div className="w-2 h-6 bg-gray-600 rounded-full" />
-            {all.filter(t => t.status !== 'active' && t.status !== 'registration').length === 1 ? 'Other Tournament' : 'Other Tournaments'}
+            {other.length === 1 ? 'Completed Tournament' : 'Completed Tournaments'}
           </h2>
           <motion.div variants={staggerContainer} initial="hidden" animate="show" className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 data-[density=compact]:gap-3">
-            {all.filter((t: Tournament) => t.status !== 'active' && t.status !== 'registration').map((t: Tournament) => <TournamentCard key={t.id} t={t} />)}
+            {other.map((t: Tournament) => <TournamentCard key={t.id} t={t} />)}
           </motion.div>
         </section>
       )}

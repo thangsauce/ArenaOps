@@ -119,6 +119,8 @@ export interface AppState {
   notifications: Notification[];
   unreadCount: number;
   settings: AppSettings;
+  appSearchQuery: string;
+  setAppSearchQuery: (query: string) => void;
   updateSettings: (patch: Partial<AppSettings>) => void;
   timePrefs: TimePrefs;
   setTimePrefs: (p: TimePrefs) => void;
@@ -132,4 +134,5 @@ export interface AppState {
   completeMatch: (tournamentId: string, matchId: string, winnerId: string | null, score1: number, score2: number) => void;
   bookRoom: (tournamentId: string, matchId: string, locationId: string) => void;
   addTournament: (tournament: Tournament) => void;
+  updateTournamentStatus: (tournamentId: string, status: Tournament['status']) => void;
 }

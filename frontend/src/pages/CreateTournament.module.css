@@ -157,6 +157,9 @@ select.input {
   cursor: pointer;
   transition: all 0.15s;
 }
+.gameCategoryIcon {
+  flex-shrink: 0;
+}
 .gameCategoryTab:hover { border-color: var(--accent); color: var(--text); }
 
 .gameCategoryTabActive {
@@ -172,7 +175,19 @@ select.input {
   padding: 4px 0;
 }
 
+.gamePickHint {
+  font-size: 0.76rem;
+  font-weight: 600;
+  color: var(--text-3);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-top: 2px;
+}
+
 .gameChip {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
   padding: 6px 14px;
   border-radius: var(--radius-sm);
   border: 1px solid var(--border);
@@ -184,6 +199,36 @@ select.input {
   transition: all 0.15s;
 }
 .gameChip:hover { border-color: var(--border-2); color: var(--text); background: var(--surface-2); }
+
+.gameChipLogo {
+  width: 20px;
+  height: 20px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  border: 1px solid transparent;
+  border-radius: 7px;
+  overflow: hidden;
+}
+
+.gameIcon {
+  width: 18px;
+  height: 18px;
+  color: var(--accent);
+}
+
+.gameLogoImage {
+  max-width: 20px;
+  max-height: 20px;
+  object-fit: contain;
+}
+
+.gameLogoImageWide {
+  max-width: 28px;
+  max-height: 20px;
+  object-fit: contain;
+}
 
 .gameChipSelected {
   background: var(--accent-dim);
@@ -254,6 +299,9 @@ select.input {
 }
 
 .cancelBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   background: transparent;
   border: 1px solid var(--border-2);
   color: var(--text-3);
@@ -266,6 +314,9 @@ select.input {
 .cancelBtn:hover { border-color: var(--red); color: var(--red); background: var(--red-dim); }
 
 .nextBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   background: var(--accent);
   color: var(--accent-fg);
   font-weight: 700;
@@ -317,6 +368,10 @@ select.input {
 }
 
 .draftBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
   background: var(--surface);
   border: 1px solid var(--border-2);
   color: var(--text-2);
@@ -329,6 +384,10 @@ select.input {
 .draftBtn:hover { background: var(--surface-2); color: var(--text); }
 
 .launchBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
   background: var(--accent);
   color: var(--accent-fg);
   font-weight: 700;
@@ -341,6 +400,11 @@ select.input {
 .launchBtn:hover { opacity: 0.9; transform: translateY(-1px); }
 
 /* ── Date Picker ── */
+.datePicker {
+  position: relative;
+  width: 100%;
+}
+
 .dateTrigger {
   display: flex;
   align-items: center;
@@ -447,4 +511,96 @@ select.input {
   opacity: 0.35;
   cursor: not-allowed;
   pointer-events: none;
+}
+
+@media (max-width: 768px) {
+  .page {
+    padding: 20px 16px;
+  }
+
+  .header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 14px;
+    margin-bottom: 24px;
+    padding-bottom: 16px;
+  }
+
+  .row,
+  .btnRow,
+  .actionRow {
+    flex-direction: column;
+  }
+
+  .gameCategoryTabs {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+
+  .gameCategoryTab {
+    justify-content: center;
+    gap: 8px;
+    min-height: 46px;
+    padding: 10px 16px;
+    font-size: 0.88rem;
+  }
+
+  .gameGrid {
+    gap: 10px;
+  }
+
+  .gameChip {
+    min-height: 44px;
+    padding: 10px 16px;
+    font-size: 0.86rem;
+    justify-content: flex-start;
+  }
+
+  .nextBtn,
+  .draftBtn,
+  .launchBtn,
+  .cancelBtn {
+    width: 100%;
+  }
+
+  .reviewRow {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+  }
+
+  .reviewValue {
+    font-size: 0.86rem;
+    word-break: break-word;
+  }
+
+  .calendarDropdown {
+    left: 0;
+    right: 0;
+    min-width: 0;
+    width: 100%;
+    max-width: 100%;
+    padding: 14px 12px;
+    border-radius: 14px;
+    box-sizing: border-box;
+  }
+
+  .calendarHeader {
+    margin-bottom: 10px;
+  }
+
+  .calendarMonth {
+    font-size: 0.84rem;
+  }
+
+  .calendarWeekday {
+    padding: 4px 0 6px;
+    font-size: 0.64rem;
+  }
+
+  .calendarDay {
+    height: 38px;
+    font-size: 0.84rem;
+  }
 }
