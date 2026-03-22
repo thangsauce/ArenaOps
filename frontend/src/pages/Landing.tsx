@@ -2448,33 +2448,39 @@ function FormatPreview({ format }: { format: string }) {
       );
     case "Swiss": {
       const rounds = [
-        { records: ["1-0","1-0","0-1","0-1"], label: "Rd 1" },
-        { records: ["2-0","1-1","1-1","0-2"], label: "Rd 2" },
+        { label: "Rd 1", pairs: [["1-0","0-1"],["1-0","0-1"]] },
+        { label: "Rd 2", pairs: [["2-0","1-1"],["1-1","0-2"]] },
       ];
+      const swissColor = (rec: string, ri: number) =>
+        rec === "2-0" || (ri === 0 && rec === "1-0")
+          ? "border-arena-accent/30 bg-arena-accent/15 text-arena-accent"
+          : rec === "0-2"
+          ? "border-red-400/20 bg-red-400/5 text-red-400/70"
+          : "border-arena-border/70 bg-arena-surface/80 text-arena-text-muted";
       return (
-        <div className="flex h-28 flex-col justify-center gap-2">
+        <div className="grid h-28 grid-cols-2 gap-2">
           {rounds.map((round, ri) => (
-            <div key={ri} className="flex items-center gap-2">
-              <motion.span className="w-7 text-[9px] font-bold uppercase tracking-wider text-arena-text-muted"
+            <motion.div key={ri} className="flex flex-col gap-1.5 rounded-2xl border border-arena-border/70 bg-arena-surface/80 p-2.5"
+              initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.55, delay: ri * 0.75, ease }}>
+              <motion.span className="text-[9px] font-bold uppercase tracking-wider text-arena-text-muted"
                 initial={{ opacity: 0 }} animate={{ opacity: 1 }}
-                transition={{ delay: ri * 0.85 + 0.15 }}>
+                transition={{ delay: ri * 0.75 + 0.2 }}>
                 {round.label}
               </motion.span>
-              <div className="flex gap-1.5">
-                {round.records.map((rec, i) => (
-                  <motion.div key={i}
-                    className={`flex h-7 w-9 items-center justify-center rounded-lg border text-[10px] font-bold ${
-                      rec === "2-0" || (ri === 0 && rec === "1-0") ? "border-arena-accent/30 bg-arena-accent/15 text-arena-accent"
-                      : rec === "0-2" ? "border-red-400/20 bg-red-400/5 text-red-400/70"
-                      : "border-arena-border/70 bg-arena-surface/80 text-arena-text-muted"
-                    }`}
-                    initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }}
-                    transition={{ duration: 0.45, delay: ri * 0.85 + 0.35 + i * 0.14, ease }}>
-                    {rec}
-                  </motion.div>
-                ))}
-              </div>
-            </div>
+              {round.pairs.map((pair, pi) => (
+                <div key={pi} className="flex items-center gap-1">
+                  {pair.map((rec, si) => (
+                    <motion.div key={si}
+                      className={`flex h-6 flex-1 items-center justify-center rounded-md border text-[10px] font-bold ${swissColor(rec, ri)}`}
+                      initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }}
+                      transition={{ duration: 0.45, delay: ri * 0.75 + 0.35 + pi * 0.18 + si * 0.09, ease }}>
+                      {rec}
+                    </motion.div>
+                  ))}
+                </div>
+              ))}
+            </motion.div>
           ))}
         </div>
       );
@@ -4534,18 +4540,6 @@ export default function Landing() {
                 <svg viewBox="0 0 52 20" className="h-4 w-12 text-arena-accent/80 sm:h-5 sm:w-14" fill="none" aria-hidden="true">
                   <path d="M50 10H12" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" />
                   <path d="m18 4-8 6 8 6" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" />
-                </svg>
-              </span>
-              <span className="absolute left-1/2 top-0 inline-flex -translate-x-1/2 -translate-y-3 opacity-0 transition-all duration-300 group-hover:translate-y-0 group-hover:opacity-100 sm:top-[2%]">
-                <svg viewBox="0 0 20 52" className="h-12 w-4 text-arena-accent/80 sm:h-14 sm:w-5" fill="none" aria-hidden="true">
-                  <path d="M10 50V12" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" />
-                  <path d="m4 18 6-8 6 8" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" />
-                </svg>
-              </span>
-              <span className="absolute bottom-0 left-1/2 inline-flex -translate-x-1/2 translate-y-3 opacity-0 transition-all duration-300 group-hover:translate-y-0 group-hover:opacity-100 sm:bottom-[2%]">
-                <svg viewBox="0 0 20 52" className="h-12 w-4 text-arena-accent/80 sm:h-14 sm:w-5" fill="none" aria-hidden="true">
-                  <path d="M10 2v38" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" />
-                  <path d="m4 34 6 8 6-8" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" />
                 </svg>
               </span>
             </div>
