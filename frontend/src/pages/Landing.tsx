@@ -634,7 +634,7 @@ export default function Landing() {
               className="group flex items-center justify-center gap-2 px-8 py-4 mx-auto bg-arena-accent hover:bg-[#dfff00] text-arena-bg font-bold rounded-xl text-lg shadow-[0_0_30px_rgba(232,255,71,0.2)] hover:shadow-[0_0_50px_rgba(232,255,71,0.4)] transition-all active:scale-95"
               onClick={() => navigate("/register")}
             >
-              Create your an account{" "}
+              Create your account{" "}
               <ArrowRight
                 size={20}
                 className="group-hover:translate-x-1 transition-transform"
