@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { startTransition, useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import ThemeToggle from "../components/ThemeToggle";
 import {
@@ -25,7 +25,6 @@ import type { Variants } from "framer-motion";
 // ── Parallax Wrapper ───────────────────────────────────────────────────────────
 function Parallax({
   children,
-  offset: _offset = 50,
   className = "",
 }: {
   children: React.ReactNode;
@@ -515,20 +514,30 @@ function renderGameWatermark(game: Game) {
       ),
       "SMASH BROS": (
         <>
-          <circle
-            cx="80"
-            cy="40"
-            r="22"
+          <path
+            d="M58 42c0-10 10-18 22-18 12 0 22 8 22 18-4-2-8-3-12-3-3 0-5 1-8 2-2-1-5-2-8-2-4 0-8 1-12 3Z"
             stroke="currentColor"
             strokeWidth="2.2"
-            opacity="0.5"
+            strokeLinejoin="round"
+            fill="currentColor"
+            opacity="0.22"
           />
           <path
-            d="M68 18v44M58 40h44"
+            d="M70 42h20v14c0 2-2 4-4 4H74c-2 0-4-2-4-4V42Z"
             stroke="currentColor"
-            strokeWidth="2.2"
-            opacity="0.5"
+            strokeWidth="1.8"
+            strokeLinejoin="round"
+            strokeLinecap="round"
+            opacity="0.34"
           />
+          <circle
+            cx="72"
+            cy="34"
+            r="3"
+            fill="currentColor"
+            opacity="0.34"
+          />
+          <circle cx="88" cy="34" r="3" fill="currentColor" opacity="0.34" />
         </>
       ),
       "STREET FIGHTER 6": (
@@ -628,40 +637,217 @@ function renderGameWatermark(game: Game) {
         />
       ),
       TENNIS: (
-        <path
-          d="M46 26h68v28H46Zm34 0v28M46 40h68"
-          stroke="currentColor"
-          strokeWidth="1.8"
-          strokeLinecap="round"
-          opacity="0.42"
-        />
+        <>
+          <circle
+            cx="80"
+            cy="40"
+            r="18"
+            stroke="currentColor"
+            strokeWidth="1.8"
+            opacity="0.28"
+          />
+          <path
+            d="M68 28c5 4 8 8 10 12m4-16c6 5 10 10 12 16"
+            stroke="currentColor"
+            strokeWidth="1.8"
+            strokeLinecap="round"
+            opacity="0.42"
+          />
+          <path
+            d="M62 52l16-16"
+            stroke="currentColor"
+            strokeWidth="1.6"
+            strokeLinecap="round"
+            opacity="0.24"
+          />
+        </>
       ),
       "AMERICAN FOOTBALL": (
-        <path
-          d="M46 42h68m-50-10v20m14-20v20m14-20v20m14-20v20"
-          stroke="currentColor"
-          strokeWidth="1.8"
-          strokeLinecap="round"
-          opacity="0.38"
-        />
+        <>
+          <path
+            d="M80 24c-14 5-24 15-24 24s10 19 24 24c14-5 24-15 24-24S94 29 80 24Z"
+            stroke="currentColor"
+            strokeWidth="1.8"
+            strokeLinejoin="round"
+            opacity="0.26"
+          />
+          <path
+            d="M72 40h16m-12-4 8 8m-8 0 8-8"
+            stroke="currentColor"
+            strokeWidth="1.8"
+            strokeLinecap="round"
+            opacity="0.4"
+          />
+        </>
       ),
       BADMINTON: (
-        <path
-          d="M50 26h60M50 54h60M60 26v28m40-28v28M50 40h60"
-          stroke="currentColor"
-          strokeWidth="1.8"
-          strokeLinecap="round"
-          opacity="0.38"
-        />
+        <>
+          <path
+            d="M66 28l20 20"
+            stroke="currentColor"
+            strokeWidth="1.8"
+            strokeLinecap="round"
+            opacity="0.26"
+          />
+          <path
+            d="M88 30c5 0 9 4 9 9 0 2-1 4-3 6l-10-10c2-3 2-5 4-5Z"
+            stroke="currentColor"
+            strokeWidth="1.8"
+            strokeLinejoin="round"
+            opacity="0.4"
+          />
+          <path
+            d="M62 24l10 10m-4-14 8 8m-12-4 8 8"
+            stroke="currentColor"
+            strokeWidth="1.5"
+            strokeLinecap="round"
+            opacity="0.28"
+          />
+        </>
       ),
       VOLLEYBALL: (
-        <path
-          d="M48 40h64M58 28v24m12-24v24m12-24v24m12-24v24"
-          stroke="currentColor"
-          strokeWidth="1.8"
-          strokeLinecap="round"
-          opacity="0.38"
-        />
+        <>
+          <circle
+            cx="80"
+            cy="40"
+            r="18"
+            stroke="currentColor"
+            strokeWidth="1.8"
+            opacity="0.24"
+          />
+          <path
+            d="M62 34c6 1 10 5 12 11m24-13c-7 1-12 5-16 11m-2-21c4 6 5 12 2 19"
+            stroke="currentColor"
+            strokeWidth="1.8"
+            strokeLinecap="round"
+            opacity="0.4"
+          />
+        </>
+      ),
+      BOXING: (
+        <>
+          <path
+            d="M56 52c-4 0-7-3-7-7v-5c0-3 2-5 5-5h3v-4h8v6c3 1 5 3 5 6v1c0 5-4 8-8 8H56Z"
+            stroke="currentColor"
+            strokeWidth="1.8"
+            strokeLinejoin="round"
+            opacity="0.32"
+          />
+          <path
+            d="M98 52c4 0 7-3 7-7v-5c0-3-2-5-5-5h-3v-4h-8v6c-3 1-5 3-5 6v1c0 5 4 8 8 8h6Z"
+            stroke="currentColor"
+            strokeWidth="1.8"
+            strokeLinejoin="round"
+            opacity="0.32"
+          />
+          <path
+            d="M61 35h6m32 0h-6M66 44h18m10 0H76"
+            stroke="currentColor"
+            strokeWidth="1.6"
+            strokeLinecap="round"
+            opacity="0.22"
+          />
+        </>
+      ),
+      CYCLING: (
+        <>
+          <circle
+            cx="62"
+            cy="48"
+            r="10"
+            stroke="currentColor"
+            strokeWidth="1.8"
+            opacity="0.24"
+          />
+          <circle
+            cx="98"
+            cy="48"
+            r="10"
+            stroke="currentColor"
+            strokeWidth="1.8"
+            opacity="0.24"
+          />
+          <path
+            d="M62 48l12-14h10l14 14M74 34l8 14m-4-22h10"
+            stroke="currentColor"
+            strokeWidth="1.8"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            opacity="0.4"
+          />
+        </>
+      ),
+      "TABLE TENNIS": (
+        <>
+          <circle
+            cx="70"
+            cy="42"
+            r="10"
+            stroke="currentColor"
+            strokeWidth="1.8"
+            opacity="0.28"
+          />
+          <path
+            d="M77 49l10 9"
+            stroke="currentColor"
+            strokeWidth="1.8"
+            strokeLinecap="round"
+            opacity="0.38"
+          />
+          <circle cx="95" cy="34" r="4" fill="currentColor" opacity="0.34" />
+        </>
+      ),
+      GOLF: (
+        <>
+          <path
+            d="M70 54c10 2 22 2 32-1"
+            stroke="currentColor"
+            strokeWidth="1.6"
+            strokeLinecap="round"
+            opacity="0.24"
+          />
+          <path
+            d="M80 24v26"
+            stroke="currentColor"
+            strokeWidth="1.8"
+            strokeLinecap="round"
+            opacity="0.34"
+          />
+          <path
+            d="M80 24c8 2 13 5 16 8-4 3-9 5-16 5"
+            stroke="currentColor"
+            strokeWidth="1.8"
+            strokeLinejoin="round"
+            opacity="0.4"
+          />
+          <circle cx="92" cy="52" r="3.2" fill="currentColor" opacity="0.3" />
+        </>
+      ),
+      BASEBALL: (
+        <>
+          <circle
+            cx="80"
+            cy="40"
+            r="18"
+            stroke="currentColor"
+            strokeWidth="1.8"
+            opacity="0.22"
+          />
+          <path
+            d="M68 27c-3 6-4 13-1 19m25-19c3 6 4 13 1 19"
+            stroke="currentColor"
+            strokeWidth="1.8"
+            strokeLinecap="round"
+            opacity="0.4"
+          />
+          <path
+            d="M66 31c2 1 4 3 5 5m18-5c-2 1-4 3-5 5m-18 8c2 1 4 3 5 5m18-5c-2 1-4 3-5 5"
+            stroke="currentColor"
+            strokeWidth="1.3"
+            strokeLinecap="round"
+            opacity="0.28"
+          />
+        </>
       ),
     };
     return (
@@ -695,12 +881,31 @@ function renderGameWatermark(game: Game) {
       />
     ),
     CHECKERS: (
-      <path
-        d="M56 26h48v28H56Zm24 0v28M56 40h48"
-        stroke="currentColor"
-        strokeWidth="1.8"
-        opacity="0.24"
-      />
+      <>
+        <circle
+          cx="68"
+          cy="34"
+          r="10"
+          stroke="currentColor"
+          strokeWidth="1.8"
+          opacity="0.34"
+        />
+        <circle
+          cx="92"
+          cy="46"
+          r="10"
+          stroke="currentColor"
+          strokeWidth="1.8"
+          opacity="0.22"
+        />
+        <path
+          d="M60 56h40"
+          stroke="currentColor"
+          strokeWidth="1.6"
+          strokeLinecap="round"
+          opacity="0.2"
+        />
+      </>
     ),
     POKER: (
       <path
@@ -713,21 +918,122 @@ function renderGameWatermark(game: Game) {
       />
     ),
     MAHJONG: (
-      <path
-        d="M62 22h36v36H62Zm8 10h20m-20 8h20m-14 8h8"
-        stroke="currentColor"
-        strokeWidth="1.8"
-        strokeLinecap="round"
-        opacity="0.4"
-      />
+      <>
+        <rect
+          x="64"
+          y="22"
+          width="32"
+          height="36"
+          rx="2"
+          stroke="currentColor"
+          strokeWidth="1.8"
+          opacity="0.28"
+        />
+        <circle cx="80" cy="34" r="4.5" fill="currentColor" opacity="0.18" />
+        <path
+          d="M74 46c2-3 10-3 12 0m-14 6h16"
+          stroke="currentColor"
+          strokeWidth="1.8"
+          strokeLinecap="round"
+          opacity="0.36"
+        />
+      </>
     ),
     GO: (
-      <path
-        d="M58 24h44v32H58Zm11 0v32m11-32v32m11-32v32M58 34h44M58 46h44"
-        stroke="currentColor"
-        strokeWidth="1.6"
-        opacity="0.24"
-      />
+      <>
+        <path
+          d="M60 24v28m12-28v28m12-28v28m12-28v28M60 28h48M60 40h48M60 52h48"
+          stroke="currentColor"
+          strokeWidth="1.5"
+          strokeLinecap="round"
+          opacity="0.2"
+        />
+        <circle cx="72" cy="36" r="5" fill="currentColor" opacity="0.28" />
+        <circle
+          cx="92"
+          cy="44"
+          r="5"
+          stroke="currentColor"
+          strokeWidth="1.8"
+          opacity="0.34"
+        />
+      </>
+    ),
+    SCRABBLE: (
+      <>
+        <rect
+          x="60"
+          y="24"
+          width="18"
+          height="18"
+          rx="2"
+          stroke="currentColor"
+          strokeWidth="1.8"
+          opacity="0.26"
+        />
+        <rect
+          x="82"
+          y="38"
+          width="18"
+          height="18"
+          rx="2"
+          stroke="currentColor"
+          strokeWidth="1.8"
+          opacity="0.18"
+        />
+        <path
+          d="M67 29c1.8-1.2 4.8-.6 4.6 1.8-.3 2.1-4.3 2.1-4.5 4.2.2 2.4 2.9 3 4.8 1.8"
+          stroke="currentColor"
+          strokeWidth="1.6"
+          strokeLinecap="round"
+          opacity="0.38"
+        />
+        <circle cx="95" cy="52" r="1.4" fill="currentColor" opacity="0.3" />
+      </>
+    ),
+    MONOPOLY: (
+      <>
+        <path
+          d="M58 54h44M62 54V36l18-10 18 10v18"
+          stroke="currentColor"
+          strokeWidth="1.8"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          opacity="0.28"
+        />
+        <path
+          d="M80 26v9m-8 8h16m-11 11v-9h6v9"
+          stroke="currentColor"
+          strokeWidth="1.6"
+          strokeLinecap="round"
+          opacity="0.38"
+        />
+      </>
+    ),
+    BACKGAMMON: (
+      <>
+        <rect
+          x="58"
+          y="24"
+          width="44"
+          height="32"
+          rx="2"
+          stroke="currentColor"
+          strokeWidth="1.8"
+          opacity="0.18"
+        />
+        <path
+          d="M80 24v32"
+          stroke="currentColor"
+          strokeWidth="1.5"
+          opacity="0.22"
+        />
+        <path
+          d="M62 26h14l-7 18Zm22 0h14l-7 18ZM62 54h14l-7-18Zm22 0h14l-7-18Z"
+          fill="currentColor"
+          opacity="0.26"
+        />
+      </>
     ),
     UNO: (
       <>
@@ -741,6 +1047,83 @@ function renderGameWatermark(game: Game) {
           d="M72 40c3-6 13-6 16 0-3 6-13 6-16 0Z"
           fill="currentColor"
           opacity="0.35"
+        />
+      </>
+    ),
+    BLACKJACK: (
+      <>
+        <path
+          d="M60 24h24v32H60Z"
+          stroke="currentColor"
+          strokeWidth="1.8"
+          opacity="0.28"
+        />
+        <path
+          d="M76 28h24v32H76Z"
+          stroke="currentColor"
+          strokeWidth="1.8"
+          opacity="0.18"
+        />
+        <path
+          d="M67 35c2.4-4.2 9.2-4.2 11.6 0-2.4 4.2-9.2 4.2-11.6 0Z"
+          fill="currentColor"
+          opacity="0.32"
+        />
+        <path
+          d="M85 32h7m-3.5-3.5V35.5"
+          stroke="currentColor"
+          strokeWidth="1.8"
+          strokeLinecap="round"
+          opacity="0.34"
+        />
+      </>
+    ),
+    "MAGIC: THE GATHERING": (
+      <>
+        <path
+          d="M80 22c-10 5-16 14-16 24 0 8 7 14 16 14s16-6 16-14c0-10-6-19-16-24Z"
+          stroke="currentColor"
+          strokeWidth="1.8"
+          strokeLinejoin="round"
+          opacity="0.22"
+        />
+        <path
+          d="M80 27c-6 4-10 10-10 17 0 5 4.5 9 10 9s10-4 10-9c0-7-4-13-10-17Z"
+          fill="currentColor"
+          opacity="0.14"
+        />
+        <path
+          d="M80 24v29m-11-9h22"
+          stroke="currentColor"
+          strokeWidth="1.6"
+          strokeLinecap="round"
+          opacity="0.28"
+        />
+      </>
+    ),
+    "YU-GI-OH": (
+      <>
+        <rect
+          x="60"
+          y="22"
+          width="40"
+          height="36"
+          rx="2"
+          stroke="currentColor"
+          strokeWidth="1.8"
+          opacity="0.22"
+        />
+        <path
+          d="M67 29c6-4 20-4 26 1 4 3 4 8 0 11-6 5-20 5-26 1-4-3-4-9 0-13Z"
+          stroke="currentColor"
+          strokeWidth="1.8"
+          strokeLinecap="round"
+          opacity="0.34"
+        />
+        <path
+          d="M70 34c4-2 13-2 17 1 2 2 2 4 0 6-4 3-13 3-17 1-3-2-3-5 0-8Z"
+          fill="currentColor"
+          opacity="0.16"
         />
       </>
     ),
@@ -2308,7 +2691,7 @@ function CategoryButton({
       className="relative flex min-w-0 items-center justify-center gap-2 rounded-full border px-3 py-2 text-xs font-bold sm:justify-start sm:pl-1.5 sm:pr-5 sm:py-1.5 sm:text-sm"
     >
       {/* thumbnail */}
-      <span className="relative w-6 h-6 flex-shrink-0 rounded-full overflow-hidden">
+      <span className="relative w-6 h-6 shrink-0 rounded-full overflow-hidden">
         <img
           src={imgSrc}
           alt=""
@@ -2415,10 +2798,12 @@ export default function Landing() {
   const heroTextInView = useInView(heroTextRef, { once: false, margin: "-100px" });
 
   useEffect(() => {
-    if (heroTextInView) {
+    if (!heroTextInView) return;
+    const raf = requestAnimationFrame(() => {
       setScoreTrigger((t) => t + 1);
       setSlamGlow(false);
-    }
+    });
+    return () => cancelAnimationFrame(raf);
   }, [heroTextInView]);
 
   const {
@@ -2450,7 +2835,11 @@ export default function Landing() {
   ];
 
   const handleTabChange = (cat: Category) => {
-    if (cat !== activeCategory) setActiveCategory(cat);
+    if (cat !== activeCategory) {
+      startTransition(() => {
+        setActiveCategory(cat);
+      });
+    }
   };
 
   return (
@@ -2459,8 +2848,8 @@ export default function Landing() {
       <FloatingSymbols />
 
       {/* Ambient glow blobs */}
-      <div className="absolute top-[-10%] left-1/2 -translate-x-1/2 w-[800px] h-[400px] bg-arena-accent/10 blur-[120px] rounded-full pointer-events-none" />
-      <div className="absolute top-[40%] right-[-10%] w-[600px] h-[600px] bg-blue-500/5 blur-[150px] rounded-full pointer-events-none" />
+      <div className="absolute top-[-10%] left-1/2 -translate-x-1/2 w-200 h-100 bg-arena-accent/10 blur-[120px] rounded-full pointer-events-none" />
+      <div className="absolute top-[40%] right-[-10%] w-150 h-150 bg-blue-500/5 blur-[150px] rounded-full pointer-events-none" />
 
       {/* Nav */}
       <nav className="fixed top-0 left-0 right-0 z-50 glass-panel border-x-0 border-t-0 rounded-none px-6 py-4 flex items-center justify-between">
@@ -2500,7 +2889,12 @@ export default function Landing() {
           className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-arena-surface border border-arena-border text-xs font-semibold text-arena-accent mb-8 shadow-lg"
         >
           <Zap size={14} className="fill-current" />
-          <span className="tracking-wider uppercase">
+          <span className="tracking-[0.14em] uppercase leading-tight text-center sm:hidden">
+            Tournament Platform
+            <br />
+            for Every Sport & Game
+          </span>
+          <span className="hidden tracking-wider uppercase sm:inline">
             Tournament Platform for Every Sport & Game
           </span>
         </motion.div>
@@ -2619,8 +3013,8 @@ export default function Landing() {
       {/* ── GAMES SECTION ── */}
       <section className="relative py-20 z-10">
         <div className="absolute inset-0 pointer-events-none overflow-hidden">
-          <div className="absolute left-1/4 top-1/2 -translate-y-1/2 w-[500px] h-[300px] bg-purple-600/5 blur-[120px] rounded-full" />
-          <div className="absolute right-1/4 top-1/2 -translate-y-1/2 w-[400px] h-[300px] bg-blue-600/5 blur-[100px] rounded-full" />
+          <div className="absolute left-1/4 top-1/2 -translate-y-1/2 w-125 h-75 bg-purple-600/5 blur-[120px] rounded-full" />
+          <div className="absolute right-1/4 top-1/2 -translate-y-1/2 w-100 h-75 bg-blue-600/5 blur-[100px] rounded-full" />
         </div>
 
         {/* Section header */}
@@ -2685,14 +3079,20 @@ export default function Landing() {
           </div>
         </Parallax>
 
-        {/* Browse marquee strips — fade in/out on category switch */}
+        {/* Mobile browse scroller */}
+        <Parallax offset={40} className="px-6 md:hidden">
+          <div className="-mx-6 overflow-x-auto px-6 pb-2 [scrollbar-width:none] [-ms-overflow-style:none]">
+            <div className="flex w-max gap-4 pr-6">
+              {filteredGames.map((game) => (
+                <BrowseCard key={`${game.name}-mobile`} game={game} />
+              ))}
+            </div>
+          </div>
+        </Parallax>
+
+        {/* Browse marquee strips */}
         <Parallax offset={60}>
-          <motion.div
-            key={activeCategory}
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.35 }}
-          >
+          <div className="hidden md:block">
             {/* Strip 1 — left */}
             <div
               className="relative mb-4 overflow-hidden"
@@ -2726,7 +3126,7 @@ export default function Landing() {
                 ))}
               </div>
             </div>
-          </motion.div>
+          </div>
         </Parallax>
       </section>
 
@@ -2734,8 +3134,12 @@ export default function Landing() {
       <section className="relative py-24 px-6 z-10 flex-1">
         <div className="max-w-6xl mx-auto">
           <Parallax offset={50} className="text-center mb-16">
+            <h2 className="font-display text-[2rem] font-bold uppercase tracking-tight leading-[1.05] mb-4 md:hidden">
+              Everything your{" "}
+              <span style={{ color: "var(--accent)" }}>club</span> needs
+            </h2>
             <h2
-              className="font-display text-4xl md:text-5xl font-bold uppercase tracking-tight mb-4"
+              className="hidden md:block font-display text-4xl md:text-5xl font-bold uppercase tracking-tight mb-4"
               style={{ perspective: "800px" }}
             >
               {"Everything your club needs".split("").map((char, i) =>
@@ -2807,7 +3211,7 @@ export default function Landing() {
           offset={60}
           className="max-w-4xl mx-auto glass-panel p-12 text-center relative overflow-visible group"
         >
-          <div className="absolute inset-0 bg-gradient-to-br from-arena-accent/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+          <div className="absolute inset-0 bg-linear-to-br from-arena-accent/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
           <div className="pointer-events-none absolute inset-0">
             {CTA_PLUS_BURST.map((item, index) => (
               <span
@@ -2893,7 +3297,7 @@ export default function Landing() {
 
       {/* Footer */}
       <footer className="relative z-10">
-        <div className="h-px bg-gradient-to-r from-transparent via-arena-accent/40 to-transparent" />
+        <div className="h-px bg-linear-to-r from-transparent via-arena-accent/40 to-transparent" />
         <div className="border-t border-arena-border bg-arena-surface/20 backdrop-blur-sm">
           <motion.div
             initial="hidden"

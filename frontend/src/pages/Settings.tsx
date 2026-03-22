@@ -174,7 +174,7 @@ function Row({ label, sub, children }: { label: string; sub?: string; children: 
         <p className="text-sm font-semibold text-arena-text">{label}</p>
         {sub && <p className="text-xs text-arena-text-muted mt-1 leading-relaxed">{sub}</p>}
       </div>
-      <div className="flex-shrink-0 w-full sm:w-auto flex justify-end">
+      <div className="shrink-0 w-full sm:w-auto flex justify-end">
         {children}
       </div>
     </div>
@@ -265,7 +265,7 @@ export default function Settings() {
         </Row>
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-4">
           <div className="hidden sm:block max-w-md flex-1" aria-hidden="true" />
-          <div className="flex-shrink-0 w-full sm:w-80 flex justify-end">
+          <div className="shrink-0 w-full sm:w-80 flex justify-end">
             <button
               className="inline-flex items-center gap-2 px-4 py-2 text-sm bg-arena-accent text-[rgba(255,255,255,0.9)] dark:text-arena-bg font-bold rounded-lg shadow-[0_0_10px_rgba(var(--accent-rgb),0.15)] hover:shadow-[0_0_20px_rgba(var(--accent-rgb),0.3)] transition-all active:scale-95"
               onClick={saveProfile}

@@ -102,7 +102,7 @@ function TournamentCard({ t }: { t: Tournament }) {
       <div className="mt-auto">
         {t.matches.length > 0 && (
            <div className="w-full h-1.5 bg-arena-border rounded-full overflow-hidden mb-4">
-             <div className="h-full bg-gradient-to-r from-arena-accent to-[#b5d61f] rounded-full transition-all duration-1000 ease-out" style={{ width: `${progress}%` }} />
+             <div className="h-full bg-linear-to-r from-arena-accent to-[#b5d61f] rounded-full transition-all duration-1000 ease-out" style={{ width: `${progress}%` }} />
            </div>
         )}
 

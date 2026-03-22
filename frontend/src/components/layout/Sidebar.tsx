@@ -331,7 +331,7 @@ export default function Sidebar({ open, onClose }: SidebarProps) {
                 >
                   <r.icon
                     size={13}
-                    className="text-arena-accent flex-shrink-0"
+                    className="text-arena-accent shrink-0"
                   />
                   <div className="min-w-0">
                     <p className="text-xs font-semibold text-arena-text truncate">

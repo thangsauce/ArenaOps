@@ -38,8 +38,8 @@ export default function Login() {
       {/* Left Panel */}
       <div className="hidden md:flex md:w-5/12 lg:w-1/2 relative p-12 flex-col justify-center overflow-hidden border-r border-arena-border bg-[#0d0d14]">
         {/* Decorative Grid */}
-        <div className="absolute inset-0 bg-[linear-gradient(to_right,#ffffff05_1px,transparent_1px),linear-gradient(to_bottom,#ffffff05_1px,transparent_1px)] bg-[size:4rem_4rem] [mask-image:radial-gradient(ellipse_60%_60%_at_50%_50%,#000_70%,transparent_100%)]" />
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-arena-accent/5 blur-[100px] rounded-full pointer-events-none" />
+        <div className="absolute inset-0 bg-[linear-gradient(to_right,#ffffff05_1px,transparent_1px),linear-gradient(to_bottom,#ffffff05_1px,transparent_1px)] bg-size-[4rem_4rem] mask-[radial-gradient(ellipse_60%_60%_at_50%_50%,#000_70%,transparent_100%)]" />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-125 h-125 bg-arena-accent/5 blur-[100px] rounded-full pointer-events-none" />
 
         <div className="relative z-10 max-w-md mx-auto">
           <Link
@@ -89,7 +89,7 @@ export default function Login() {
                 key={i}
                 className="flex items-center gap-3 text-gray-300 font-medium"
               >
-                <span className="w-1.5 h-1.5 rounded-full bg-arena-accent flex-shrink-0 shadow-[0_0_8px_rgba(232,255,71,0.8)]" />
+                <span className="w-1.5 h-1.5 rounded-full bg-arena-accent shrink-0 shadow-[0_0_8px_rgba(232,255,71,0.8)]" />
                 {text}
               </li>
             ))}
@@ -99,7 +99,7 @@ export default function Login() {
 
       {/* Right Form */}
       <div className="flex-1 flex items-center justify-center p-6 sm:p-12 relative">
-        <div className="absolute right-0 top-0 w-[400px] h-[400px] bg-blue-500/5 blur-[120px] rounded-full pointer-events-none" />
+        <div className="absolute right-0 top-0 w-100 h-100 bg-blue-500/5 blur-[120px] rounded-full pointer-events-none" />
 
         {/* Home Button */}
         <button
