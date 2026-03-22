@@ -48,3 +48,18 @@ export function formatTimeRange(
 ): string {
   return `${formatTime(start, dateStr, format, timezone)} – ${formatTime(end, dateStr, format, timezone)}`;
 }
+
+export function formatDate(
+  dateStr: string,
+  options: Intl.DateTimeFormatOptions = {
+    month: 'long',
+    day: 'numeric',
+    year: 'numeric',
+  },
+): string {
+  try {
+    return new Date(`${dateStr}T12:00:00`).toLocaleDateString('en-US', options);
+  } catch {
+    return dateStr;
+  }
+}

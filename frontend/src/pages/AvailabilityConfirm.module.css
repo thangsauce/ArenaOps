@@ -17,7 +17,6 @@
   animation: fadeIn 0.3s ease;
 }
 
-@keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
 .brand { display: flex; align-items: center; gap: 7px; margin-bottom: 28px; }
 .brandIcon { color: var(--accent); }
@@ -46,15 +45,35 @@
 .stepSub { font-size: 0.85rem; color: var(--text-2); margin-top: -10px; }
 
 .slotGrid { display: flex; flex-direction: column; gap: 8px; }
-.slotCard { display: flex; align-items: center; gap: 14px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 14px 16px; text-align: left; cursor: pointer; transition: all 0.15s; }
+.slotCard { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); text-align: left; transition: all 0.15s; overflow: hidden; }
 .slotCard:hover { border-color: var(--border-2); background: var(--surface-2); }
 .slotSelected { border-color: var(--accent) !important; background: var(--accent-dim) !important; }
+.slotExpanded { border-color: var(--border-2); }
+.slotToggle { width: 100%; display: flex; align-items: center; justify-content: space-between; gap: 14px; padding: 14px 16px; text-align: left; cursor: pointer; }
+.slotToggleMain { display: flex; align-items: center; gap: 14px; min-width: 0; }
 .slotCheck { color: var(--accent); flex-shrink: 0; }
 .slotCircle { width: 16px; height: 16px; border-radius: 50%; border: 2px solid var(--border-2); }
 .slotInfo { display: flex; flex-direction: column; gap: 2px; }
 .slotLabel { font-size: 0.9rem; font-weight: 600; color: var(--text); }
+.slotSummary { font-size: 0.74rem; color: var(--text-3); }
 .slotTime { font-size: 0.78rem; color: var(--text-2); }
 .slotDate { font-size: 0.72rem; color: var(--text-3); }
+.slotChevron { color: var(--text-3); transition: transform 0.2s ease, color 0.15s ease; flex-shrink: 0; }
+.slotChevronOpen { transform: rotate(180deg); color: var(--text); }
+.slotDetails { display: flex; flex-direction: column; gap: 8px; padding: 0 16px 16px 46px; }
+.slotSelectBtn {
+  align-self: flex-start;
+  background: var(--bg-3);
+  border: 1px solid var(--border);
+  color: var(--text-2);
+  font-size: 0.76rem;
+  font-weight: 600;
+  padding: 7px 12px;
+  border-radius: 999px;
+  transition: all 0.15s;
+}
+.slotSelectBtn:hover { border-color: var(--border-2); color: var(--text); }
+.slotSelectBtnActive { background: var(--accent); border-color: var(--accent); color: var(--accent-fg); }
 
 .confirmCard { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px; display: flex; flex-direction: column; gap: 12px; }
 .confirmRow { display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; padding-bottom: 12px; border-bottom: 1px solid var(--border); }

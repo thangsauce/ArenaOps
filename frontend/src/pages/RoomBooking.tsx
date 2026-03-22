@@ -1,16 +1,21 @@
 import { useState, useEffect, useRef } from 'react';
-import { MapPin, Users, CheckCircle2, XCircle, AlertTriangle, Clock } from 'lucide-react';
+import { MapPin, Users, CheckCircle2, XCircle, AlertTriangle, Clock, LayoutGrid, Rows3, ChevronDown } from 'lucide-react';
 import { useApp } from '../store/store';
+import { formatTime } from '../utils/time';
 import styles from './RoomBooking.module.css';
 
 export default function RoomBooking() {
-  const { tournaments, bookRoom } = useApp();
+  const { tournaments, timePrefs, bookRoom } = useApp();
   const tournament = tournaments[0]; // Spring Valorant Open
 
   const [selectedMatch, setSelectedMatch] = useState<string | null>(null);
   const [selectedRoom, setSelectedRoom] = useState<string | null>(null);
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [justBooked, setJustBooked] = useState<string | null>(null);
+  const [bookingView, setBookingView] = useState<'assign' | 'assignments'>('assign');
+  const [expandedTimeBlocks, setExpandedTimeBlocks] = useState<string[]>(() =>
+    tournament?.timeBlocks[0] ? [tournament.timeBlocks[0].id] : [],
+  );
   const bookedTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
@@ -45,6 +50,8 @@ export default function RoomBooking() {
     if (!id) return 'TBD';
     return tournament.participants.find(p => p.id === id)?.name ?? 'TBD';
   };
+  const formatSlotTime = (start: string, date: string) =>
+    formatTime(start, date, timePrefs.format, timePrefs.timezone);
 
   // Build occupancy map: locationId -> array of match ids using it
   const occupancy: Record<string, string[]> = {};
@@ -55,16 +62,45 @@ export default function RoomBooking() {
     }
   });
 
+  const assignedMatches = tournament.matches.filter(m => m.locationId);
+  const unassignedRooms = tournament.locations.filter(
+    loc => !tournament.matches.some(m => m.locationId === loc.id),
+  );
+  const timeBlockBoards = tournament.timeBlocks.map(tb => ({
+    timeBlock: tb,
+    matches: tournament.matches.filter(m => m.timeBlockId === tb.id && m.status !== 'completed' && m.status !== 'cancelled'),
+  }));
+  const selectedMatchData = selectedMatch ? tournament.matches.find(m => m.id === selectedMatch) ?? null : null;
+
+  const viewButtons = [
+    { key: 'assign' as const, label: 'Assign', Icon: LayoutGrid },
+    { key: 'assignments' as const, label: 'Room Availability', Icon: Rows3 },
+  ];
+
   return (
     <div className={styles.page}>
       <div className={styles.header}>
-        <div>
+        <div className={styles.headerIntro}>
           <h1 className={styles.title}>Room Booking</h1>
           <p className={styles.sub}>Assign locations to matches · Conflict detection enabled</p>
+          <div className={styles.viewSwitcher}>
+            {viewButtons.map(({ key, label, Icon }) => (
+              <button
+                key={key}
+                className={`${styles.viewBtn} ${bookingView === key ? styles.viewBtnActive : ''}`}
+                onClick={() => setBookingView(key)}
+              >
+                <Icon size={13} />
+                {label}
+              </button>
+            ))}
+          </div>
         </div>
-        <div className={styles.tournamentPill}>
-          <span className={styles.pillDot} />
-          {tournament.name}
+        <div className={styles.headerRight}>
+          <div className={styles.tournamentPill}>
+            <span className={styles.pillDot} />
+            {tournament.name}
+          </div>
         </div>
       </div>
 
@@ -75,133 +111,250 @@ export default function RoomBooking() {
         </div>
       )}
 
-      <div className={styles.layout}>
-        {/* Left: Matches needing rooms */}
-        <div className={styles.panel}>
-          <h2 className={styles.panelTitle}>Matches</h2>
-          <div className={styles.matchList}>
-            {tournament.matches.map(m => {
-              const loc = tournament.locations.find(l => l.id === m.locationId);
-              const p1 = getParticipantName(m.participant1Id);
-              const p2 = getParticipantName(m.participant2Id);
-              const tb = tournament.timeBlocks.find(t => t.id === m.timeBlockId);
-              const isSelected = selectedMatch === m.id;
-              const isCompleted = m.status === 'completed';
+      {bookingView === 'assign' ? (
+        <div className={styles.assignSection}>
+          {selectedMatchData && (
+            <div className={styles.assignBanner}>
+              <div>
+                <p className={styles.assignBannerLabel}>Selected Match</p>
+                <p className={styles.assignBannerTitle}>
+                  {getParticipantName(selectedMatchData.participant1Id)} <span>vs</span> {getParticipantName(selectedMatchData.participant2Id)}
+                </p>
+              </div>
+              <button className={styles.assignBannerClear} onClick={() => setSelectedMatch(null)}>
+                Clear
+              </button>
+            </div>
+          )}
 
+          <div className={styles.timeBoardList}>
+            {timeBlockBoards.map(({ timeBlock, matches }) => {
+              const selectableMatches = matches.filter(m => m.status !== 'completed');
+              const isExpanded = expandedTimeBlocks.includes(timeBlock.id);
               return (
-                <div
-                  key={m.id}
-                  className={`${styles.matchCard} ${isSelected ? styles.matchSelected : ''} ${isCompleted ? styles.matchDone : ''}`}
-                  onClick={() => !isCompleted && setSelectedMatch(isSelected ? null : m.id)}
-                >
-                  <div className={styles.matchTop}>
-                    <span className={styles.matchLabel}>Round {m.round} · M{m.matchNumber}</span>
-                    <span className={styles.matchStatus} data-status={m.status}>{m.status}</span>
-                  </div>
-                  <p className={styles.matchPlayers}>{p1} <span>vs</span> {p2}</p>
-                  <div className={styles.matchMeta}>
-                    {tb && <span className={styles.metaItem}><Clock size={11} />{tb.label} · {tb.start}</span>}
-                    {loc
-                      ? <span className={styles.metaItem} style={{ color: 'var(--accent)' }}><MapPin size={11} />{loc.name}</span>
-                      : <span className={styles.metaItem} style={{ color: '#ffaa00' }}><AlertTriangle size={11} />No room</span>
-                    }
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        </div>
-
-        {/* Right: Room grid */}
-        <div className={styles.panel}>
-          <h2 className={styles.panelTitle}>
-            Locations
-            {selectedMatch && <span className={styles.selectHint}>← click to assign</span>}
-          </h2>
-          <div className={styles.roomGrid}>
-            {tournament.locations.map(loc => {
-              const conflicts = selectedMatch ? getConflicts(loc.id, selectedMatch) : [];
-              const hasConflict = conflicts.length > 0;
-              const usedBy = occupancy[loc.id] ?? [];
-              const isSelected = selectedRoom === loc.id;
-
-              return (
-                <div
-                  key={loc.id}
-                  className={`${styles.roomCard} ${!loc.available ? styles.roomUnavailable : ''} ${hasConflict ? styles.roomConflict : ''} ${isSelected ? styles.roomSelected : ''}`}
-                  onClick={() => {
-                    if (!selectedMatch || !loc.available) return;
-                    if (hasConflict) return;
-                    setSelectedRoom(loc.id);
-                    setConfirmOpen(true);
-                  }}
-                >
-                  <div className={styles.roomHeader}>
+                <section key={timeBlock.id} className={styles.timeBoard}>
+                  <button
+                    type="button"
+                    className={styles.timeBoardHeader}
+                    onClick={() => {
+                      setExpandedTimeBlocks(prev =>
+                        prev.includes(timeBlock.id)
+                          ? prev.filter(id => id !== timeBlock.id)
+                          : [...prev, timeBlock.id],
+                      );
+                    }}
+                  >
                     <div>
-                      <p className={styles.roomName}>{loc.name}</p>
-                      <p className={styles.roomBuilding}>{loc.building}</p>
+                      <p className={styles.timeBoardTitle}>{timeBlock.label}</p>
+                      <p className={styles.timeBoardMeta}>{formatSlotTime(timeBlock.start, timeBlock.date)}</p>
                     </div>
-                    <div className={styles.roomStatus}>
-                      {!loc.available
-                        ? <XCircle size={16} style={{ color: 'var(--red)' }} />
-                        : hasConflict
-                        ? <AlertTriangle size={16} style={{ color: '#ffaa00' }} />
-                        : <CheckCircle2 size={16} style={{ color: 'var(--accent)' }} />
-                      }
-                    </div>
-                  </div>
-
-                  <div className={styles.roomMeta}>
-                    <span className={styles.roomCap}><Users size={12} />Cap. {loc.capacity}</span>
-                    <span className={styles.roomUsage}>
-                      {usedBy.length} match{usedBy.length !== 1 ? 'es' : ''} booked
-                    </span>
-                  </div>
-
-                  {hasConflict && (
-                    <div className={styles.conflictWarning}>
-                      <AlertTriangle size={11} />
-                      Conflict: {conflicts.length} match{conflicts.length > 1 ? 'es' : ''} in same slot
-                    </div>
-                  )}
-
-                  {!loc.available && (
-                    <div className={styles.conflictWarning} style={{ color: 'var(--red)', background: 'var(--red-dim)' }}>
-                      <XCircle size={11} />
-                      Unavailable — campus hold
-                    </div>
-                  )}
-
-                  <div className={styles.roomStatusLabel} data-available={loc.available && !hasConflict}>
-                    {!loc.available ? 'Unavailable' : hasConflict ? 'Conflict' : selectedMatch ? 'Click to assign' : 'Available'}
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-
-          {/* Booking summary */}
-          <div className={styles.bookingSummary}>
-            <h3 className={styles.summaryTitle}>Booking Summary</h3>
-            {tournament.locations.map(loc => {
-              const booked = tournament.matches.filter(m => m.locationId === loc.id);
-              if (booked.length === 0) return null;
-              return (
-                <div key={loc.id} className={styles.summaryRow}>
-                  <span className={styles.summaryRoom}><MapPin size={12} />{loc.name}</span>
-                  <div className={styles.summaryMatches}>
-                    {booked.map(m => (
-                      <span key={m.id} className={styles.summaryChip} data-status={m.status}>
-                        R{m.round}M{m.matchNumber}
+                    <div className={styles.timeBoardHeaderRight}>
+                      <span className={styles.timeBoardCount}>
+                        {matches.length} match{matches.length !== 1 ? 'es' : ''}
                       </span>
-                    ))}
-                  </div>
-                </div>
+                      <ChevronDown size={16} className={`${styles.timeBoardChevron} ${isExpanded ? styles.timeBoardChevronOpen : ''}`} />
+                    </div>
+                  </button>
+
+                  {isExpanded && (
+                    <div className={styles.timeBoardGrid}>
+                      <div className={styles.timeBoardColumn}>
+                        <h2 className={styles.panelTitle}>Matches</h2>
+                        <div className={styles.matchList}>
+                          {matches.length === 0 ? (
+                            <div className={styles.summaryEmpty}>No matches in this slot.</div>
+                          ) : (
+                            matches.map(m => {
+                              const loc = tournament.locations.find(l => l.id === m.locationId);
+                              const isSelected = selectedMatch === m.id;
+                              const isLocked = m.status === 'completed';
+                              return (
+                                <div
+                                  key={m.id}
+                                  className={`${styles.matchCard} ${isSelected ? styles.matchSelected : ''} ${isLocked ? styles.matchDone : ''}`}
+                                  onClick={() => !isLocked && setSelectedMatch(isSelected ? null : m.id)}
+                                >
+                                  <div className={styles.matchTop}>
+                                    <span className={styles.matchLabel}>Match {m.matchNumber} · Round {m.round}</span>
+                                    <span className={styles.matchStatus} data-status={m.status}>{m.status}</span>
+                                  </div>
+                                  <p className={styles.matchPlayers}>
+                                    {getParticipantName(m.participant1Id)} <span>vs</span> {getParticipantName(m.participant2Id)}
+                                  </p>
+                                  <div className={styles.matchMeta}>
+                                    {loc
+                                      ? <span className={styles.metaItem} style={{ color: 'var(--accent)' }}><MapPin size={11} />{loc.name}</span>
+                                      : <span className={styles.metaItem} style={{ color: 'var(--amber)' }}><AlertTriangle size={11} />No room</span>
+                                    }
+                                  </div>
+                                </div>
+                              );
+                            })
+                          )}
+                        </div>
+                      </div>
+
+                      <div className={styles.timeBoardColumn}>
+                        <h2 className={styles.panelTitle}>
+                          Rooms
+                          {selectedMatchData?.timeBlockId === timeBlock.id && <span className={styles.selectHint}>click a room to assign</span>}
+                        </h2>
+                        <div className={styles.roomGrid}>
+                          {tournament.locations.map(loc => {
+                            const canAssignInSlot = selectedMatchData?.timeBlockId === timeBlock.id;
+                            const conflicts = canAssignInSlot && selectedMatchData ? getConflicts(loc.id, selectedMatchData.id) : [];
+                            const hasConflict = conflicts.length > 0;
+                            const usedBy = occupancy[loc.id] ?? [];
+                            const isSelected = selectedRoom === loc.id;
+
+                            return (
+                              <div
+                                key={loc.id}
+                                className={`${styles.roomCard} ${!loc.available ? styles.roomUnavailable : ''} ${hasConflict ? styles.roomConflict : ''} ${isSelected ? styles.roomSelected : ''} ${!canAssignInSlot ? styles.roomIdle : ''}`}
+                                onClick={() => {
+                                  if (!selectedMatchData || selectedMatchData.timeBlockId !== timeBlock.id || !loc.available || hasConflict) return;
+                                  setSelectedRoom(loc.id);
+                                  setConfirmOpen(true);
+                                }}
+                              >
+                                <div className={styles.roomHeader}>
+                                  <div>
+                                    <p className={styles.roomName}>{loc.name}</p>
+                                    <p className={styles.roomBuilding}>{loc.building}</p>
+                                  </div>
+                                  <div className={styles.roomStatus}>
+                                    {!loc.available
+                                      ? <XCircle size={16} style={{ color: 'var(--red)' }} />
+                                      : hasConflict
+                                      ? <AlertTriangle size={16} style={{ color: 'var(--amber)' }} />
+                                      : <CheckCircle2 size={16} style={{ color: 'var(--accent)' }} />
+                                    }
+                                  </div>
+                                </div>
+                                <div className={styles.roomMeta}>
+                                  <span className={styles.roomCap}><Users size={12} />Cap. {loc.capacity}</span>
+                                  <span className={styles.roomUsage}>{usedBy.length} match{usedBy.length !== 1 ? 'es' : ''} booked</span>
+                                </div>
+                                {hasConflict && (
+                                  <div className={styles.conflictWarning}>
+                                    <AlertTriangle size={11} />
+                                    Conflict in this slot
+                                  </div>
+                                )}
+                                {!loc.available && (
+                                  <div className={styles.conflictWarning} style={{ color: 'var(--red)', background: 'var(--red-dim)' }}>
+                                    <XCircle size={11} />
+                                    Unavailable
+                                  </div>
+                                )}
+                                <div className={styles.roomStatusLabel} data-available={loc.available && !hasConflict}>
+                                  {!canAssignInSlot
+                                    ? selectableMatches.length > 0 ? 'Select a match in this slot' : 'No match to assign'
+                                    : !loc.available
+                                    ? 'Unavailable'
+                                    : hasConflict
+                                    ? 'Conflict'
+                                    : 'Assign room'}
+                                </div>
+                              </div>
+                            );
+                          })}
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                </section>
               );
             })}
           </div>
         </div>
-      </div>
+      ) : (
+        <div className={styles.viewerSection}>
+          <div className={styles.viewerBlock}>
+            <div className={`${styles.summaryHeader} ${styles.summaryHeaderAvailable}`}>
+              <h3 className={styles.summaryTitle}>Available Rooms</h3>
+              <span className={styles.summaryCount}>
+                {unassignedRooms.length} available
+              </span>
+            </div>
+            <div className={`${styles.bookingSummary} ${styles.bookingSummaryAvailable}`}>
+            {unassignedRooms.length > 0 ? (
+              <div className={styles.summaryMatchesList}>
+                {unassignedRooms.map(loc => (
+                    <div key={loc.id} className={`${styles.summaryMatchCard} ${styles.summaryMatchCardAvailable}`} data-status={loc.available ? 'scheduled' : 'completed'}>
+                      <div className={styles.summaryMatchTop}>
+                        <span className={styles.summaryRoom}><MapPin size={12} />{loc.name}</span>
+                        <span className={styles.summaryChip} data-status={loc.available ? 'scheduled' : 'completed'}>
+                        {loc.available ? 'Open' : 'Unavailable'}
+                      </span>
+                    </div>
+                    <p className={styles.summaryRoomMeta}>{loc.building} · Cap. {loc.capacity}</p>
+                    <p className={styles.summaryMatchTime}>
+                      {loc.available ? <CheckCircle2 size={11} /> : <XCircle size={11} />}
+                      {loc.available ? 'No current assignments' : 'Room currently unavailable'}
+                    </p>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className={styles.summaryEmpty}>All rooms currently have assignments.</div>
+            )}
+            </div>
+          </div>
+
+          <div className={styles.viewerBlock}>
+            <div className={`${styles.viewerHeader} ${styles.viewerHeaderBooked}`}>
+              <h2 className={styles.panelTitle}>Booked Rooms</h2>
+              <span className={styles.viewerMeta}>{assignedMatches.length} active assignments</span>
+            </div>
+            {tournament.locations.some(loc => tournament.matches.some(m => m.locationId === loc.id)) ? (
+              <div className={styles.viewerGrid}>
+                {tournament.locations.map(loc => {
+                  const booked = tournament.matches.filter(m => m.locationId === loc.id);
+                  if (booked.length === 0) return null;
+                  return (
+                    <div key={loc.id} className={`${styles.viewerCard} ${styles.viewerCardBooked}`}>
+                      <div className={styles.summaryRoomRow}>
+                        <div>
+                          <p className={styles.summaryRoom}><MapPin size={12} />{loc.name}</p>
+                          <p className={styles.summaryRoomMeta}>{loc.building} · Cap. {loc.capacity}</p>
+                        </div>
+                        <span className={styles.summaryRoomCount}>
+                          {booked.length} match{booked.length !== 1 ? 'es' : ''}
+                        </span>
+                      </div>
+                      <div className={styles.summaryMatchesList}>
+                        {booked.map(m => {
+                          const tb = tournament.timeBlocks.find(t => t.id === m.timeBlockId);
+                          return (
+                            <div key={m.id} className={styles.summaryMatchCard} data-status={m.status}>
+                              <div className={styles.summaryMatchTop}>
+                                <span className={styles.summaryMatchRef}>Match {m.matchNumber} · Round {m.round}</span>
+                                <span className={styles.summaryChip} data-status={m.status}>{m.status}</span>
+                              </div>
+                              <p className={styles.summaryMatchPlayers}>
+                                {getParticipantName(m.participant1Id)} <span>vs</span> {getParticipantName(m.participant2Id)}
+                              </p>
+                              {tb && (
+                                <p className={styles.summaryMatchTime}>
+                                  <Clock size={11} />
+                                  {tb.label} · {formatSlotTime(tb.start, tb.date)}
+                                </p>
+                              )}
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            ) : (
+              <div className={styles.summaryEmpty}>No rooms assigned yet.</div>
+            )}
+          </div>
+        </div>
+      )}
 
       {/* Confirm modal */}
       {confirmOpen && selectedMatch && selectedRoom && (
@@ -218,11 +371,11 @@ export default function RoomBooking() {
                 <>
                   <div className={styles.confirmDetails}>
                     <div className={styles.confirmRow}><span>Match</span><strong>{p1} vs {p2}</strong></div>
-                    <div className={styles.confirmRow}><span>Time</span><strong>{tb?.label ?? '—'} · {tb?.start}</strong></div>
+                    <div className={styles.confirmRow}><span>Time</span><strong>{tb ? `${tb.label} · ${formatSlotTime(tb.start, tb.date)}` : '—'}</strong></div>
                     <div className={styles.confirmRow}><span>Room</span><strong>{loc.name}, {loc.building}</strong></div>
                     <div className={styles.confirmRow}><span>Capacity</span><strong>{loc.capacity} people</strong></div>
                   </div>
-                  <p className={styles.confirmNote}>⚡ All participants will be notified within 30 seconds of this assignment.</p>
+                  <p className={styles.confirmNote}>All participants will be notified within 30 seconds of this assignment.</p>
                   <div className={styles.modalActions}>
                     <button className={styles.cancelBtn} onClick={() => setConfirmOpen(false)}>Cancel</button>
                     <button className={styles.bookBtn} onClick={handleBook}>Confirm Booking</button>

@@ -3,6 +3,7 @@ import { X, Link2, QrCode, Code2, Copy, Check, Download, Zap, Users, Calendar, T
 import QRCode from 'qrcode';
 import type { Tournament } from '../types';
 import styles from './ShareModal.module.css';
+import { formatDate } from '../utils/time';
 
 type Tab = 'qr' | 'link' | 'widget';
 
@@ -18,6 +19,7 @@ export default function ShareModal({ tournament, onClose }: Props) {
 
   const shareUrl = window.location.href;
   const confirmed = tournament.participants.filter(p => p.status === 'confirmed').length;
+  const formattedStartDate = formatDate(tournament.startDate);
 
   const widgetHtml = `<!-- ArenaOPS Tournament Widget -->
 <style>
@@ -35,7 +37,7 @@ export default function ShareModal({ tournament, onClose }: Props) {
   <p class="ao-meta">${tournament.game} · ${tournament.format.replace(/-/g, ' ')}</p>
   <div class="ao-stats">
     <div class="ao-stat"><strong>${confirmed}/${tournament.maxParticipants}</strong>Players</div>
-    <div class="ao-stat"><strong>${tournament.startDate}</strong>Start Date</div>
+    <div class="ao-stat"><strong>${formattedStartDate}</strong>Start Date</div>
   </div>
   <a class="ao-btn" href="${shareUrl}" target="_blank">View Tournament →</a>
 </div>`;
@@ -163,7 +165,7 @@ export default function ShareModal({ tournament, onClose }: Props) {
               <div className={styles.infoRow}>
                 <Calendar size={13} className={styles.infoIcon} />
                 <span className={styles.infoLabel}>Start</span>
-                <span className={styles.infoValue}>{tournament.startDate}</span>
+                <span className={styles.infoValue}>{formattedStartDate}</span>
               </div>
             </div>
 
@@ -217,7 +219,7 @@ export default function ShareModal({ tournament, onClose }: Props) {
                 </div>
                 <div className={styles.widgetStatDivider} />
                 <div className={styles.widgetStat}>
-                  <strong>{tournament.startDate}</strong>
+                  <strong>{formattedStartDate}</strong>
                   <span>Start Date</span>
                 </div>
               </div>

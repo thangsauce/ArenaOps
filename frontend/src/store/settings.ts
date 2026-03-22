@@ -27,6 +27,7 @@ export type DefaultFormat = 'single-elimination' | 'double-elimination' | 'round
 export type DefaultMaxParticipants = '4' | '8' | '16' | '32' | '64';
 export type WeekStart = 'sunday' | 'monday';
 export type DefaultScheduleView = 'grid' | 'list';
+export type DefaultBracketView = 'flow' | 'tree' | 'list';
 export type ParticipantSort = 'seed' | 'name' | 'status';
 
 export type TimePrefs = {
@@ -59,6 +60,10 @@ export interface SchedulePrefs {
   defaultView: DefaultScheduleView;
 }
 
+export interface BracketPrefs {
+  defaultView: DefaultBracketView;
+}
+
 export interface ParticipantPrefs {
   sortBy: ParticipantSort;
   hideDeclined: boolean;
@@ -76,6 +81,7 @@ export interface AppSettings {
   notifications: NotifPrefs;
   tournamentDefaults: TournamentDefaults;
   schedulePrefs: SchedulePrefs;
+  bracketPrefs: BracketPrefs;
   participantPrefs: ParticipantPrefs;
   profile: Profile;
 }
@@ -89,6 +95,7 @@ export const DEFAULT_SETTINGS: AppSettings = {
   notifications: { matchStart: true, delays: true, noShows: true, roomChanges: true, sound: false },
   tournamentDefaults: { format: 'single-elimination', maxParticipants: '8', organizerName: 'Thang Le' },
   schedulePrefs: { weekStart: 'sunday', defaultView: 'grid' },
+  bracketPrefs: { defaultView: 'flow' },
   participantPrefs: { sortBy: 'seed', hideDeclined: false },
   profile: { name: 'Thang Le', email: 'th432726@ucf.edu', university: 'University of Central Florida' },
 };
@@ -122,7 +129,7 @@ export interface AppState {
   reportNoShow: (tournamentId: string, matchId: string, participantId: string) => void;
   reportDelay: (tournamentId: string, matchId: string, minutes: number) => void;
   startMatch: (tournamentId: string, matchId: string) => void;
-  completeMatch: (tournamentId: string, matchId: string, winnerId: string, score1: number, score2: number) => void;
+  completeMatch: (tournamentId: string, matchId: string, winnerId: string | null, score1: number, score2: number) => void;
   bookRoom: (tournamentId: string, matchId: string, locationId: string) => void;
   addTournament: (tournament: Tournament) => void;
 }

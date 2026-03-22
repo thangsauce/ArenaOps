@@ -1,7 +1,7 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useApp } from '../store/store';
-import { formatTimeRange } from '../utils/time';
-import { ChevronLeft, ChevronRight, MapPin, Zap, Clock, AlertTriangle } from 'lucide-react';
+import { formatDate, formatTimeRange } from '../utils/time';
+import { ChevronLeft, ChevronRight, MapPin, Zap, Clock, AlertTriangle, LayoutGrid, List } from 'lucide-react';
 import type { Match, Tournament } from '../types';
 import styles from './Schedule.module.css';
 
@@ -13,7 +13,7 @@ const statusConfig = {
   completed: { label: 'Done', color: 'var(--text-3)', bg: 'var(--bg-3)', border: 'var(--border)' },
   live:      { label: 'Live', color: 'var(--red)',    bg: 'rgba(255,71,87,0.10)', border: 'rgba(255,71,87,0.45)' },
   scheduled: { label: 'Scheduled', color: 'var(--blue)',  bg: 'rgba(79,172,254,0.10)', border: 'rgba(79,172,254,0.35)' },
-  delayed:   { label: 'Delay', color: '#ffaa00',      bg: 'rgba(255,170,0,0.10)', border: 'rgba(255,170,0,0.4)' },
+  delayed:   { label: 'Delay', color: 'var(--amber)',  bg: 'var(--amber-dim)', border: 'rgba(var(--amber-rgb),0.4)' },
   cancelled: { label: 'Canc', color: 'var(--text-3)', bg: 'var(--bg-3)', border: 'var(--border)' },
 };
 
@@ -41,6 +41,10 @@ export default function Schedule() {
     setSelectedDate(d.toISOString().split('T')[0]);
   };
 
+  useEffect(() => {
+    setView(settings.schedulePrefs.defaultView);
+  }, [settings.schedulePrefs.defaultView]);
+
   // For grid: cell lookup by [locationId][timeBlockId]
   const cellMap: Record<string, Record<string, ScheduledMatch[]>> = {};
   allMatches.forEach(m => {
@@ -60,8 +64,14 @@ export default function Schedule() {
           <p className={styles.sub}>Match timeline and resource planning</p>
         </div>
         <div className={styles.viewToggle}>
-          <button className={`${styles.toggleBtn} ${view === 'grid' ? styles.toggleActive : ''}`} onClick={() => setView('grid')}>Grid</button>
-          <button className={`${styles.toggleBtn} ${view === 'list' ? styles.toggleActive : ''}`} onClick={() => setView('list')}>List</button>
+          <button className={`${styles.toggleBtn} ${view === 'grid' ? styles.toggleActive : ''}`} onClick={() => setView('grid')}>
+            <LayoutGrid size={13} />
+            <span>Grid</span>
+          </button>
+          <button className={`${styles.toggleBtn} ${view === 'list' ? styles.toggleActive : ''}`} onClick={() => setView('list')}>
+            <List size={13} />
+            <span>List</span>
+          </button>
         </div>
       </div>
 
@@ -91,7 +101,7 @@ export default function Schedule() {
         <button className={styles.dateBtn} onClick={() => shiftDate(-1)}><ChevronLeft size={16} /></button>
         <div className={styles.dateDisplay}>
           <span className={styles.dateFull}>
-            {new Date(selectedDate + 'T12:00:00').toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })}
+            {formatDate(selectedDate, { weekday: 'long', month: 'long', day: 'numeric' })}
           </span>
           {selectedDate === '2026-03-15' && <span className={styles.todayBadge}>Tournament Day</span>}
         </div>
@@ -144,7 +154,7 @@ export default function Schedule() {
                                   style={{ color: st.color, background: st.bg, borderColor: st.border }}
                                 >
                                   {m.status === 'live' && <span className={styles.chipPulse} />}
-                                  <span className={styles.chipRef}>R{m.round}·M{m.matchNumber}</span>
+                                  <span className={styles.chipRef}>Match {m.matchNumber} · Round {m.round}</span>
                                   <span className={styles.chipPlayers}>{p1}<span className={styles.chipVs}>vs</span>{p2}</span>
                                   <span className={styles.chipStatus}>{st.label}</span>
                                   {m.status === 'live' && (
@@ -205,7 +215,7 @@ export default function Schedule() {
                             <span>{m.score2}</span>
                           </div>
                         )}
-                        <div className={styles.matchStatusChip} style={{ color: st.color, background: st.bg }}>
+                        <div className={styles.matchStatusChip} style={{ color: st.color, background: st.bg, borderColor: st.border }}>
                           {m.status === 'live' && <span className={styles.livePulse} />}
                           {st.label}
                         </div>

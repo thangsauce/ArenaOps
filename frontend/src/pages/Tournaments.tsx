@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Plus, Trophy, Users, ChevronRight } from 'lucide-react';
+import { Plus, Trophy, Users, User, ChevronRight, LayoutGrid, Gamepad2, Dumbbell, Brain } from 'lucide-react';
 import { useApp } from '../store/store';
+import { formatDate } from '../utils/time';
 import styles from './Tournaments.module.css';
 
 const GAME_CATEGORIES: Record<string, string[]> = {
@@ -11,11 +12,26 @@ const GAME_CATEGORIES: Record<string, string[]> = {
 };
 
 const CATEGORY_TABS = [
-  { label: 'All',          icon: '🎮' },
-  { label: 'E-Sports',     icon: '⚡' },
-  { label: 'Sports',       icon: '🏆' },
-  { label: 'Board & Card', icon: '♟️' },
+  { label: 'All',          Icon: LayoutGrid },
+  { label: 'E-Sports',     Icon: Gamepad2 },
+  { label: 'Sports',       Icon: Dumbbell },
+  { label: 'Board & Card', Icon: Brain },
 ];
+
+const INDIVIDUAL_GAMES = new Set([
+  'chess',
+  'checkers',
+  'go',
+  'mahjong',
+  'poker',
+  'uno',
+  'tennis',
+  'table tennis',
+  'smash bros',
+  'street fighter 6',
+  'fortnite',
+  'tekken 8',
+]);
 
 export default function Tournaments() {
   const navigate = useNavigate();
@@ -39,14 +55,15 @@ export default function Tournaments() {
       </div>
 
       <div className={styles.filters}>
-        {CATEGORY_TABS.map(({ label, icon }) => (
+        {CATEGORY_TABS.map(({ label, Icon }) => (
           <button
             key={label}
             onClick={() => setCategoryFilter(label)}
             className={styles.filterChip}
             data-active={categoryFilter === label}
           >
-            <span>{icon}</span> {label}
+            <Icon size={13} />
+            <span>{label}</span>
           </button>
         ))}
       </div>
@@ -54,6 +71,9 @@ export default function Tournaments() {
       <div className={styles.list}>
         {filtered.map(t => {
           const confirmed = t.participants.filter(p => p.status === 'confirmed').length;
+          const isIndividualGame = INDIVIDUAL_GAMES.has(t.game.toLowerCase());
+          const StatIcon = isIndividualGame ? User : Users;
+          const participantLabel = isIndividualGame ? 'players' : 'teams';
           return (
             <div key={t.id} className={styles.row} onClick={() => navigate(`/tournaments/${t.id}`)}>
               <div className={styles.rowIcon}>
@@ -61,10 +81,13 @@ export default function Tournaments() {
               </div>
               <div className={styles.rowInfo}>
                 <p className={styles.rowName}>{t.name}</p>
-                <p className={styles.rowMeta}>{t.game} · {t.format.replace(/-/g, ' ')} · {t.startDate}</p>
+                <p className={styles.rowMeta}>{t.game} · {t.format.replace(/-/g, ' ')} · {formatDate(t.startDate)}</p>
               </div>
               <div className={styles.rowStats}>
-                <div className={styles.stat}><Users size={13} />{confirmed}/{t.maxParticipants}</div>
+                <div className={styles.stat}>
+                  <StatIcon size={13} />
+                  <span>{confirmed}/{t.maxParticipants} {participantLabel}</span>
+                </div>
                 <span className={styles.statusChip} data-status={t.status}>{t.status}</span>
               </div>
               <ChevronRight size={14} className={styles.arrow} />

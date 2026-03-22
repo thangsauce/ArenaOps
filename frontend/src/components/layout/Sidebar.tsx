@@ -16,6 +16,7 @@ import {
 } from "lucide-react";
 import { useApp } from "../../store/useApp";
 import { useState, useRef, useEffect } from "react";
+import { formatTimeRange } from "../../utils/time";
 
 const navItems = [
   { to: "/dashboard", icon: LayoutGrid, label: "Dashboard" },
@@ -40,12 +41,16 @@ export default function Sidebar({ open, onClose }: SidebarProps) {
     settings = {
       profile: {
         name: "Admin User",
-        email: "demo@university.edu",
-        university: "Demo University",
+        email: "demo@arenaops.gg",
+        university: "ArenaOPS",
       },
     } as any;
   }
   const { name } = settings.profile;
+  const timePrefs = settings.timePrefs ?? {
+    format: "12h",
+    timezone: "America/New_York",
+  };
   const initials = name
     .split(" ")
     .map((n: string) => n[0])
@@ -241,7 +246,7 @@ export default function Sidebar({ open, onClose }: SidebarProps) {
               .filter((tb) => tb.label.toLowerCase().includes(q))
               .map((tb) => ({
                 label: tb.label,
-                sub: `Schedule · ${tb.start}–${tb.end}`,
+                sub: `Schedule · ${formatTimeRange(tb.start, tb.end, tb.date, timePrefs.format, timePrefs.timezone)}`,
                 icon: Clock,
                 path: "/schedule",
               })),
@@ -265,7 +270,7 @@ export default function Sidebar({ open, onClose }: SidebarProps) {
             <Zap size={20} className="fill-current" />
           </div>
           <span className="font-display font-bold text-xl tracking-wider text-arena-text">
-            ArenaOPS
+            Arena<span className="text-arena-accent">OPS</span>
           </span>
         </div>
         <button
@@ -279,7 +284,7 @@ export default function Sidebar({ open, onClose }: SidebarProps) {
 
       <div className="p-4">
         <button
-          className="w-full flex items-center justify-center gap-2 py-3 px-4 bg-arena-accent hover:bg-[#dfff00] text-arena-bg font-bold rounded-xl text-sm shadow-[0_0_15px_rgba(232,255,71,0.15)] hover:shadow-[0_0_25px_rgba(232,255,71,0.3)] transition-all active:scale-95"
+          className="w-full flex items-center justify-center gap-2 py-3 px-4 bg-arena-accent hover:bg-arena-accent-hover text-arena-bg font-bold rounded-xl text-sm shadow-[0_0_15px_rgba(232,255,71,0.15)] hover:shadow-[0_0_25px_rgba(232,255,71,0.3)] transition-all active:scale-95"
           onClick={() => {
             navigate("/create");
             handleNav();
@@ -291,7 +296,7 @@ export default function Sidebar({ open, onClose }: SidebarProps) {
       </div>
 
       <nav className="flex-1 overflow-y-auto py-4 px-3 flex flex-col gap-1 custom-scrollbar">
-        <p className="px-3 text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">
+        <p className="px-3 text-xs font-semibold text-arena-text-muted uppercase tracking-wider mb-2">
           Menu
         </p>
 

@@ -53,7 +53,7 @@ export default function AppLayout() {
         <div className="flex items-center justify-between lg:hidden mb-6">
           <span className="font-display font-bold text-2xl tracking-wide text-arena-accent">ArenaOPS</span>
           <button
-            className="p-2 -mr-2 text-gray-300 hover:text-white transition-colors"
+            className="p-2 -mr-2 text-arena-text-muted hover:text-arena-text transition-colors"
             onClick={() => setSidebarOpen(true)}
             aria-label="Open menu"
           >

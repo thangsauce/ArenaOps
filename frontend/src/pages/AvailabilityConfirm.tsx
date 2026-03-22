@@ -1,16 +1,18 @@
 import { useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { CheckCircle2, Clock, MapPin, Zap } from 'lucide-react';
+import { CheckCircle2, ChevronDown, Clock, MapPin, Zap } from 'lucide-react';
 import { useApp } from '../store/store';
+import { formatDate, formatTimeRange } from '../utils/time';
 import styles from './AvailabilityConfirm.module.css';
 
 type Step = 'intro' | 'availability' | 'confirm' | 'done';
 
 export default function AvailabilityConfirm() {
   const { token } = useParams<{ token: string }>();
-  const { tournaments } = useApp();
+  const { tournaments, timePrefs } = useApp();
   const [step, setStep] = useState<Step>('intro');
   const [selected, setSelected] = useState<string[]>([]);
+  const [expandedSlots, setExpandedSlots] = useState<string[]>([]);
 
   const tournament = tournaments[0];
   // Find participant by token (participant id) or fall back to first pending
@@ -20,6 +22,13 @@ export default function AvailabilityConfirm() {
   const toggleSlot = (id: string) => {
     setSelected(prev => prev.includes(id) ? prev.filter(x => x !== id) : [...prev, id]);
   };
+
+  const toggleExpandedSlot = (id: string) => {
+    setExpandedSlots(prev => prev.includes(id) ? prev.filter(x => x !== id) : [...prev, id]);
+  };
+
+  const formatSlotRange = (start: string, end: string, date: string) =>
+    formatTimeRange(start, end, date, timePrefs.format, timePrefs.timezone);
 
   if (!tournament || !participant) {
     return (
@@ -57,7 +66,7 @@ export default function AvailabilityConfirm() {
             </p>
 
             <div className={styles.infoRow}>
-              <div className={styles.infoItem}><Clock size={13} />{tournament.startDate}</div>
+              <div className={styles.infoItem}><Clock size={13} />{formatDate(tournament.startDate)}</div>
               <div className={styles.infoItem}><MapPin size={13} />{tournament.locations[0]?.building}</div>
             </div>
 
@@ -80,21 +89,43 @@ export default function AvailabilityConfirm() {
             <div className={styles.slotGrid}>
               {tournament.timeBlocks.map(tb => {
                 const isSelected = selected.includes(tb.id);
+                const isExpanded = expandedSlots.includes(tb.id);
                 return (
-                  <button
+                  <div
                     key={tb.id}
-                    className={`${styles.slotCard} ${isSelected ? styles.slotSelected : ''}`}
-                    onClick={() => toggleSlot(tb.id)}
+                    className={`${styles.slotCard} ${isSelected ? styles.slotSelected : ''} ${isExpanded ? styles.slotExpanded : ''}`}
                   >
-                    <div className={styles.slotCheck}>
-                      {isSelected ? <CheckCircle2 size={16} /> : <div className={styles.slotCircle} />}
-                    </div>
-                    <div className={styles.slotInfo}>
-                      <span className={styles.slotLabel}>{tb.label}</span>
-                      <span className={styles.slotTime}>{tb.start} – {tb.end}</span>
-                      <span className={styles.slotDate}>{tb.date}</span>
-                    </div>
-                  </button>
+                    <button
+                      type="button"
+                      className={styles.slotToggle}
+                      onClick={() => toggleExpandedSlot(tb.id)}
+                    >
+                      <div className={styles.slotToggleMain}>
+                        <div className={styles.slotCheck}>
+                          {isSelected ? <CheckCircle2 size={16} /> : <div className={styles.slotCircle} />}
+                        </div>
+                        <div className={styles.slotInfo}>
+                          <span className={styles.slotLabel}>{tb.label}</span>
+                          <span className={styles.slotSummary}>{isSelected ? 'Selected' : 'Tap to view details'}</span>
+                        </div>
+                      </div>
+                      <ChevronDown size={16} className={`${styles.slotChevron} ${isExpanded ? styles.slotChevronOpen : ''}`} />
+                    </button>
+
+                    {isExpanded && (
+                      <div className={styles.slotDetails}>
+                        <span className={styles.slotTime}>{formatSlotRange(tb.start, tb.end, tb.date)}</span>
+                        <span className={styles.slotDate}>{formatDate(tb.date, { weekday: 'short', month: 'short', day: 'numeric' })}</span>
+                        <button
+                          type="button"
+                          className={`${styles.slotSelectBtn} ${isSelected ? styles.slotSelectBtnActive : ''}`}
+                          onClick={() => toggleSlot(tb.id)}
+                        >
+                          {isSelected ? 'Selected' : 'Select this slot'}
+                        </button>
+                      </div>
+                    )}
+                  </div>
                 );
               })}
             </div>
@@ -133,7 +164,7 @@ export default function AvailabilityConfirm() {
                     const tb = tournament.timeBlocks.find(t => t.id === id);
                     return tb ? (
                       <span key={id} className={styles.confirmSlotBadge}>
-                        {tb.label} · {tb.start}–{tb.end}
+                        {tb.label} · {formatSlotRange(tb.start, tb.end, tb.date)}
                       </span>
                     ) : null;
                   })}

@@ -187,9 +187,9 @@
   height: 40px;
   border-radius: 50%;
   background: var(--accent-dim);
-  animation: pulse 1.4s infinite;
+  animation: qrPulse 1.4s infinite;
 }
-@keyframes pulse {
+@keyframes qrPulse {
   0%, 100% { opacity: 0.3; transform: scale(0.9); }
   50%       { opacity: 0.8; transform: scale(1.1); }
 }

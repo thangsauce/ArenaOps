@@ -1,10 +1,27 @@
 import { useState } from 'react';
-import { CheckCircle2, Circle, XCircle, Search, Plus, Mail, Trash2, ChevronDown } from 'lucide-react';
+import { CheckCircle2, ChevronDown, ChevronUp, Circle, Mail, Plus, Search, Trash2, User, Users, XCircle } from 'lucide-react';
 import { useApp } from '../store/store';
 import type { Participant, ParticipantStatus } from '../types';
 import styles from './Participants.module.css';
 
 type FilterStatus = 'all' | ParticipantStatus;
+type RosterView = 'team' | 'player';
+type InviteMode = 'player' | 'team';
+
+const INDIVIDUAL_GAMES = new Set([
+  'chess',
+  'checkers',
+  'go',
+  'mahjong',
+  'poker',
+  'uno',
+  'tennis',
+  'table tennis',
+  'smash bros',
+  'street fighter 6',
+  'fortnite',
+  'tekken 8',
+]);
 
 const statusIcon = (s: ParticipantStatus) => {
   if (s === 'confirmed') return <CheckCircle2 size={14} className={styles.iconConfirmed} />;
@@ -21,6 +38,19 @@ const statusLabel: Record<ParticipantStatus, string> = {
 interface ParticipantWithTournament extends Participant {
   tournamentName: string;
   tournamentId: string;
+  game: string;
+  isIndividualGame: boolean;
+}
+
+interface TeamWithTournament {
+  key: string;
+  teamName: string;
+  tournamentName: string;
+  tournamentId: string;
+  game: string;
+  members: ParticipantWithTournament[];
+  status: ParticipantStatus;
+  availabilityCount: number;
 }
 
 export default function Participants() {
@@ -29,18 +59,79 @@ export default function Participants() {
   const [search, setSearch] = useState('');
   const [filter, setFilter] = useState<FilterStatus>('all');
   const [showInviteModal, setShowInviteModal] = useState(false);
+  const [inviteMode, setInviteMode] = useState<InviteMode>('player');
   const [inviteEmail, setInviteEmail] = useState('');
   const [inviteName, setInviteName] = useState('');
+  const [inviteTeamName, setInviteTeamName] = useState('');
+  const [inviteMemberCount, setInviteMemberCount] = useState('');
   const [selectedTournament, setSelectedTournament] = useState(tournaments[0]?.id ?? '');
   const [expandedRow, setExpandedRow] = useState<string | null>(null);
   const [rowStatuses, setRowStatuses] = useState<Record<string, ParticipantStatus>>({});
+  const [viewMode, setViewMode] = useState<RosterView>('team');
+
+  const parsedInviteMemberCount = inviteMemberCount.trim() === '' ? 0 : Number(inviteMemberCount);
+
+  const updateInviteMemberCount = (next: number) => {
+    if (!Number.isFinite(next)) return;
+    setInviteMemberCount(next <= 0 ? '' : String(Math.floor(next)));
+  };
+
+  const handleInviteMemberCountChange = (value: string) => {
+    if (/^\d*$/.test(value)) {
+      setInviteMemberCount(value);
+    }
+  };
 
   // Flatten all participants across tournaments
   const allParticipants: ParticipantWithTournament[] = tournaments.flatMap(t =>
-    t.participants.map(p => ({ ...p, tournamentName: t.name, tournamentId: t.id }))
+    t.participants.map(p => ({
+      ...p,
+      tournamentName: t.name,
+      tournamentId: t.id,
+      game: t.game,
+      isIndividualGame: INDIVIDUAL_GAMES.has(t.game.toLowerCase()),
+    }))
   );
 
-  const filtered = allParticipants.filter(p => {
+  const allTeams: TeamWithTournament[] = tournaments
+    .filter(t => !INDIVIDUAL_GAMES.has(t.game.toLowerCase()))
+    .flatMap(tournament => {
+      const groupedTeams = tournament.participants.reduce<Record<string, ParticipantWithTournament[]>>((acc, participant) => {
+        const teamName = participant.team?.trim() || participant.name;
+        if (!acc[teamName]) acc[teamName] = [];
+        acc[teamName].push({
+          ...participant,
+          tournamentName: tournament.name,
+          tournamentId: tournament.id,
+          game: tournament.game,
+          isIndividualGame: false,
+        });
+        return acc;
+      }, {});
+
+      return Object.entries(groupedTeams).map(([teamName, members]) => {
+        const memberStatuses = members.map(member => member.status);
+        const status: ParticipantStatus =
+          memberStatuses.some(memberStatus => memberStatus === 'confirmed')
+            ? 'confirmed'
+            : memberStatuses.some(memberStatus => memberStatus === 'pending')
+            ? 'pending'
+            : 'declined';
+
+        return {
+          key: `${tournament.id}-${teamName}`,
+          teamName,
+          tournamentName: tournament.name,
+          tournamentId: tournament.id,
+          game: tournament.game,
+          members,
+          status,
+          availabilityCount: members.reduce((sum, member) => sum + member.availability.length, 0),
+        };
+      });
+    });
+
+  const filteredParticipants = allParticipants.filter(p => {
     if (hideDeclined && p.status === 'declined') return false;
     const matchesSearch =
       p.name.toLowerCase().includes(search.toLowerCase()) ||
@@ -49,11 +140,29 @@ export default function Participants() {
     return matchesSearch && matchesFilter;
   });
 
+  const filteredTeams = allTeams.filter(team => {
+    if (hideDeclined && team.status === 'declined') return false;
+    const needle = search.toLowerCase();
+    const matchesSearch =
+      team.teamName.toLowerCase().includes(needle) ||
+      team.tournamentName.toLowerCase().includes(needle) ||
+      team.members.some(member =>
+        member.name.toLowerCase().includes(needle) ||
+        member.email.toLowerCase().includes(needle),
+      );
+    const matchesFilter = filter === 'all' || team.status === filter;
+    return matchesSearch && matchesFilter;
+  });
+
+  const activeRows = viewMode === 'team' ? filteredTeams : filteredParticipants;
+
+  const countSource = viewMode === 'team' ? allTeams : allParticipants;
+
   const counts = {
-    all: allParticipants.length,
-    confirmed: allParticipants.filter(p => p.status === 'confirmed').length,
-    pending: allParticipants.filter(p => p.status === 'pending').length,
-    declined: allParticipants.filter(p => p.status === 'declined').length,
+    all: countSource.length,
+    confirmed: countSource.filter(entry => entry.status === 'confirmed').length,
+    pending: countSource.filter(entry => entry.status === 'pending').length,
+    declined: countSource.filter(entry => entry.status === 'declined').length,
   };
 
   const participantStats = (() => {
@@ -95,10 +204,16 @@ export default function Participants() {
   })();
 
   const handleSendInvite = () => {
-    if (!inviteName.trim() || !inviteEmail.trim()) return;
+    const isValid = inviteMode === 'player'
+      ? inviteName.trim() && inviteEmail.trim()
+      : inviteTeamName.trim() && inviteName.trim() && inviteEmail.trim();
+    if (!isValid) return;
     setShowInviteModal(false);
+    setInviteMode('player');
     setInviteName('');
     setInviteEmail('');
+    setInviteTeamName('');
+    setInviteMemberCount('');
   };
 
   return (
@@ -109,7 +224,24 @@ export default function Participants() {
           <p className={styles.sub}>{counts.all} total across {tournaments.length} tournaments</p>
         </div>
         <button className={styles.inviteBtn} onClick={() => setShowInviteModal(true)}>
-          <Plus size={15} /> Invite Player
+          <Plus size={15} /> Invite
+        </button>
+      </div>
+
+      <div className={styles.viewToggle}>
+        <button
+          className={`${styles.viewToggleBtn} ${viewMode === 'team' ? styles.viewToggleBtnActive : ''}`}
+          onClick={() => setViewMode('team')}
+        >
+          <Users size={13} />
+          <span>By Team</span>
+        </button>
+        <button
+          className={`${styles.viewToggleBtn} ${viewMode === 'player' ? styles.viewToggleBtnActive : ''}`}
+          onClick={() => setViewMode('player')}
+        >
+          <User size={13} />
+          <span>By Player</span>
         </button>
       </div>
 
@@ -155,7 +287,7 @@ export default function Participants() {
         <Search size={15} className={styles.searchIcon} />
         <input
           className={styles.searchInput}
-          placeholder="Search by name or email..."
+          placeholder={viewMode === 'team' ? 'Search by team, player, or email...' : 'Search by name or email...'}
           value={search}
           onChange={e => setSearch(e.target.value)}
         />
@@ -163,19 +295,31 @@ export default function Participants() {
 
       {/* Table */}
       <div className={styles.table}>
-        <div className={styles.tableHead}>
-          <span>Player</span>
-          <span>Tournament</span>
-          <span>Status</span>
-          <span>Availability</span>
-          <span></span>
+        <div className={`${styles.tableHead} ${viewMode === 'team' ? styles.tableHeadTeam : ''}`}>
+          {viewMode === 'team' ? (
+            <>
+              <span>Team</span>
+              <span>Tournament</span>
+              <span>Status</span>
+              <span>Members</span>
+              <span></span>
+            </>
+          ) : (
+            <>
+              <span>Player</span>
+              <span>Tournament</span>
+              <span>Status</span>
+              <span>Availability</span>
+              <span></span>
+            </>
+          )}
         </div>
 
-        {filtered.length === 0 && (
+        {activeRows.length === 0 && (
           <div className={styles.empty}>No participants match your search.</div>
         )}
 
-        {filtered.map(p => {
+        {viewMode === 'player' && filteredParticipants.map(p => {
           const rowKey = `${p.id}-${p.tournamentId}`;
           const currentStatus = rowStatuses[rowKey] ?? p.status;
           return (
@@ -242,28 +386,190 @@ export default function Participants() {
             </div>
           );
         })}
+
+        {viewMode === 'team' && filteredTeams.map(team => {
+          const rowKey = team.key;
+          return (
+            <div key={rowKey} className={styles.tableGroup}>
+              <div
+                className={`${styles.tableRow} ${styles.tableRowTeam}`}
+                onClick={() => setExpandedRow(expandedRow === rowKey ? null : rowKey)}
+              >
+                <div className={styles.playerCell}>
+                  <div className={styles.avatar}>
+                    {team.teamName.split(' ').map(word => word[0]).join('').slice(0, 2)}
+                  </div>
+                  <div>
+                    <p className={styles.playerName}>{team.teamName}</p>
+                    <p className={styles.playerEmail}>{team.game}</p>
+                  </div>
+                </div>
+                <span className={styles.tournamentName}>{team.tournamentName}</span>
+                <div className={styles.statusCell}>
+                  {statusIcon(team.status)}
+                  <span data-status={team.status}>{statusLabel[team.status]}</span>
+                </div>
+                <div className={styles.availCell}>
+                  <span className={styles.availBadge}>{team.members.length} member{team.members.length !== 1 ? 's' : ''}</span>
+                </div>
+                <div className={styles.rowActions}>
+                  <ChevronDown
+                    size={14}
+                    className={`${styles.chevron} ${expandedRow === rowKey ? styles.chevronOpen : ''}`}
+                  />
+                </div>
+              </div>
+
+              {expandedRow === rowKey && (
+                <div className={`${styles.expandedRow} ${styles.teamExpandedRow}`}>
+                  {team.members.map((member, index) => {
+                    const memberKey = `${member.id}-${member.tournamentId}`;
+                    const currentStatus = rowStatuses[memberKey] ?? member.status;
+                    return (
+                      <div key={memberKey} className={styles.teamMemberCard}>
+                        <div className={styles.teamMemberTop}>
+                          <div className={styles.playerCell}>
+                            <div className={styles.avatar}>{index + 1}</div>
+                            <div>
+                              <p className={styles.playerName}>{member.name}</p>
+                              <p className={styles.playerEmail}>{member.email}</p>
+                            </div>
+                          </div>
+                          <div className={styles.teamMemberStatus}>
+                            <div className={styles.statusCell}>
+                              {statusIcon(currentStatus)}
+                              <span data-status={currentStatus}>{statusLabel[currentStatus]}</span>
+                            </div>
+                            <select
+                              className={styles.statusSelect}
+                              value={currentStatus}
+                              onChange={e => setRowStatuses(prev => ({ ...prev, [memberKey]: e.target.value as ParticipantStatus }))}
+                            >
+                              <option value="confirmed">Confirmed</option>
+                              <option value="pending">Pending</option>
+                              <option value="declined">Declined</option>
+                            </select>
+                          </div>
+                        </div>
+                        <div className={styles.teamMemberMeta}>
+                          <span className={styles.expandedValue}>
+                            {member.seed != null ? `Seed #${member.seed}` : 'No seed'}
+                          </span>
+                          <span className={styles.availBadge}>
+                            {member.availability.length} time block{member.availability.length > 1 ? 's' : ''}
+                          </span>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
+            </div>
+          );
+        })}
       </div>
 
       {/* Invite Modal */}
       {showInviteModal && (
         <div className={styles.modalOverlay} onClick={() => setShowInviteModal(false)}>
           <div className={styles.modal} onClick={e => e.stopPropagation()}>
-            <h2 className={styles.modalTitle}>Invite Player</h2>
-            <p className={styles.modalSub}>Send an availability confirmation request.</p>
+            <h2 className={styles.modalTitle}>Invite</h2>
+            <p className={styles.modalSub}>
+              {inviteMode === 'player'
+                ? 'Send an availability confirmation request to a player.'
+                : 'Send an invite to a team contact and track the team under one entry.'}
+            </p>
+
+            <div className={styles.modalToggle}>
+              <button
+                className={`${styles.modalToggleBtn} ${inviteMode === 'player' ? styles.modalToggleBtnActive : ''}`}
+                onClick={() => setInviteMode('player')}
+                type="button"
+              >
+                <User size={13} />
+                <span>Player</span>
+              </button>
+              <button
+                className={`${styles.modalToggleBtn} ${inviteMode === 'team' ? styles.modalToggleBtnActive : ''}`}
+                onClick={() => setInviteMode('team')}
+                type="button"
+              >
+                <Users size={13} />
+                <span>Team</span>
+              </button>
+            </div>
 
             <div className={styles.modalField}>
-              <label>Player Name</label>
-              <input className={styles.modalInput} placeholder="Full name" value={inviteName} onChange={e => setInviteName(e.target.value)} />
+              <label>{inviteMode === 'player' ? 'Player Name' : 'Captain / Contact Name'}</label>
+              <input
+                className={styles.modalInput}
+                placeholder={inviteMode === 'player' ? 'Full name' : 'Team captain or organizer'}
+                value={inviteName}
+                onChange={e => setInviteName(e.target.value)}
+              />
             </div>
             <div className={styles.modalField}>
-              <label>Email Address</label>
-              <input className={styles.modalInput} placeholder="student@ucf.edu" value={inviteEmail} onChange={e => setInviteEmail(e.target.value)} />
+              <label>{inviteMode === 'player' ? 'Email Address' : 'Captain / Contact Email'}</label>
+              <input
+                className={styles.modalInput}
+                placeholder="student@ucf.edu"
+                value={inviteEmail}
+                onChange={e => setInviteEmail(e.target.value)}
+              />
             </div>
+            {inviteMode === 'team' && (
+              <>
+                <div className={styles.modalField}>
+                  <label>Team Name</label>
+                  <input
+                    className={styles.modalInput}
+                    placeholder="e.g. Neon Mirage"
+                    value={inviteTeamName}
+                    onChange={e => setInviteTeamName(e.target.value)}
+                  />
+                </div>
+                <div className={styles.modalField}>
+                  <label>Member Count</label>
+                  <div className={styles.numberControl}>
+                    <input
+                      className={styles.numberInput}
+                      type="text"
+                      inputMode="numeric"
+                      pattern="[0-9]*"
+                      placeholder="Optional"
+                      value={inviteMemberCount}
+                      onChange={e => handleInviteMemberCountChange(e.target.value)}
+                    />
+                    <div className={styles.numberButtons}>
+                      <button
+                        className={styles.numberButton}
+                        type="button"
+                        aria-label="Increase member count"
+                        onClick={() => updateInviteMemberCount(parsedInviteMemberCount + 1)}
+                      >
+                        <ChevronUp size={14} />
+                      </button>
+                      <button
+                        className={styles.numberButton}
+                        type="button"
+                        aria-label="Decrease member count"
+                        onClick={() => updateInviteMemberCount(Math.max(0, parsedInviteMemberCount - 1))}
+                      >
+                        <ChevronDown size={14} />
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </>
+            )}
             <div className={styles.modalField}>
               <label>Tournament</label>
-              <select className={styles.modalInput} value={selectedTournament} onChange={e => setSelectedTournament(e.target.value)}>
-                {tournaments.map(t => <option key={t.id} value={t.id}>{t.name}</option>)}
-              </select>
+              <div className={styles.selectWrap}>
+                <select className={`${styles.modalInput} ${styles.selectInput}`} value={selectedTournament} onChange={e => setSelectedTournament(e.target.value)}>
+                  {tournaments.map(t => <option key={t.id} value={t.id}>{t.name}</option>)}
+                </select>
+                <ChevronDown size={16} className={styles.selectChevron} aria-hidden="true" />
+              </div>
             </div>
 
             <div className={styles.modalActions}>
@@ -271,7 +577,9 @@ export default function Participants() {
               <button
                 className={styles.sendBtn}
                 onClick={handleSendInvite}
-                disabled={!inviteName.trim() || !inviteEmail.trim()}
+                disabled={inviteMode === 'player'
+                  ? !inviteName.trim() || !inviteEmail.trim()
+                  : !inviteTeamName.trim() || !inviteName.trim() || !inviteEmail.trim()}
               >
                 <Mail size={14} /> Send Invite
               </button>

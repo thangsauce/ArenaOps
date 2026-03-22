@@ -11,6 +11,7 @@ export {
   type DefaultMaxParticipants,
   type WeekStart,
   type DefaultScheduleView,
+  type DefaultBracketView,
   type ParticipantSort,
   type TimePrefs,
   type AppSettings,

@@ -7,7 +7,7 @@ import {
   useApp, TIMEZONES,
   type TimeFormat, type Timezone, type Theme, type Density,
   type DefaultFormat, type DefaultMaxParticipants, type WeekStart,
-  type DefaultScheduleView, type ParticipantSort,
+  type DefaultScheduleView, type DefaultBracketView, type ParticipantSort,
 } from '../store/store';
 import { formatTime } from '../utils/time';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -40,7 +40,7 @@ function Dropdown<T extends string>({
   return (
     <div className={`relative w-full max-w-sm ${open ? 'z-50' : 'z-10'}`} ref={ref}>
       <button
-        className={`w-full flex items-center justify-between px-3 py-2 bg-arena-surface-hover border ${open ? 'border-arena-accent/50 ring-1 ring-arena-accent/50' : 'border-arena-border'} hover:bg-arena-border rounded-lg transition-all text-left`}
+        className={`w-full flex items-center justify-between px-3 py-2 bg-arena-surface-hover border ${open ? 'border-arena-accent/50 bg-arena-accent/[0.04] shadow-[0_0_18px_rgba(var(--accent-rgb),0.14)]' : 'border-arena-border'} hover:bg-arena-border rounded-xl transition-all text-left`}
         onClick={() => setOpen(o => !o)}
       >
         <div className="flex flex-col">
@@ -107,21 +107,45 @@ function Section({
 }) {
   const [open, setOpen] = useState(defaultOpen);
   return (
-    <div className="mb-3 data-[density=compact]:mb-2 glass-card overflow-visible relative" style={{ zIndex }}>
+    <div
+      className="mb-3 data-[density=compact]:mb-2 glass-card overflow-visible relative"
+      style={{ zIndex }}
+    >
       <button
-        className="w-full flex items-center justify-between p-4 data-[density=compact]:p-3 tracking-wide text-left"
+        className={`w-full flex items-center justify-between p-4 data-[density=compact]:p-3 tracking-wide text-left transition-all duration-200 ${
+          open
+            ? 'bg-arena-accent/[0.08] border-b border-arena-accent/15 rounded-t-2xl'
+            : 'rounded-2xl'
+        }`}
         onClick={() => setOpen(o => !o)}
       >
         <div className="flex items-center gap-3 data-[density=compact]:gap-2">
-          <div className="p-2 bg-arena-surface-hover text-arena-text-muted rounded-lg transition-colors">
+          <div
+            className={`p-2 rounded-lg transition-colors ${
+              open
+                ? 'bg-arena-accent/15 text-arena-accent shadow-[0_0_18px_rgba(var(--accent-rgb),0.12)]'
+                : 'bg-arena-surface-hover text-arena-text-muted'
+            }`}
+          >
             <Icon size={16} />
           </div>
           <div>
-            <h3 className="text-sm font-bold text-arena-text tracking-tight">{title}</h3>
+            <h3
+              className={`text-sm font-bold tracking-tight transition-colors ${
+                open ? 'text-arena-accent' : 'text-arena-text'
+              }`}
+            >
+              {title}
+            </h3>
             <p className="text-xs text-arena-text-muted mt-0.5">{desc}</p>
           </div>
         </div>
-        <ChevronRight size={16} className={`text-arena-text-muted transition-transform duration-200 ${open ? 'rotate-90' : ''}`} />
+        <ChevronRight
+          size={16}
+          className={`transition-transform duration-200 ${
+            open ? 'rotate-90 text-arena-accent' : 'text-arena-text-muted'
+          }`}
+        />
       </button>
 
       <AnimatePresence>
@@ -132,7 +156,7 @@ function Section({
             exit={{ height: 0, opacity: 0 }}
             className="overflow-visible"
           >
-            <div className="px-4 data-[density=compact]:px-3 pb-2 divide-y divide-arena-border border-t border-arena-border mt-2">
+            <div className="px-4 data-[density=compact]:px-3 pb-3 divide-y divide-arena-border/70">
               {children}
             </div>
           </motion.div>
@@ -186,12 +210,13 @@ export default function Settings() {
     notifications: { matchStart: true, delays: true, noShows: true, roomChanges: true, sound: false },
     tournamentDefaults: { format: 'single-elimination' as DefaultFormat, maxParticipants: '16' as DefaultMaxParticipants, organizerName: 'Admin' },
     schedulePrefs: { defaultView: 'grid' as DefaultScheduleView, weekStart: 'monday' as WeekStart },
+    bracketPrefs: { defaultView: 'flow' as DefaultBracketView },
     participantPrefs: { sortBy: 'seed' as ParticipantSort, hideDeclined: false },
     profile: { name: 'Admin User', email: '', university: '' }
   };
   const updateSettings = state?.updateSettings || (() => { });
 
-  const { timePrefs, appearance, notifications, tournamentDefaults, schedulePrefs, participantPrefs, profile } = settings;
+  const { timePrefs, appearance, notifications, tournamentDefaults, schedulePrefs, bracketPrefs, participantPrefs, profile } = settings;
 
   const [profileForm, setProfileForm] = useState(profile);
   const [saved, setSaved] = useState(false);
@@ -215,7 +240,7 @@ export default function Settings() {
       </div>
 
       {/* ── Profile ── */}
-      <Section icon={User} title="Profile" desc="Your organizer identity across all tournaments" zIndex={70}>
+      <Section icon={User} title="Profile" desc="Your organizer identity across all tournaments" defaultOpen={false} zIndex={70}>
         <Row label="Display name" sub="Shown on tournaments you create">
           <input
             className="w-full sm:w-80 bg-arena-surface-hover border border-arena-border rounded-xl px-4 py-2.5 text-sm text-arena-text focus:outline-none focus:border-arena-accent/50 focus:ring-1 focus:ring-arena-accent/50 transition-all font-medium"
@@ -238,13 +263,16 @@ export default function Settings() {
             onChange={e => setProfileForm(p => ({ ...p, university: e.target.value }))}
           />
         </Row>
-        <div className="flex justify-end pt-4 mt-2 border-t border-arena-border">
-          <button
-            className="flex items-center gap-2 px-4 py-2 text-sm bg-arena-accent text-[rgba(255,255,255,0.9)] dark:text-arena-bg font-bold rounded-lg shadow-[0_0_10px_rgba(var(--accent-rgb),0.15)] hover:shadow-[0_0_20px_rgba(var(--accent-rgb),0.3)] transition-all active:scale-95"
-            onClick={saveProfile}
-          >
-            {saved ? <><Check size={16} /> Saved!</> : 'Save Profile'}
-          </button>
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-4">
+          <div className="hidden sm:block max-w-md flex-1" aria-hidden="true" />
+          <div className="flex-shrink-0 w-full sm:w-80 flex justify-end">
+            <button
+              className="inline-flex items-center gap-2 px-4 py-2 text-sm bg-arena-accent text-[rgba(255,255,255,0.9)] dark:text-arena-bg font-bold rounded-lg shadow-[0_0_10px_rgba(var(--accent-rgb),0.15)] hover:shadow-[0_0_20px_rgba(var(--accent-rgb),0.3)] transition-all active:scale-95"
+              onClick={saveProfile}
+            >
+              {saved ? <><Check size={16} /> Saved!</> : 'Save Profile'}
+            </button>
+          </div>
         </div>
       </Section>
 
@@ -342,6 +370,20 @@ export default function Settings() {
             options={[
               { value: 'monday', label: 'Monday' },
               { value: 'sunday', label: 'Sunday' },
+            ]}
+          />
+        </Row>
+      </Section>
+
+      <Section icon={Trophy} title="Bracket Preferences" desc="Choose how tournament brackets open by default" defaultOpen={false} zIndex={37}>
+        <Row label="Default bracket view" sub="How brackets are shown when you open a tournament">
+          <ChipGroup<DefaultBracketView>
+            value={bracketPrefs.defaultView}
+            onChange={defaultView => updateSettings({ bracketPrefs: { defaultView } })}
+            options={[
+              { value: 'flow', label: 'Flow' },
+              { value: 'tree', label: 'Tree' },
+              { value: 'list', label: 'List' },
             ]}
           />
         </Row>

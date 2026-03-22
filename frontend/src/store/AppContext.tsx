@@ -41,7 +41,25 @@ export function AppProvider({ children }: { children: ReactNode }) {
 
   const addNotification = useCallback((n: Omit<Notification, 'id' | 'timestamp' | 'read'>) => {
     setNotifications(prev => [{ ...n, id: `n${Date.now()}`, timestamp: new Date(), read: false }, ...prev]);
-  }, []);
+    if (settings.notifications.sound) {
+      try {
+        const ctx = new (window.AudioContext || (window as any).webkitAudioContext)();
+        const now = ctx.currentTime;
+        const gain = ctx.createGain();
+        gain.connect(ctx.destination);
+        gain.gain.setValueAtTime(0.22, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.35);
+        [880, 1100].forEach((freq, i) => {
+          const osc = ctx.createOscillator();
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(freq, now + i * 0.11);
+          osc.connect(gain);
+          osc.start(now + i * 0.11);
+          osc.stop(now + i * 0.11 + 0.18);
+        });
+      } catch (_) {}
+    }
+  }, [settings.notifications.sound]);
 
   const markAllRead = useCallback(() => setNotifications(prev => prev.map(n => ({ ...n, read: true }))), []);
   const markRead    = useCallback((id: string) => setNotifications(prev => prev.map(n => n.id === id ? { ...n, read: true } : n)), []);
@@ -65,11 +83,19 @@ export function AppProvider({ children }: { children: ReactNode }) {
     addNotification({ type: 'match_change', title: 'Match started', message: `${p1} vs ${p2} is now live in ${t?.name ?? ''}.`, tournamentId, matchId });
   }, [tournaments, updateMatch, addNotification]);
 
-  const completeMatch = useCallback((tournamentId: string, matchId: string, winnerId: string, score1: number, score2: number) => {
+  const completeMatch = useCallback((tournamentId: string, matchId: string, winnerId: string | null, score1: number, score2: number) => {
     updateMatch(tournamentId, matchId, { status: 'completed', winnerId, score1, score2 });
     const t = tournaments.find(x => x.id === tournamentId);
-    const winner = t?.participants.find(p => p.id === winnerId)?.name ?? 'Unknown';
-    addNotification({ type: 'match_change', title: 'Match completed', message: `${winner} advances. Score: ${score1}–${score2}.`, tournamentId, matchId });
+    const winner = winnerId ? t?.participants.find(p => p.id === winnerId)?.name ?? 'Unknown' : null;
+    addNotification({
+      type: 'match_change',
+      title: 'Match completed',
+      message: winner
+        ? `${winner} advances. Score: ${score1}–${score2}.`
+        : `Match ended in a tie. Score: ${score1}–${score2}.`,
+      tournamentId,
+      matchId,
+    });
   }, [tournaments, updateMatch, addNotification]);
 
   const reportNoShow = useCallback((tournamentId: string, matchId: string, participantId: string) => {

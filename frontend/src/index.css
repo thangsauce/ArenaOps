@@ -20,11 +20,13 @@
     --animate-marquee-right: marqueeRight 85s linear infinite;
 
     @keyframes fadeIn {
-        0% {
+        from {
             opacity: 0;
+            transform: translateY(8px);
         }
-        100% {
+        to {
             opacity: 1;
+            transform: translateY(0);
         }
     }
     @keyframes slideUp {
@@ -46,6 +48,15 @@
             box-shadow: 0 0 40px rgba(var(--accent-rgb), 0.3);
         }
     }
+    @keyframes symbolFloat {
+        0%, 100% { transform: translateY(0px);           }
+        33%       { transform: translateY(-14px) rotate(4deg);  }
+        66%       { transform: translateY(-7px)  rotate(-3deg); }
+    }
+    @keyframes slamGlow {
+        0%   { filter: drop-shadow(0 0 28px rgba(var(--accent-rgb), 0.95)); }
+        100% { filter: drop-shadow(0 0 0px  rgba(var(--accent-rgb), 0)); }
+    }
     @keyframes marqueeLeft {
         from {
             transform: translateX(0);
@@ -62,6 +73,14 @@
             transform: translateX(0);
         }
     }
+    @keyframes pulse {
+        0%, 100% { opacity: 1; }
+        50%       { opacity: 0.3; }
+    }
+}
+
+.slam-glow {
+    animation: slamGlow 0.75s ease-out forwards;
 }
 
 :root {
@@ -72,6 +91,12 @@
     --font-display: "Bebas Neue", sans-serif;
     --blue: #3b82f6;
     --blue-dim: rgba(59, 130, 246, 0.1);
+    --amber: #ffaa00;
+    --amber-dim: rgba(255, 170, 0, 0.1);
+    --amber-rgb: 255, 170, 0;
+    --purple: #b06cff;
+    --purple-dim: rgba(176, 108, 255, 0.12);
+    --font-body: var(--font-sans);
 
     /* ── Light Mode Base (Default) ── */
     --bg: #f9fafb;
@@ -94,6 +119,7 @@
     --accent-rgb: 94, 107, 0;
     --accent-fg: #ffffff;
     --accent-dim: rgba(94, 107, 0, 0.1);
+    --accent-glow: rgba(94, 107, 0, 0.2);
 }
 
 .dark {
@@ -118,6 +144,7 @@
     --accent-rgb: 232, 255, 71;
     --accent-fg: #0a0a09;
     --accent-dim: rgba(232, 255, 71, 0.1);
+    --accent-glow: rgba(232, 255, 71, 0.2);
 }
 
 @layer base {

@@ -4,9 +4,9 @@ import styles from './Notifications.module.css';
 
 const typeConfig = {
   match_change: { icon: Zap, color: 'var(--accent)', bg: 'var(--accent-dim)' },
-  no_show: { icon: AlertTriangle, color: '#ffaa00', bg: 'rgba(255,170,0,0.12)' },
+  no_show: { icon: AlertTriangle, color: 'var(--amber)', bg: 'var(--amber-dim)' },
   delay: { icon: Calendar, color: 'var(--blue)', bg: 'var(--blue-dim)' },
-  room_change: { icon: MapPin, color: '#b06cff', bg: 'rgba(176,108,255,0.12)' },
+  room_change: { icon: MapPin, color: 'var(--purple)', bg: 'var(--purple-dim)' },
   system: { icon: Info, color: 'var(--text-2)', bg: 'var(--bg-3)' },
   confirmation: { icon: CheckCircle2, color: 'var(--accent)', bg: 'var(--accent-dim)' },
 };
@@ -17,6 +17,14 @@ function timeAgo(date: Date): string {
   if (diff < 3600) return `${Math.floor(diff / 60)}m ago`;
   if (diff < 86400) return `${Math.floor(diff / 3600)}h ago`;
   return `${Math.floor(diff / 86400)}d ago`;
+}
+
+function groupLabel(date: Date): string {
+  const now = new Date();
+  const diff = Math.floor((now.getTime() - date.getTime()) / 86400000);
+  if (diff === 0) return 'Today';
+  if (diff === 1) return 'Yesterday';
+  return 'Earlier';
 }
 
 export default function Notifications() {
@@ -46,32 +54,40 @@ export default function Notifications() {
       )}
 
       <div className={styles.list}>
-        {notifications.map(n => {
-          const cfg = typeConfig[n.type];
-          const Icon = cfg.icon;
-          return (
-            <div
-              key={n.id}
-              className={`${styles.item} ${!n.read ? styles.unread : ''}`}
-              onClick={() => markRead(n.id)}
-            >
-              <div className={styles.iconWrap} style={{ background: cfg.bg, color: cfg.color }}>
-                <Icon size={15} />
+        {(() => {
+          let lastGroup = '';
+          return notifications.map(n => {
+            const cfg = typeConfig[n.type];
+            const Icon = cfg.icon;
+            const group = groupLabel(n.timestamp);
+            const showGroup = group !== lastGroup;
+            lastGroup = group;
+            return (
+              <div key={n.id}>
+                {showGroup && <p className={styles.groupLabel}>{group}</p>}
+                <div
+                  className={`${styles.item} ${!n.read ? styles.unread : ''}`}
+                  onClick={() => markRead(n.id)}
+                >
+                  <div className={styles.iconWrap} style={{ background: cfg.bg, color: cfg.color }}>
+                    <Icon size={15} />
+                  </div>
+                  <div className={styles.content}>
+                    <p className={styles.notifTitle}>{n.title}</p>
+                    <p className={styles.notifMessage}>{n.message}</p>
+                    <p className={styles.notifTime}>{timeAgo(n.timestamp)}</p>
+                  </div>
+                  {!n.read && <div className={styles.unreadDot} />}
+                </div>
               </div>
-              <div className={styles.content}>
-                <p className={styles.notifTitle}>{n.title}</p>
-                <p className={styles.notifMessage}>{n.message}</p>
-                <p className={styles.notifTime}>{timeAgo(n.timestamp)}</p>
-              </div>
-              {!n.read && <div className={styles.unreadDot} />}
-            </div>
-          );
-        })}
+            );
+          });
+        })()}
       </div>
 
       <div className={styles.performanceCard}>
         <h3 className={styles.perfTitle}>Delivery Performance</h3>
-        <p className={styles.perfSub}>Based on this tournament (NFR1 target: 95% delivery in &lt;30s)</p>
+        <p className={styles.perfSub}>NFR1 target: 95% delivery in &lt;30s</p>
         <div className={styles.perfStats}>
           <div className={styles.perfStat}>
             <span className={styles.perfValue} style={{ color: 'var(--accent)' }}>100%</span>
@@ -85,6 +101,21 @@ export default function Notifications() {
             <span className={styles.perfValue}>{notifications.length}</span>
             <span className={styles.perfLabel}>Total sent</span>
           </div>
+        </div>
+        <div className={styles.perfBar}>
+          {[
+            { label: 'Delivery rate', pct: 100, color: 'var(--accent)' },
+            { label: 'Within 30s',    pct: 100, color: 'var(--blue)'   },
+            { label: 'Read rate',     pct: Math.round((notifications.filter(n => n.read).length / Math.max(notifications.length, 1)) * 100), color: 'var(--purple)' },
+          ].map(({ label, pct, color }) => (
+            <div key={label} className={styles.perfBarRow}>
+              <span style={{ width: 90 }}>{label}</span>
+              <div className={styles.perfBarTrack}>
+                <div className={styles.perfBarFill} style={{ width: `${pct}%`, background: color }} />
+              </div>
+              <span style={{ width: 36, textAlign: 'right' }}>{pct}%</span>
+            </div>
+          ))}
         </div>
       </div>
     </div>

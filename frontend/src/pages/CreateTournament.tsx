@@ -12,11 +12,11 @@ const GAME_CATALOG = [
   },
   {
     category: 'Sports', icon: '🏆',
-    games: ['Soccer','American Football','Basketball','Tennis','Volleyball','Badminton','Table Tennis','Baseball'],
+    games: ['Soccer','Basketball','Tennis','American Football','Badminton','Volleyball'],
   },
   {
     category: 'Board & Card', icon: '♟️',
-    games: ['Chess','Checkers','Poker','Magic: The Gathering','Hearthstone','Go'],
+    games: ['Chess','Checkers','Poker','Mahjong','Go','Uno'],
   },
 ];
 

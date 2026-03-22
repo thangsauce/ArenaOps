@@ -1,5 +1,4 @@
 .page { padding: 32px 40px; width: 100%; animation: fadeIn 0.3s ease; }
-@keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
 
 .header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 24px; padding-bottom: 20px; border-bottom: 1px solid var(--border); }
 .title { font-family: var(--font-display); font-size: 2rem; letter-spacing: 0.02em; }
@@ -12,9 +11,9 @@
 
 .list { display: flex; flex-direction: column; gap: 4px; margin-bottom: 28px; }
 
-.item { display: flex; align-items: flex-start; gap: 12px; padding: 14px 16px; border-radius: var(--radius); cursor: pointer; transition: background 0.12s; position: relative; }
+.item { display: flex; align-items: flex-start; gap: 12px; padding: 14px 16px; border-radius: var(--radius); cursor: pointer; transition: background 0.12s; position: relative; border-left: 3px solid transparent; }
 .item:hover { background: var(--surface); }
-.unread { background: var(--surface) !important; }
+.unread { background: var(--surface) !important; border-left-color: var(--accent) !important; }
 .unread .notifTitle { color: var(--text); font-weight: 600; }
 
 .iconWrap { width: 34px; height: 34px; border-radius: 9px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 1px; }
@@ -26,10 +25,16 @@
 
 .unreadDot { width: 7px; height: 7px; background: var(--accent); border-radius: 50%; flex-shrink: 0; margin-top: 6px; }
 
+.groupLabel { font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-3); padding: 8px 16px 4px; }
+
 .performanceCard { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 20px 24px; }
 .perfTitle { font-size: 0.88rem; font-weight: 600; color: var(--text); margin-bottom: 4px; }
 .perfSub { font-size: 0.75rem; color: var(--text-3); margin-bottom: 16px; }
-.perfStats { display: flex; gap: 32px; }
+.perfStats { display: flex; gap: 32px; margin-bottom: 16px; }
 .perfStat { display: flex; flex-direction: column; gap: 3px; }
 .perfValue { font-family: var(--font-display); font-size: 1.6rem; line-height: 1; color: var(--text); }
 .perfLabel { font-size: 0.72rem; color: var(--text-3); text-transform: uppercase; letter-spacing: 0.06em; }
+.perfBar { display: flex; flex-direction: column; gap: 6px; }
+.perfBarRow { display: flex; align-items: center; gap: 10px; font-size: 0.72rem; color: var(--text-3); }
+.perfBarTrack { flex: 1; height: 4px; background: var(--bg-3); border-radius: 4px; overflow: hidden; }
+.perfBarFill { height: 100%; border-radius: 4px; transition: width 1s ease; }

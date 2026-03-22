@@ -4,10 +4,6 @@
   animation: fadeIn 0.3s ease;
 }
 
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(8px); }
-  to { opacity: 1; transform: translateY(0); }
-}
 
 .notFound { padding: 60px; text-align: center; color: var(--text-2); }
 
@@ -140,6 +136,11 @@
 }
 
 .round { min-width: 200px; }
+.championColumn {
+  min-width: 220px;
+  display: flex;
+  flex-direction: column;
+}
 
 .roundLabel {
   font-size: 0.72rem;
@@ -151,6 +152,45 @@
 }
 
 .roundMatches { display: flex; flex-direction: column; gap: 10px; }
+.championCard {
+  background: linear-gradient(180deg, color-mix(in srgb, var(--accent) 12%, var(--surface)), var(--surface));
+  border: 1px solid rgba(var(--accent-rgb), 0.28);
+  border-radius: var(--radius);
+  padding: 14px 16px;
+  box-shadow: 0 0 0 1px rgba(var(--accent-rgb), 0.06), 0 10px 24px rgba(var(--accent-rgb), 0.08);
+}
+.championEyebrow {
+  display: inline-flex;
+  font-size: 0.66rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 10px;
+}
+.championBody {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.championInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+.championTitle {
+  font-size: 0.72rem;
+  color: var(--text-3);
+}
+.championName {
+  font-size: 0.92rem;
+  font-weight: 700;
+  color: var(--text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
 
 .matchCard {
   background: var(--surface);
@@ -209,6 +249,9 @@
   display: flex;
   align-items: center;
   gap: 4px;
+  border: 1px solid transparent;
+  border-radius: 999px;
+  padding: 3px 8px;
 }
 
 .liveDot {
@@ -219,10 +262,6 @@
   animation: pulse 1.5s infinite;
 }
 
-@keyframes pulse {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.4; }
-}
 
 .matchups { display: flex; flex-direction: column; gap: 4px; }
 
@@ -284,6 +323,32 @@
   min-width: 206px;
   position: relative;
   overflow: visible;
+}
+.treeChampionColumn {
+  min-width: 220px;
+  display: flex;
+  flex-direction: column;
+}
+.treeChampionSlot {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  position: relative;
+}
+.treeChampionConnector {
+  position: absolute;
+  left: -44px;
+  top: 50%;
+  width: 44px;
+  height: 2px;
+  background: color-mix(in srgb, var(--accent) 26%, var(--text) 74%);
+  box-shadow: 0 0 6px color-mix(in srgb, var(--accent) 12%, transparent);
+  transform: translateY(-50%);
+}
+.treeChampionCardWrap {
+  width: 100%;
+  position: relative;
+  z-index: 1;
 }
 
 .treeRoundBody {
@@ -410,11 +475,74 @@
   gap: 4px;
   flex-shrink: 0;
   min-width: 58px;
-  justify-content: flex-end;
+  justify-content: center;
+  border: 1px solid transparent;
+  border-radius: 999px;
+  padding: 4px 8px;
 }
 
 /* ── Participants ── */
 .participantList { display: flex; flex-direction: column; gap: 6px; }
+.teamCard {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+}
+.teamHeader {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 14px;
+  text-align: left;
+}
+.teamIdentity {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+.teamInfo {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+.teamName {
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.teamMeta {
+  font-size: 0.72rem;
+  color: var(--text-3);
+}
+.teamHeaderRight {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+}
+.teamChevron {
+  color: var(--text-3);
+  transition: transform 0.2s ease, color 0.15s ease;
+}
+.teamChevronOpen {
+  transform: rotate(180deg);
+  color: var(--text);
+}
+.teamMembers {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 0 10px 10px;
+  border-top: 1px solid var(--border);
+  background: color-mix(in srgb, var(--surface) 88%, var(--bg-3));
+}
 
 .logoHint {
   display: flex;
@@ -432,6 +560,9 @@
   border: 1px solid var(--border);
   border-radius: var(--radius-sm);
   padding: 9px 14px;
+}
+.teamMembers .participantRow {
+  background: var(--bg-3);
 }
 
 /* Avatar upload button */
@@ -464,9 +595,26 @@
   font-family: var(--font-display);
 }
 
-.participantInfo { flex: 1; }
-.participantName2 { font-size: 0.85rem; font-weight: 500; color: var(--text); }
-.participantEmail { font-size: 0.72rem; color: var(--text-3); }
+.participantInfo {
+  flex: 1;
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  min-width: 0;
+}
+.participantName2 {
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: var(--text);
+  line-height: 1.15;
+  white-space: nowrap;
+}
+.participantEmail {
+  font-size: 0.72rem;
+  color: var(--text-3);
+  line-height: 1.2;
+  white-space: nowrap;
+}
 
 .availBadge {
   font-size: 0.7rem;

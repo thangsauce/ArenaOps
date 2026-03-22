@@ -1,22 +1,34 @@
 import { useState, useEffect } from 'react';
 import { Sun, Moon } from 'lucide-react';
+import { useApp } from '../store/store';
 
 export default function ThemeToggle() {
-  const [isDark, setIsDark] = useState(() =>
-    document.documentElement.classList.contains('dark')
+  const { settings, updateSettings } = useApp();
+  const theme = settings.appearance.theme;
+  const [prefersDark, setPrefersDark] = useState(() =>
+    window.matchMedia('(prefers-color-scheme: dark)').matches
   );
 
   useEffect(() => {
-    if (isDark) {
-      document.documentElement.classList.add('dark');
-    } else {
-      document.documentElement.classList.remove('dark');
-    }
-  }, [isDark]);
+    const mq = window.matchMedia('(prefers-color-scheme: dark)');
+    const handleChange = (event: MediaQueryListEvent) => setPrefersDark(event.matches);
+    mq.addEventListener('change', handleChange);
+    return () => mq.removeEventListener('change', handleChange);
+  }, []);
+
+  const isDark = theme === 'dark' || (theme === 'system' && prefersDark);
+  const toggleTheme = () => {
+    updateSettings({
+      appearance: {
+        ...settings.appearance,
+        theme: isDark ? 'light' : 'dark',
+      },
+    });
+  };
 
   return (
     <button
-      onClick={() => setIsDark(d => !d)}
+      onClick={toggleTheme}
       aria-label={isDark ? 'Switch to light mode' : 'Switch to dark mode'}
       className="fixed bottom-6 right-6 z-50 flex items-center justify-center w-10 h-10 rounded-full shadow-xl border transition-all duration-300 active:scale-95 hover:scale-105"
       style={{

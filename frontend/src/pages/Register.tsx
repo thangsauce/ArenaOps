@@ -1,6 +1,15 @@
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import { Zap, User, Mail, Lock, Eye, EyeOff, ArrowRight } from "lucide-react";
+import {
+  Zap,
+  User,
+  Mail,
+  Lock,
+  Eye,
+  EyeOff,
+  ArrowRight,
+  ArrowLeft,
+} from "lucide-react";
 import { motion } from "framer-motion";
 
 export default function Register() {
@@ -104,6 +113,15 @@ export default function Register() {
       {/* Right Form */}
       <div className="flex-1 flex items-center justify-center p-6 sm:p-12 relative">
         <div className="absolute right-0 top-0 w-[400px] h-[400px] bg-blue-500/5 blur-[120px] rounded-full pointer-events-none" />
+
+        {/* Back Button */}
+        <button
+          onClick={() => navigate(-1)}
+          className="absolute top-6 left-6 sm:top-8 sm:left-8 flex items-center gap-2 text-sm font-medium text-gray-400 hover:text-white transition-colors z-10"
+        >
+          <ArrowLeft size={16} />
+          Back
+        </button>
 
         <motion.div
           initial={{ opacity: 0, scale: 0.95 }}
@@ -249,7 +267,7 @@ export default function Register() {
 
             <button
               type="submit"
-              className="w-full flex items-center justify-center gap-2 group mt-6 py-4 bg-arena-accent hover:bg-[#dfff00] text-arena-bg font-bold rounded-xl text-lg shadow-[0_0_20px_rgba(232,255,71,0.15)] hover:shadow-[0_0_30px_rgba(232,255,71,0.3)] transition-all active:scale-95 disabled:opacity-70 disabled:pointer-events-none"
+              className="w-full flex items-center justify-center gap-2 group mt-6 py-4 bg-arena-accent hover:bg-arena-accent-hover text-arena-bg font-bold rounded-xl text-lg shadow-[0_0_20px_rgba(232,255,71,0.15)] hover:shadow-[0_0_30px_rgba(232,255,71,0.3)] transition-all active:scale-95 disabled:opacity-70 disabled:pointer-events-none"
               disabled={loading}
             >
               {loading ? (

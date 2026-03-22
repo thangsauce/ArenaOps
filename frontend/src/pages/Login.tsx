@@ -1,38 +1,40 @@
-import { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
-import { Zap, Mail, Lock, Eye, EyeOff, ArrowRight, ArrowLeft } from 'lucide-react';
-import { motion } from 'framer-motion';
+import { useState } from "react";
+import { useNavigate, Link } from "react-router-dom";
+import {
+  Zap,
+  Mail,
+  Lock,
+  Eye,
+  EyeOff,
+  ArrowRight,
+  ArrowLeft,
+} from "lucide-react";
+import { motion } from "framer-motion";
 
 export default function Login() {
   const navigate = useNavigate();
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [showPass, setShowPass] = useState(false);
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    setError('');
+    setError("");
     if (!email || !password) {
-      setError('Please fill in all fields.');
+      setError("Please fill in all fields.");
       return;
     }
     setLoading(true);
     setTimeout(() => {
       setLoading(false);
-      navigate('/dashboard');
+      navigate("/dashboard");
     }, 800);
   };
 
   return (
     <div className="min-h-screen flex flex-col md:flex-row bg-arena-bg font-sans text-gray-100 overflow-hidden">
-      <button
-        onClick={() => navigate('/')}
-        className="fixed top-4 left-4 z-50 flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium text-arena-text-muted hover:text-arena-text bg-arena-surface border border-arena-border hover:border-arena-border transition-all"
-      >
-        <ArrowLeft size={15} /> Home
-      </button>
       {/* Left Panel */}
       <div className="hidden md:flex md:w-5/12 lg:w-1/2 relative p-12 flex-col justify-center overflow-hidden border-r border-arena-border bg-[#0d0d14]">
         {/* Decorative Grid */}
@@ -40,14 +42,19 @@ export default function Login() {
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-arena-accent/5 blur-[100px] rounded-full pointer-events-none" />
 
         <div className="relative z-10 max-w-md mx-auto">
-          <Link to="/" className="inline-flex items-center gap-2 mb-16 hover:opacity-80 transition-opacity">
+          <Link
+            to="/"
+            className="inline-flex items-center gap-2 mb-16 hover:opacity-80 transition-opacity"
+          >
             <div className="p-2 bg-arena-accent/10 rounded-lg text-arena-accent">
               <Zap size={22} className="fill-current" />
             </div>
-            <span className="font-display tracking-wide text-3xl font-bold">ArenaOPS</span>
+            <span className="font-display tracking-wide text-3xl font-bold">
+              ArenaOPS
+            </span>
           </Link>
-          
-          <motion.h2 
+
+          <motion.h2
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
@@ -55,29 +62,33 @@ export default function Login() {
           >
             Your arena awaits.
           </motion.h2>
-          
-          <motion.p 
+
+          <motion.p
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.1 }}
             className="text-lg text-gray-400 mb-10 leading-relaxed"
           >
-            Manage tournaments, track matches live, and run events your club will remember.
+            Manage tournaments, track matches live, and run events your club
+            will remember.
           </motion.p>
-          
-          <motion.ul 
+
+          <motion.ul
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.2 }}
             className="space-y-4"
           >
             {[
-              'Live match control & real-time scoring',
-              'Automated scheduling & availability collection',
-              'Room booking & venue management',
-              'Participant tracking & bracket generation'
+              "Live match control & real-time scoring",
+              "Automated scheduling & availability collection",
+              "Room booking & venue management",
+              "Participant tracking & bracket generation",
             ].map((text, i) => (
-              <li key={i} className="flex items-center gap-3 text-gray-300 font-medium">
+              <li
+                key={i}
+                className="flex items-center gap-3 text-gray-300 font-medium"
+              >
                 <span className="w-1.5 h-1.5 rounded-full bg-arena-accent flex-shrink-0 shadow-[0_0_8px_rgba(232,255,71,0.8)]" />
                 {text}
               </li>
@@ -90,37 +101,61 @@ export default function Login() {
       <div className="flex-1 flex items-center justify-center p-6 sm:p-12 relative">
         <div className="absolute right-0 top-0 w-[400px] h-[400px] bg-blue-500/5 blur-[120px] rounded-full pointer-events-none" />
 
-        <motion.div 
+        {/* Home Button */}
+        <button
+          onClick={() => navigate("/")}
+          className="absolute top-6 left-6 sm:top-8 sm:left-8 flex items-center gap-2 text-sm font-medium text-gray-400 hover:text-white transition-colors z-10"
+        >
+          <ArrowLeft size={16} />
+          Home
+        </button>
+
+        <motion.div
           initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.4 }}
           className="w-full max-w-md"
         >
           {/* Mobile Logo */}
-          <Link to="/" className="flex md:hidden items-center gap-2 mb-12 justify-center">
+          <Link
+            to="/"
+            className="flex md:hidden items-center gap-2 mb-12 justify-center"
+          >
             <div className="p-2 bg-arena-accent/10 rounded-lg text-arena-accent">
               <Zap size={22} className="fill-current" />
             </div>
-            <span className="font-display tracking-wide text-2xl font-bold">ArenaOPS</span>
+            <span className="font-display tracking-wide text-2xl font-bold">
+              ArenaOPS
+            </span>
           </Link>
 
           <div className="mb-10 text-center md:text-left">
-            <h1 className="font-display text-4xl font-bold uppercase tracking-tight mb-2">Welcome back</h1>
+            <h1 className="font-display text-4xl font-bold uppercase tracking-tight mb-2">
+              Welcome back
+            </h1>
             <p className="text-gray-400">Sign in to your ArenaOPS account</p>
           </div>
 
           <form className="space-y-6" onSubmit={handleSubmit}>
             <div className="space-y-2">
-              <label className="text-sm font-semibold text-gray-300 ml-1" htmlFor="email">Email</label>
+              <label
+                className="text-sm font-semibold text-gray-300 ml-1"
+                htmlFor="email"
+              >
+                Email
+              </label>
               <div className="relative flex items-center">
-                <Mail size={18} className="absolute left-4 text-gray-500 pointer-events-none" />
+                <Mail
+                  size={18}
+                  className="absolute left-4 text-gray-500 pointer-events-none"
+                />
                 <input
                   id="email"
                   type="email"
                   className="w-full bg-arena-surface/80 border border-arena-border rounded-xl py-3.5 pl-11 pr-4 text-white placeholder-gray-600 focus:outline-none focus:border-arena-accent/50 focus:ring-1 focus:ring-arena-accent/50 transition-all font-medium"
                   placeholder="you@university.edu"
                   value={email}
-                  onChange={e => setEmail(e.target.value)}
+                  onChange={(e) => setEmail(e.target.value)}
                   autoComplete="email"
                 />
               </div>
@@ -128,24 +163,37 @@ export default function Login() {
 
             <div className="space-y-2">
               <div className="flex items-center justify-between ml-1">
-                <label className="text-sm font-semibold text-gray-300" htmlFor="password">Password</label>
-                <button type="button" className="text-xs font-semibold text-arena-accent hover:text-white transition-colors">Forgot password?</button>
+                <label
+                  className="text-sm font-semibold text-gray-300"
+                  htmlFor="password"
+                >
+                  Password
+                </label>
+                <button
+                  type="button"
+                  className="text-xs font-semibold text-arena-accent hover:text-white transition-colors"
+                >
+                  Forgot password?
+                </button>
               </div>
               <div className="relative flex items-center">
-                <Lock size={18} className="absolute left-4 text-gray-500 pointer-events-none" />
+                <Lock
+                  size={18}
+                  className="absolute left-4 text-gray-500 pointer-events-none"
+                />
                 <input
                   id="password"
-                  type={showPass ? 'text' : 'password'}
+                  type={showPass ? "text" : "password"}
                   className="w-full bg-arena-surface/80 border border-arena-border rounded-xl py-3.5 pl-11 pr-12 text-white placeholder-gray-600 focus:outline-none focus:border-arena-accent/50 focus:ring-1 focus:ring-arena-accent/50 transition-all font-medium"
                   placeholder="••••••••"
                   value={password}
-                  onChange={e => setPassword(e.target.value)}
+                  onChange={(e) => setPassword(e.target.value)}
                   autoComplete="current-password"
                 />
                 <button
                   type="button"
                   className="absolute right-4 text-gray-500 hover:text-gray-300 transition-colors"
-                  onClick={() => setShowPass(v => !v)}
+                  onClick={() => setShowPass((v) => !v)}
                 >
                   {showPass ? <EyeOff size={18} /> : <Eye size={18} />}
                 </button>
@@ -153,27 +201,42 @@ export default function Login() {
             </div>
 
             {error && (
-              <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="text-sm font-medium text-red-400 bg-red-400/10 border border-red-400/20 py-2 px-3 rounded-lg text-center">
+              <motion.p
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                className="text-sm font-medium text-red-400 bg-red-400/10 border border-red-400/20 py-2 px-3 rounded-lg text-center"
+              >
                 {error}
               </motion.p>
             )}
 
             <button
               type="submit"
-              className="w-full flex items-center justify-center gap-2 group mt-2 py-4 bg-arena-accent hover:bg-[#dfff00] text-arena-bg font-bold rounded-xl text-lg shadow-[0_0_20px_rgba(232,255,71,0.15)] hover:shadow-[0_0_30px_rgba(232,255,71,0.3)] transition-all active:scale-95 disabled:opacity-70 disabled:pointer-events-none"
+              className="w-full flex items-center justify-center gap-2 group mt-2 py-4 bg-arena-accent hover:bg-arena-accent-hover text-arena-bg font-bold rounded-xl text-lg shadow-[0_0_20px_rgba(232,255,71,0.15)] hover:shadow-[0_0_30px_rgba(232,255,71,0.3)] transition-all active:scale-95 disabled:opacity-70 disabled:pointer-events-none"
               disabled={loading}
             >
               {loading ? (
                 <div className="w-6 h-6 border-2 border-arena-bg border-t-transparent rounded-full animate-spin" />
               ) : (
-                <>Sign in <ArrowRight size={20} className="group-hover:translate-x-1 transition-transform" /></>
+                <>
+                  Sign in{" "}
+                  <ArrowRight
+                    size={20}
+                    className="group-hover:translate-x-1 transition-transform"
+                  />
+                </>
               )}
             </button>
           </form>
 
           <p className="mt-8 text-center text-gray-400 font-medium text-sm">
-            Don't have an account?{' '}
-            <Link to="/register" className="text-arena-accent hover:text-white transition-colors font-bold ml-1">Create one</Link>
+            Don't have an account?{" "}
+            <Link
+              to="/register"
+              className="text-arena-accent hover:text-white transition-colors font-bold ml-1"
+            >
+              Create one
+            </Link>
           </p>
         </motion.div>
       </div>
