@@ -2562,14 +2562,14 @@ export function FadeUp({
   );
 }
 
-const fadeUpGridVariants = {
+const fadeUpGridVariants: Variants = {
   hidden: {},
   show: { transition: { staggerChildren: 0.12 } },
 };
 
-const fadeUpItemVariants = {
+const fadeUpItemVariants: Variants = {
   hidden: { opacity: 0, y: 22 },
-  show: { opacity: 1, y: 0, transition: { duration: 0.55, ease: "easeOut" as const } },
+  show: { opacity: 1, y: 0, transition: { duration: 0.55, ease: "easeOut" } },
 };
 
 export function FadeUpGrid({
