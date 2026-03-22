@@ -3997,23 +3997,19 @@ export default function Landing() {
               </motion.span>
               </span>
             </h2>
-            <p className="text-arena-text-muted text-lg max-w-2xl mx-auto">
-              Purpose-built for the chaos of running tournaments at scale.
-            </p>
+            <FadeUp>
+              <p className="text-arena-text-muted text-lg max-w-2xl mx-auto">
+                Purpose-built for the chaos of running tournaments at scale.
+              </p>
+            </FadeUp>
           </Parallax>
 
           {/* ── Feature Showcases ── */}
           <div className="space-y-28">
 
             {/* 1 · Tournament Management */}
-            <motion.div
-              initial={{ opacity: 0, y: 40 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: "-80px" }}
-              transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-              className="flex flex-col lg:flex-row items-center gap-12 lg:gap-20"
-            >
-              <div className="flex-1 text-center lg:text-left">
+            <div className="flex flex-col lg:flex-row items-center gap-12 lg:gap-20">
+              <FadeUp className="flex-1 text-center lg:text-left">
                 <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-arena-accent/10 border border-arena-accent/20 text-xs font-bold text-arena-accent mb-5 uppercase tracking-widest">
                   <Trophy size={12} /> Tournament Management
                 </div>
@@ -4031,10 +4027,17 @@ export default function Landing() {
                     </li>
                   ))}
                 </ul>
-              </div>
+              </FadeUp>
 
               {/* Mockup: Dashboard */}
-              <div className="flex-1 w-full rounded-2xl border border-arena-border overflow-hidden" style={{ background: "var(--bg-2)" }}>
+              <motion.div
+                className="flex-1 w-full"
+                initial={{ opacity: 0, x: 60 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                viewport={{ once: true, margin: "-80px" }}
+                transition={{ duration: 0.55, ease: "easeOut" }}
+              >
+              <div className="rounded-2xl border border-arena-border overflow-hidden" style={{ background: "var(--bg-2)" }}>
                 <div className="flex items-center justify-between px-4 py-3 border-b border-arena-border" style={{ background: "var(--bg-3)" }}>
                   <div className="flex items-center gap-2">
                     <div className="w-1.5 h-1.5 rounded-full bg-arena-accent animate-pulse" />
@@ -4076,18 +4079,20 @@ export default function Landing() {
                   <ChevronRight size={14} className="text-arena-text-muted shrink-0 mt-1" />
                 </div>
               </div>
-            </motion.div>
+              </motion.div>
+            </div>
 
             {/* 2 · Live Match Control */}
-            <motion.div
-              initial={{ opacity: 0, y: 40 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: "-80px" }}
-              transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-              className="flex flex-col-reverse lg:flex-row items-center gap-12 lg:gap-20"
-            >
+            <div className="flex flex-col-reverse lg:flex-row items-center gap-12 lg:gap-20">
               {/* Mockup: Live Control */}
-              <div className="flex-1 w-full rounded-2xl border border-arena-border overflow-hidden" style={{ background: "var(--bg-2)" }}>
+              <motion.div
+                className="flex-1 w-full"
+                initial={{ opacity: 0, x: -60 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                viewport={{ once: true, margin: "-80px" }}
+                transition={{ duration: 0.55, ease: "easeOut" }}
+              >
+              <div className="rounded-2xl border border-arena-border overflow-hidden" style={{ background: "var(--bg-2)" }}>
                 <div className="flex items-center justify-between px-4 py-3 border-b border-arena-border" style={{ background: "var(--bg-3)" }}>
                   <div className="flex items-center gap-2">
                     <div className="w-1.5 h-1.5 rounded-full bg-red-400 animate-pulse" />
@@ -4130,8 +4135,9 @@ export default function Landing() {
                   </div>
                 </div>
               </div>
+              </motion.div>
 
-              <div className="flex-1 text-center lg:text-left">
+              <FadeUp className="flex-1 text-center lg:text-left">
                 <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-red-500/10 border border-red-500/20 text-xs font-bold text-red-400 mb-5 uppercase tracking-widest">
                   <Zap size={12} /> Live Match Control
                 </div>
@@ -4149,18 +4155,12 @@ export default function Landing() {
                     </li>
                   ))}
                 </ul>
-              </div>
-            </motion.div>
+              </FadeUp>
+            </div>
 
             {/* 3 · Scheduling & Room Booking */}
-            <motion.div
-              initial={{ opacity: 0, y: 40 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: "-80px" }}
-              transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-              className="flex flex-col lg:flex-row items-center gap-12 lg:gap-20"
-            >
-              <div className="flex-1 text-center lg:text-left">
+            <div className="flex flex-col lg:flex-row items-center gap-12 lg:gap-20">
+              <FadeUp className="flex-1 text-center lg:text-left">
                 <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-blue-500/10 border border-blue-500/20 text-xs font-bold text-blue-400 mb-5 uppercase tracking-widest">
                   <Calendar size={12} /> Scheduling & Rooms
                 </div>
@@ -4178,10 +4178,17 @@ export default function Landing() {
                     </li>
                   ))}
                 </ul>
-              </div>
+              </FadeUp>
 
               {/* Mockup: Schedule */}
-              <div className="flex-1 w-full rounded-2xl border border-arena-border overflow-hidden" style={{ background: "var(--bg-2)" }}>
+              <motion.div
+                className="flex-1 w-full"
+                initial={{ opacity: 0, x: 60 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                viewport={{ once: true, margin: "-80px" }}
+                transition={{ duration: 0.55, ease: "easeOut" }}
+              >
+              <div className="rounded-2xl border border-arena-border overflow-hidden" style={{ background: "var(--bg-2)" }}>
                 <div className="flex items-center justify-between px-4 py-3 border-b border-arena-border" style={{ background: "var(--bg-3)" }}>
                   <span className="text-xs font-bold text-arena-text uppercase tracking-widest">Schedule</span>
                   <div className="flex items-center gap-2">
@@ -4225,18 +4232,20 @@ export default function Landing() {
                   </div>
                 </div>
               </div>
-            </motion.div>
+              </motion.div>
+            </div>
 
             {/* 4 · Participants & Notifications */}
-            <motion.div
-              initial={{ opacity: 0, y: 40 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: "-80px" }}
-              transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-              className="flex flex-col-reverse lg:flex-row items-center gap-12 lg:gap-20"
-            >
+            <div className="flex flex-col-reverse lg:flex-row items-center gap-12 lg:gap-20">
               {/* Mockup: Participants + Notifications */}
-              <div className="flex-1 w-full grid grid-cols-2 gap-4">
+              <motion.div
+                className="flex-1 w-full"
+                initial={{ opacity: 0, x: -60 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                viewport={{ once: true, margin: "-80px" }}
+                transition={{ duration: 0.55, ease: "easeOut" }}
+              >
+              <div className="grid grid-cols-2 gap-4">
                 <div className="rounded-2xl border border-arena-border overflow-hidden" style={{ background: "var(--bg-2)" }}>
                   <div className="flex items-center gap-2 px-3 py-3 border-b border-arena-border" style={{ background: "var(--bg-3)" }}>
                     <Users size={11} className="text-arena-text-muted" />
@@ -4289,8 +4298,9 @@ export default function Landing() {
                   </div>
                 </div>
               </div>
+              </motion.div>
 
-              <div className="flex-1 text-center lg:text-left">
+              <FadeUp className="flex-1 text-center lg:text-left">
                 <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-arena-accent/10 border border-arena-accent/20 text-xs font-bold text-arena-accent mb-5 uppercase tracking-widest">
                   <Users size={12} /> Players & Alerts
                 </div>
@@ -4308,18 +4318,12 @@ export default function Landing() {
                     </li>
                   ))}
                 </ul>
-              </div>
-            </motion.div>
+              </FadeUp>
+            </div>
 
             {/* 5 · Share Event */}
-            <motion.div
-              initial={{ opacity: 0, y: 40 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: "-80px" }}
-              transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-              className="flex flex-col lg:flex-row items-center gap-12 lg:gap-20"
-            >
-              <div className="flex-1 text-center lg:text-left">
+            <div className="flex flex-col lg:flex-row items-center gap-12 lg:gap-20">
+              <FadeUp className="flex-1 text-center lg:text-left">
                 <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-arena-accent/10 border border-arena-accent/20 text-xs font-bold text-arena-accent mb-5 uppercase tracking-widest">
                   <ArrowUpRight size={12} /> Share Event
                 </div>
@@ -4337,9 +4341,16 @@ export default function Landing() {
                     </li>
                   ))}
                 </ul>
-              </div>
+              </FadeUp>
 
-              <div className="flex-1 w-full max-w-[440px] rounded-[20px] border border-arena-border overflow-hidden shadow-[0_32px_80px_rgba(0,0,0,0.35)]" style={{ background: "var(--surface)" }}>
+              <motion.div
+                className="flex-1 w-full"
+                initial={{ opacity: 0, x: 60 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                viewport={{ once: true, margin: "-80px" }}
+                transition={{ duration: 0.55, ease: "easeOut" }}
+              >
+              <div className="w-full max-w-[440px] rounded-[20px] border border-arena-border overflow-hidden shadow-[0_32px_80px_rgba(0,0,0,0.35)]" style={{ background: "var(--surface)" }}>
                 <div className="flex items-center justify-between px-5 py-4 border-b border-arena-border">
                   <div className="flex items-center gap-3 min-w-0">
                     <div className="w-9 h-9 rounded-xl flex items-center justify-center text-arena-accent border border-arena-accent/30 shrink-0" style={{ background: "var(--accent-dim)" }}>
@@ -4419,7 +4430,8 @@ export default function Landing() {
                   </div>
                 </div>
               </div>
-            </motion.div>
+              </motion.div>
+            </div>
 
           </div>{/* end feature showcases */}
         </div>
@@ -4445,6 +4457,7 @@ export default function Landing() {
               </span>
             ))}
           </div>
+          <FadeUp>
           <div className="relative z-10">
             <h2
               ref={ctaLevelRef}
@@ -4484,6 +4497,7 @@ export default function Landing() {
               Join hundreds of clubs & organisations already using ArenaOPS.
             </p>
           </div>
+          </FadeUp>
         </Parallax>
       </section>
 
