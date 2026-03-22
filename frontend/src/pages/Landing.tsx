@@ -8,17 +8,29 @@ import {
   MapPin,
   Users,
   ArrowRight,
+  ArrowUpRight,
+  ArrowUp,
   Shield,
   Gamepad2,
   Github,
   Mail,
   Globe,
+  Link2,
+  QrCode,
+  Code2,
+  CheckCircle2,
+  Bell,
+  Clock,
+  ChevronRight,
+  AlertTriangle,
+  BarChart2,
 } from "lucide-react";
 import {
   motion,
   useMotionValue,
   useSpring,
   useInView,
+  useAnimationControls,
 } from "framer-motion";
 import type { Variants } from "framer-motion";
 
@@ -26,12 +38,13 @@ import type { Variants } from "framer-motion";
 function Parallax({
   children,
   className = "",
+  ...props
 }: {
   children: React.ReactNode;
   offset?: number;
   className?: string;
-}) {
-  return <div className={className}>{children}</div>;
+} & React.HTMLAttributes<HTMLDivElement>) {
+  return <div className={className} {...props}>{children}</div>;
 }
 import valorantLogo from "../assets/game-logos/valorant-icon.png";
 import leagueOfLegendsLogo from "../assets/game-logos/league-of-legends-icon.png";
@@ -69,6 +82,40 @@ type Game = {
   }>;
   badgeLabel?: string;
 };
+
+function StrikeClubIcon({ className, style }: BadgeIconProps) {
+  return (
+    <svg
+      viewBox="0 0 32 32"
+      className={className}
+      style={style}
+      fill="none"
+      aria-hidden="true"
+    >
+      <path
+        d="M21.6 4.2c3.8 0 6.8 2.4 6.8 5.5 0 2.7-2.2 4.9-5.3 5.4l-4.9.9-3.7-8.8 4-1.8c1-.8 2-1.2 3.1-1.2Z"
+        fill="currentColor"
+      />
+      <path
+        d="M13.6 10.2c.8-.4 1.8-.1 2.2.7l7.2 17c.4 1 0 2.1-1 2.5l-2.2 1c-1 .4-2.1 0-2.5-1l-7.2-17c-.4-1 0-2.1 1-2.5l2.5-1.1Z"
+        fill="currentColor"
+      />
+      <path
+        d="M15 11.4 21.6 27M18.4 7.2l1.6 3.8m-6.6 1.4 1.7-.8m1.6 3.9 1.7-.8m1.6 3.9 1.7-.8m1.6 3.9 1.7-.8"
+        stroke="rgba(255,255,255,0.26)"
+        strokeWidth="1.6"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+      <path
+        d="M18.6 5.7c1.5-1 3.2-1.5 5-1.5"
+        stroke="rgba(0,0,0,0.14)"
+        strokeWidth="1.2"
+        strokeLinecap="round"
+      />
+    </svg>
+  );
+}
 
 function SoccerBadgeIcon({ className, style }: BadgeIconProps) {
   return (
@@ -2199,38 +2246,283 @@ const games: Game[] = [
 ];
 
 // ── Features data ──────────────────────────────────────────────────────────────
-const features = [
+
+const supportedFormats = [
   {
-    icon: Trophy,
-    title: "Tournament Management",
-    desc: "Create and run single-elimination, round-robin, and double-elimination brackets with ease.",
+    title: "Single Elimination",
+    blurb: "One loss and you're out. Fast, clean, and ideal for short event windows.",
   },
   {
-    icon: Zap,
-    title: "Live Match Control",
-    desc: "Start matches, report scores, handle no-shows, and push real-time updates to all participants.",
+    title: "Double Elimination",
+    blurb: "Teams get a second life through a lower bracket before final elimination.",
   },
   {
-    icon: Calendar,
-    title: "Smart Scheduling",
-    desc: "Collect availability, auto-generate conflict-free schedules, and send confirmation links.",
+    title: "Round Robin",
+    blurb: "Everyone plays everyone. Best when you want the fullest set of matchups.",
   },
   {
-    icon: MapPin,
-    title: "Room Booking",
-    desc: "Assign venues, manage time slots, and prevent double-bookings across all your events.",
+    title: "Swiss",
+    blurb: "Players with similar records keep facing each other across each round.",
   },
   {
-    icon: Users,
-    title: "Participant Tracking",
-    desc: "Register teams and players, track check-ins, and manage waitlists automatically.",
+    title: "Group Stage",
+    blurb: "Start in pools, then advance top performers into a final knockout bracket.",
   },
   {
-    icon: Shield,
-    title: "Role-Based Access",
-    desc: "Give organizers, referees, and volunteers the exact permissions they need — nothing more.",
+    title: "Battle Royale",
+    blurb: "Many players drop into the same lobby and placements decide scoring.",
+  },
+  {
+    title: "Ladder",
+    blurb: "Competitors climb rankings over time by challenging players above them.",
+  },
+  {
+    title: "Free for All",
+    blurb: "Everyone competes at once and final standings decide the winner.",
   },
 ];
+
+function FormatChipIcon({ format }: { format: string }) {
+  const common = {
+    className: "h-3.5 w-3.5 shrink-0",
+    viewBox: "0 0 24 24",
+    fill: "none",
+    "aria-hidden": true as const,
+  };
+
+  switch (format) {
+    case "Single Elimination":
+      return (
+        <svg {...common}>
+          <path d="M5 7h5m-5 10h5m9-5h-5m-4-5v10" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
+          <circle cx="5" cy="7" r="1.5" fill="currentColor" />
+          <circle cx="5" cy="17" r="1.5" fill="currentColor" />
+          <circle cx="19" cy="12" r="1.5" fill="currentColor" />
+        </svg>
+      );
+    case "Double Elimination":
+      return (
+        <svg {...common}>
+          <path d="M4.5 7h5m-5 10h5m10-10h-5m5 10h-5m-4-10v10" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
+          <circle cx="4.5" cy="7" r="1.4" fill="currentColor" />
+          <circle cx="4.5" cy="17" r="1.4" fill="currentColor" />
+          <circle cx="19.5" cy="7" r="1.4" fill="currentColor" />
+          <circle cx="19.5" cy="17" r="1.4" fill="currentColor" />
+        </svg>
+      );
+    case "Round Robin":
+      return (
+        <svg {...common}>
+          <circle cx="12" cy="5.5" r="1.6" fill="currentColor" />
+          <circle cx="6" cy="16.5" r="1.6" fill="currentColor" />
+          <circle cx="18" cy="16.5" r="1.6" fill="currentColor" />
+          <path d="M12 5.5 6 16.5M12 5.5l6 11M6 16.5h12" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
+        </svg>
+      );
+    case "Swiss":
+      return (
+        <svg {...common}>
+          <rect x="4" y="5" width="6" height="4" rx="1" stroke="currentColor" strokeWidth="1.5" />
+          <rect x="14" y="5" width="6" height="4" rx="1" stroke="currentColor" strokeWidth="1.5" />
+          <rect x="4" y="15" width="6" height="4" rx="1" stroke="currentColor" strokeWidth="1.5" />
+          <rect x="14" y="15" width="6" height="4" rx="1" stroke="currentColor" strokeWidth="1.5" />
+          <path d="M10 7h4M10 17h4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+        </svg>
+      );
+    case "Group Stage":
+      return (
+        <svg {...common}>
+          <rect x="4" y="5" width="7" height="14" rx="1.8" stroke="currentColor" strokeWidth="1.6" />
+          <path d="M7.5 8.5h0M7.5 12h0M7.5 15.5h0" stroke="currentColor" strokeWidth="3" strokeLinecap="round" />
+          <path d="M13 12h7" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
+          <circle cx="20" cy="12" r="1.5" fill="currentColor" />
+        </svg>
+      );
+    case "Battle Royale":
+      return (
+        <svg {...common}>
+          <circle cx="12" cy="12" r="6.5" stroke="currentColor" strokeWidth="1.6" />
+          <circle cx="12" cy="12" r="2" fill="currentColor" />
+          <path d="M12 3.5v3M12 17.5v3M3.5 12h3M17.5 12h3" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
+        </svg>
+      );
+    case "Ladder":
+      return (
+        <svg {...common}>
+          <path d="M7 18V6M17 18V6M7 9h10M7 13h10M7 17h10" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
+        </svg>
+      );
+    case "Free for All":
+      return (
+        <svg {...common}>
+          <circle cx="8" cy="8" r="1.7" fill="currentColor" />
+          <circle cx="16" cy="8" r="1.7" fill="currentColor" />
+          <circle cx="8" cy="16" r="1.7" fill="currentColor" />
+          <circle cx="16" cy="16" r="1.7" fill="currentColor" />
+          <path d="M8 8l8 8M16 8l-8 8" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+        </svg>
+      );
+    default:
+      return null;
+  }
+}
+
+function FormatPreview({ format }: { format: string }) {
+  const nodeBase =
+    "h-3.5 w-3.5 rounded-full border border-arena-accent/40 bg-arena-accent/20";
+  const lineBase = "rounded-full bg-arena-accent/30";
+
+  switch (format) {
+    case "Single Elimination":
+      return (
+        <div className="flex h-28 items-center justify-center gap-4">
+          <div className="space-y-3">
+            <div className={nodeBase} />
+            <div className={nodeBase} />
+            <div className={nodeBase} />
+            <div className={nodeBase} />
+          </div>
+          <div className="flex h-20 items-center">
+            <div className={`h-[2px] w-8 ${lineBase}`} />
+          </div>
+          <div className="space-y-6">
+            <div className={nodeBase} />
+            <div className={nodeBase} />
+          </div>
+          <div className="flex h-10 items-center">
+            <div className={`h-[2px] w-8 ${lineBase}`} />
+          </div>
+          <div className="space-y-2">
+            <div className="h-4 w-4 rounded-full bg-arena-accent shadow-[0_0_18px_rgba(232,255,71,0.35)]" />
+          </div>
+        </div>
+      );
+    case "Double Elimination":
+      return (
+        <div className="grid h-28 grid-cols-2 gap-4">
+          <div className="rounded-2xl border border-arena-border/70 bg-arena-surface/80 p-3">
+            <p className="mb-2 text-[10px] font-semibold uppercase tracking-[0.18em] text-arena-text-muted">
+              Upper
+            </p>
+            <div className="space-y-2">
+              <div className={`${nodeBase} w-full rounded-xl`} />
+              <div className={`${nodeBase} w-4/5 rounded-xl`} />
+              <div className={`${nodeBase} w-3/5 rounded-xl`} />
+            </div>
+          </div>
+          <div className="rounded-2xl border border-arena-accent/20 bg-arena-accent/10 p-3">
+            <p className="mb-2 text-[10px] font-semibold uppercase tracking-[0.18em] text-arena-accent">
+              Lower
+            </p>
+            <div className="space-y-2">
+              <div className={`${nodeBase} w-3/5 rounded-xl`} />
+              <div className={`${nodeBase} w-4/5 rounded-xl`} />
+              <div className={`${nodeBase} w-full rounded-xl bg-arena-accent/30`} />
+            </div>
+          </div>
+        </div>
+      );
+    case "Round Robin":
+      return (
+        <div className="grid h-28 grid-cols-3 gap-3">
+          {["A vs B", "A vs C", "B vs C"].map((pair) => (
+            <div
+              key={pair}
+              className="flex items-center justify-center rounded-2xl border border-arena-border/70 bg-arena-surface/80 text-[10px] font-semibold uppercase tracking-[0.14em] text-arena-text-muted"
+            >
+              {pair}
+            </div>
+          ))}
+        </div>
+      );
+    case "Swiss":
+      return (
+        <div className="grid h-28 grid-cols-3 gap-3">
+          {["1-0", "1-0", "0-1", "0-1", "2-0", "1-1"].map((record, i) => (
+            <div
+              key={`${record}-${i}`}
+              className="flex items-center justify-center rounded-2xl border border-arena-border/70 bg-arena-surface/80 text-xs font-bold text-arena-text"
+            >
+              {record}
+            </div>
+          ))}
+        </div>
+      );
+    case "Group Stage":
+      return (
+        <div className="grid h-28 grid-cols-[1fr_auto_1fr] items-center gap-3">
+          <div className="rounded-2xl border border-arena-border/70 bg-arena-surface/80 p-3">
+            <p className="mb-2 text-[10px] font-semibold uppercase tracking-[0.18em] text-arena-text-muted">
+              Groups
+            </p>
+            <div className="grid grid-cols-2 gap-2">
+              <div className={`${nodeBase} w-full rounded-xl`} />
+              <div className={`${nodeBase} w-full rounded-xl`} />
+              <div className={`${nodeBase} w-full rounded-xl`} />
+              <div className={`${nodeBase} w-full rounded-xl`} />
+            </div>
+          </div>
+          <div className={`h-[2px] w-8 ${lineBase}`} />
+          <div className="rounded-2xl border border-arena-accent/20 bg-arena-accent/10 p-3">
+            <p className="mb-2 text-[10px] font-semibold uppercase tracking-[0.18em] text-arena-accent">
+              Finals
+            </p>
+            <div className="space-y-2">
+              <div className={`${nodeBase} w-full rounded-xl`} />
+              <div className={`${nodeBase} w-3/5 rounded-xl bg-arena-accent/30`} />
+            </div>
+          </div>
+        </div>
+      );
+    case "Battle Royale":
+      return (
+        <div className="relative flex h-28 items-center justify-center overflow-hidden rounded-[28px] border border-arena-border/70 bg-arena-surface/80">
+          <div className="absolute h-20 w-20 rounded-full border border-arena-accent/20" />
+          <div className="absolute h-12 w-12 rounded-full border border-arena-accent/30" />
+          <div className="absolute h-2.5 w-2.5 rounded-full bg-arena-accent shadow-[0_0_18px_rgba(232,255,71,0.35)]" />
+          <div className="absolute left-7 top-7 h-2.5 w-2.5 rounded-full bg-arena-text-muted/60" />
+          <div className="absolute right-8 top-9 h-2.5 w-2.5 rounded-full bg-arena-text-muted/60" />
+          <div className="absolute bottom-7 left-10 h-2.5 w-2.5 rounded-full bg-arena-text-muted/60" />
+          <div className="absolute bottom-8 right-10 h-2.5 w-2.5 rounded-full bg-arena-text-muted/60" />
+        </div>
+      );
+    case "Ladder":
+      return (
+        <div className="flex h-28 items-center justify-center gap-3">
+          {[1, 2, 3, 4].map((step) => (
+            <div key={step} className="flex flex-col items-center gap-2">
+              <div
+                className="w-12 rounded-2xl border border-arena-border/70 bg-arena-surface/80"
+                style={{ height: `${24 + step * 12}px` }}
+              />
+              <span className="text-[10px] font-semibold uppercase tracking-[0.16em] text-arena-text-muted">
+                #{5 - step}
+              </span>
+            </div>
+          ))}
+        </div>
+      );
+    case "Free for All":
+      return (
+        <div className="grid h-28 grid-cols-3 gap-3">
+          {["1st", "2nd", "3rd", "4th", "5th", "6th"].map((place, i) => (
+            <div
+              key={place}
+              className={`flex items-center justify-center rounded-2xl border text-xs font-bold ${
+                i === 0
+                  ? "border-arena-accent/30 bg-arena-accent/15 text-arena-accent"
+                  : "border-arena-border/70 bg-arena-surface/80 text-arena-text-muted"
+              }`}
+            >
+              {place}
+            </div>
+          ))}
+        </div>
+      );
+    default:
+      return null;
+  }
+}
 
 // ── Animation variants ─────────────────────────────────────────────────────────
 const staggerContainer: Variants = {
@@ -2246,6 +2538,73 @@ const fadeUp: Variants = {
     transition: { duration: 0.8, ease: [0.16, 1, 0.3, 1] },
   },
 };
+
+// ── Scroll-reveal helpers ───────────────────────────────────────────────────────
+export function FadeUp({
+  children,
+  delay = 0,
+  className,
+}: {
+  children: React.ReactNode;
+  delay?: number;
+  className?: string;
+}) {
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 22 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, margin: "-80px" }}
+      transition={{ duration: 0.55, ease: "easeOut", delay }}
+      className={className}
+    >
+      {children}
+    </motion.div>
+  );
+}
+
+const fadeUpGridVariants = {
+  hidden: {},
+  show: { transition: { staggerChildren: 0.12 } },
+};
+
+const fadeUpItemVariants = {
+  hidden: { opacity: 0, y: 22 },
+  show: { opacity: 1, y: 0, transition: { duration: 0.55, ease: "easeOut" as const } },
+};
+
+export function FadeUpGrid({
+  children,
+  className,
+}: {
+  children: React.ReactNode;
+  className?: string;
+}) {
+  return (
+    <motion.div
+      variants={fadeUpGridVariants}
+      initial="hidden"
+      whileInView="show"
+      viewport={{ once: true, margin: "-80px" }}
+      className={className}
+    >
+      {children}
+    </motion.div>
+  );
+}
+
+export function FadeUpItem({
+  children,
+  className,
+}: {
+  children: React.ReactNode;
+  className?: string;
+}) {
+  return (
+    <motion.div variants={fadeUpItemVariants} className={className}>
+      {children}
+    </motion.div>
+  );
+}
 
 // ── Floating category symbols background ───────────────────────────────────────
 // Deterministic pseudo-random so positions are stable across re-renders
@@ -2474,13 +2833,21 @@ function InteractiveGrid() {
 
 // ── Browse card (used in the scrolling Browse Tournaments strips) ──────────────
 function BrowseCard({ game }: { game: Game }) {
+  const navigate = useNavigate();
   const watermarkVariants = getBrowseCardWatermarkVariants(game);
+
+  const overlayVariants = {
+    idle: { opacity: 0 },
+    hover: { opacity: 1, transition: { duration: 0.18 } },
+  };
 
   return (
     <motion.div
       initial={false}
       animate="idle"
       whileHover="hover"
+      whileTap="hover"
+      onClick={() => navigate("/login")}
       className="relative shrink-0 w-68 h-40 rounded-2xl overflow-hidden border cursor-pointer group select-none"
       style={{
         background:
@@ -2592,8 +2959,10 @@ function BrowseCard({ game }: { game: Game }) {
           </div>
         </div>
       </div>
-      <div
-        className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-200"
+      {/* Desktop: hover overlay */}
+      <motion.div
+        variants={overlayVariants}
+        className="hidden sm:flex absolute inset-0 items-center justify-center"
         style={{
           background: "color-mix(in srgb, var(--bg) 18%, transparent)",
         }}
@@ -2607,6 +2976,28 @@ function BrowseCard({ game }: { game: Game }) {
           }}
         >
           Browse Tournaments <ArrowRight size={12} />
+        </span>
+      </motion.div>
+
+      {/* Mobile: always-visible tap strip */}
+      <div
+        className="sm:hidden absolute bottom-0 inset-x-0 flex items-center justify-between px-4 py-2"
+        style={{
+          background: "linear-gradient(to top, color-mix(in srgb, var(--bg) 72%, transparent) 0%, transparent 100%)",
+        }}
+      >
+        <span className="text-[11px] font-bold" style={{ color: "var(--text-main)" }}>
+          Browse
+        </span>
+        <span
+          className="flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-md border"
+          style={{
+            color: "var(--text-main)",
+            background: "color-mix(in srgb, var(--surface) 80%, transparent)",
+            borderColor: "color-mix(in srgb, var(--border) 90%, transparent)",
+          }}
+        >
+          Tap <ArrowRight size={9} />
         </span>
       </div>
     </motion.div>
@@ -2736,8 +3127,13 @@ function useScorecardReveal(
   );
   const [flashIndex, setFlashIndex] = useState(-1);
   const [done, setDone] = useState(false);
+  // Guard so the animation only ever runs once, even in React Strict Mode
+  const hasRun = useRef(false);
 
   useEffect(() => {
+    if (!trigger || hasRun.current) return;
+    hasRun.current = true;
+
     setDisplay(
       text.split("").map((c) => (c === " " ? " " : SCOREBOARD_CHARS[0])),
     );
@@ -2790,29 +3186,120 @@ function useScorecardReveal(
 // ── Landing page ───────────────────────────────────────────────────────────────
 export default function Landing() {
   const navigate = useNavigate();
+  const [selectedFormat, setSelectedFormat] = useState(supportedFormats[0].title);
+  const [hoveredFormat, setHoveredFormat] = useState<string | null>(null);
   const [activeCategory, setActiveCategory] = useState<Category>("E-Sports");
 
   const [slamGlow, setSlamGlow] = useState(false);
-  const [scoreTrigger, setScoreTrigger] = useState(1);
   const heroTextRef = useRef<HTMLHeadingElement>(null);
-  const heroTextInView = useInView(heroTextRef, { once: false, margin: "-100px" });
-
-  useEffect(() => {
-    if (!heroTextInView) return;
-    const raf = requestAnimationFrame(() => {
-      setScoreTrigger((t) => t + 1);
-      setSlamGlow(false);
-    });
-    return () => cancelAnimationFrame(raf);
-  }, [heroTextInView]);
+  const heroTextInView = useInView(heroTextRef, { once: true, margin: "-100px" });
 
   const {
     display: line1Display,
     flashIndex,
     done: line1Done,
-  } = useScorecardReveal("Run your tournaments.", scoreTrigger);
+  } = useScorecardReveal("Run your tournaments.", heroTextInView ? 1 : 0);
+
+  const clubHeadingRef = useRef<HTMLHeadingElement>(null);
+  const clubInView = useInView(clubHeadingRef, { once: false, margin: "-20px" });
+  const [clubPhase, setClubPhase] = useState<"idle" | "impact" | "settle">("idle");
+  const [clubCracked, setClubCracked] = useState(false);
+  useEffect(() => {
+    if (!clubInView) {
+      requestAnimationFrame(() => setClubPhase("idle"));
+      return;
+    }
+    const t1 = setTimeout(() => {
+      setClubPhase("impact");
+      setClubCracked(true);
+    }, 140);
+    const t2 = setTimeout(() => setClubPhase("settle"), 430);
+    const t3 = setTimeout(() => setClubPhase("idle"), 760);
+    return () => {
+      clearTimeout(t1);
+      clearTimeout(t2);
+      clearTimeout(t3);
+    };
+  }, [clubInView]);
+
+  const mobileClubHeadingRef = useRef<HTMLHeadingElement>(null);
+  const mobileClubInView = useInView(mobileClubHeadingRef, {
+    once: false,
+    margin: "-16px",
+  });
+  const [mobileClubPhase, setMobileClubPhase] = useState<"idle" | "impact" | "settle">("idle");
+  const [mobileClubCracked, setMobileClubCracked] = useState(false);
+  useEffect(() => {
+    if (!mobileClubInView) {
+      requestAnimationFrame(() => setMobileClubPhase("idle"));
+      return;
+    }
+    const t1 = setTimeout(() => {
+      setMobileClubPhase("impact");
+      setMobileClubCracked(true);
+    }, 110);
+    const t2 = setTimeout(() => setMobileClubPhase("settle"), 380);
+    const t3 = setTimeout(() => setMobileClubPhase("idle"), 680);
+    return () => {
+      clearTimeout(t1);
+      clearTimeout(t2);
+      clearTimeout(t3);
+    };
+  }, [mobileClubInView]);
+
+  const ctaLevelRef = useRef<HTMLHeadingElement>(null);
+  const ctaLevelInView = useInView(ctaLevelRef, { once: false, margin: "-20% 0px -20% 0px" });
+  const ctaLevelControls = useAnimationControls();
+  const ctaLevelArrowControls = useAnimationControls();
+  const [ctaLevelHovered, setCtaLevelHovered] = useState(false);
+
+  const playCtaLevelAnimation = (repeat = 0) => {
+    void ctaLevelControls.start({
+      y: [0, -10, 0],
+      scale: [1, 1.06, 1],
+      textShadow: [
+        "0 0 0px rgba(var(--accent-rgb), 0)",
+        "0 0 18px rgba(var(--accent-rgb), 0.35)",
+        "0 0 0px rgba(var(--accent-rgb), 0)",
+      ],
+      transition: { duration: 0.75, ease: "easeOut", repeat, repeatDelay: 0.12 },
+    });
+    void ctaLevelArrowControls.start({
+      y: [2, -8, 2],
+      rotate: [0, 0, 0],
+      opacity: [0.85, 1, 0.9],
+      transition: { duration: 0.75, ease: "easeOut", repeat, repeatDelay: 0.12 },
+    });
+  };
+
+  useEffect(() => {
+    if (ctaLevelHovered) {
+      playCtaLevelAnimation(Infinity);
+      return;
+    }
+    if (ctaLevelInView) {
+      playCtaLevelAnimation();
+      return;
+    }
+    void ctaLevelControls.start({
+      y: 0,
+      scale: 1,
+      textShadow: "0 0 0px rgba(var(--accent-rgb), 0)",
+      transition: { duration: 0.2, ease: "easeOut" },
+    });
+    void ctaLevelArrowControls.start({
+      y: 2,
+      rotate: 0,
+      opacity: 0.9,
+      transition: { duration: 0.2, ease: "easeOut" },
+    });
+  }, [ctaLevelHovered, ctaLevelInView, ctaLevelControls, ctaLevelArrowControls]);
 
   const filteredGames = games.filter((g) => g.category === activeCategory);
+  const activeFormat = hoveredFormat ?? selectedFormat;
+  const activeFormatMeta =
+    supportedFormats.find((format) => format.title === activeFormat) ??
+    supportedFormats[0];
   const rotateGames = (items: Game[], offset: number) => {
     if (items.length === 0) return items;
     const normalized = ((offset % items.length) + items.length) % items.length;
@@ -2975,6 +3462,102 @@ export default function Landing() {
         >
           No credit card required · Free to get started
         </motion.p>
+
+        <motion.div
+          initial={{ opacity: 0, y: 16 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.55, delay: 0.45 }}
+          className="mt-10 w-full max-w-4xl"
+        >
+          <p className="mb-4 text-xs font-semibold uppercase tracking-[0.18em] text-arena-text-muted">
+            Built for every format
+          </p>
+          <div
+            className="mx-auto max-w-3xl"
+            onMouseLeave={() => setHoveredFormat(null)}
+          >
+            <div className="flex flex-wrap items-center justify-center gap-2">
+              {supportedFormats.map((format) => (
+                (() => {
+                  const isActive = activeFormat === format.title;
+                  const isSelected = selectedFormat === format.title;
+
+                  return (
+                    <motion.button
+                      key={format.title}
+                      type="button"
+                      onMouseEnter={() => setHoveredFormat(format.title)}
+                      onFocus={() => setHoveredFormat(format.title)}
+                      onBlur={() => setHoveredFormat(null)}
+                      onClick={() => {
+                        setSelectedFormat(format.title);
+                        setHoveredFormat(null);
+                      }}
+                      className="inline-flex items-center gap-2 rounded-full border px-3 py-1.5 text-[11px] sm:text-xs font-semibold uppercase tracking-[0.08em] transition-all"
+                      animate={
+                        isSelected
+                          ? { y: -3, scale: 1.04 }
+                          : { y: 0, scale: 1 }
+                      }
+                      whileHover={!isSelected ? { y: -1.5, scale: 1.015 } : undefined}
+                      whileTap={{ scale: 0.98 }}
+                      transition={{ type: "spring", stiffness: 520, damping: 28 }}
+                      style={{
+                        color: isActive ? "var(--bg)" : "var(--text-main)",
+                        background: isActive
+                          ? "var(--accent)"
+                          : "color-mix(in srgb, var(--surface) 88%, transparent)",
+                        borderColor: isSelected
+                          ? "color-mix(in srgb, var(--accent) 92%, white 8%)"
+                          : isActive
+                            ? "var(--accent)"
+                            : "color-mix(in srgb, var(--border) 88%, transparent)",
+                        boxShadow: isSelected
+                          ? "0 0 0 2px rgba(232,255,71,0.18), 0 0 22px rgba(232,255,71,0.22)"
+                          : isActive
+                            ? "0 0 18px rgba(232,255,71,0.22)"
+                            : "none",
+                      }}
+                    >
+                      <FormatChipIcon format={format.title} />
+                      <span>{format.title}</span>
+                    </motion.button>
+                  );
+                })()
+              ))}
+            </div>
+            <motion.div
+              key={activeFormatMeta.title}
+              initial={{ opacity: 0, y: 8, scale: 0.985 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.22, ease: "easeOut" }}
+              className="mx-auto mt-5 grid gap-4 rounded-[28px] border p-4 text-left md:grid-cols-[1.1fr_0.9fr] md:p-5"
+              style={{
+                background: "color-mix(in srgb, var(--surface) 92%, transparent)",
+                borderColor: "color-mix(in srgb, var(--border) 90%, transparent)",
+              }}
+            >
+              <div className="flex flex-col justify-center">
+                <h3 className="text-lg font-bold text-arena-text md:text-xl">
+                  {activeFormatMeta.title}
+                </h3>
+                <p className="mt-2 text-sm leading-relaxed text-arena-text-muted md:text-[15px]">
+                  {activeFormatMeta.blurb}
+                </p>
+              </div>
+              <div
+                className="rounded-[24px] border p-4"
+                style={{
+                  background:
+                    "linear-gradient(135deg, color-mix(in srgb, var(--accent) 10%, transparent), color-mix(in srgb, var(--surface) 88%, transparent))",
+                  borderColor: "color-mix(in srgb, var(--accent) 18%, var(--border))",
+                }}
+              >
+                <FormatPreview format={activeFormatMeta.title} />
+              </div>
+            </motion.div>
+          </div>
+        </motion.div>
       </section>
 
       {/* Stats bar */}
@@ -3134,74 +3717,707 @@ export default function Landing() {
       <section className="relative py-24 px-6 z-10 flex-1">
         <div className="max-w-6xl mx-auto">
           <Parallax offset={50} className="text-center mb-16">
-            <h2 className="font-display text-[2rem] font-bold uppercase tracking-tight leading-[1.05] mb-4 md:hidden">
-              Everything your{" "}
-              <span style={{ color: "var(--accent)" }}>club</span> needs
+            <h2
+              ref={mobileClubHeadingRef}
+              className="font-display text-[2rem] font-bold uppercase tracking-tight leading-[1.05] mb-4 md:hidden"
+            >
+              <span className="inline-flex flex-wrap items-baseline justify-center gap-x-2 gap-y-1">
+              <motion.span
+                className="inline-block"
+                animate={
+                  mobileClubPhase === "impact"
+                    ? {
+                        x: [0, -5, 0],
+                        y: [0, 2, 0],
+                        rotate: [0, -1.5, 0],
+                        opacity: [1, 0.88, 1],
+                      }
+                    : { x: 0, y: 0, rotate: 0, opacity: 1 }
+                }
+                transition={{
+                  duration: mobileClubPhase === "impact" ? 0.38 : 0.18,
+                  ease: [0.22, 1, 0.36, 1],
+                }}
+              >
+                Everything your
+              </motion.span>
+              <motion.span
+                className="relative inline-block overflow-visible"
+                style={{ color: "var(--accent)" }}
+                animate={
+                  mobileClubPhase === "impact"
+                    ? {
+                        y: [0, -14, -7, -10, 0],
+                        scale: [1, 1.16, 1.07, 1.03, 1],
+                        rotate: [0, -4, 2, -1, 0],
+                        textShadow: [
+                          "0 0 0px rgba(var(--accent-rgb), 0)",
+                          "0 0 22px rgba(var(--accent-rgb), 0.35)",
+                          "0 0 10px rgba(var(--accent-rgb), 0.18)",
+                          "0 0 0px rgba(var(--accent-rgb), 0)"
+                        ],
+                      }
+                    : { y: 0, scale: 1, rotate: 0, textShadow: "0 0 0px rgba(var(--accent-rgb), 0)" }
+                }
+                transition={
+                  mobileClubPhase === "impact"
+                    ? { duration: 0.48, times: [0, 0.18, 0.42, 0.68, 1], ease: "easeOut" }
+                    : { duration: 0 }
+                }
+              >
+                <motion.span
+                  className="pointer-events-none absolute left-1 top-0 text-arena-accent"
+                  initial={false}
+                  animate={
+                    mobileClubPhase === "impact"
+                      ? {
+                          x: [-2, -1, 0, -1, 0],
+                          y: [-28, -12, 0, -4, -1],
+                          rotate: [-18, -8, 18, -6, 0],
+                          scale: [0.9, 0.98, 1.06, 1.02, 1],
+                          opacity: [0.15, 1, 1, 1, 1],
+                        }
+                      : { x: 0, y: -1, rotate: 0, scale: 1, opacity: 1 }
+                  }
+                  transition={
+                    mobileClubPhase === "impact"
+                      ? { duration: 0.5, times: [0, 0.42, 0.56, 0.76, 1], ease: "easeOut" }
+                      : { duration: 0.18 }
+                  }
+                  style={{ translateX: "-42%", translateY: "-74%" }}
+                >
+                  <StrikeClubIcon className="h-10 w-10 rotate-[75deg] drop-shadow-[0_0_14px_rgba(var(--accent-rgb),0.32)]" />
+                </motion.span>
+                <motion.span
+                  className="pointer-events-none absolute left-1/2 top-1/2 h-9 w-9 rounded-full border border-arena-accent/30"
+                  initial={false}
+                  animate={
+                    mobileClubPhase === "impact"
+                      ? { opacity: [0, 0.95, 0], scale: [0.5, 1.2, 1.7] }
+                      : { opacity: 0, scale: 0.5 }
+                  }
+                  transition={{ duration: 0.42, ease: "easeOut" }}
+                  style={{ x: "-50%", y: "-50%" }}
+                />
+                <motion.span
+                  className="pointer-events-none absolute left-1/2 top-1/2 h-0.5 w-8 rounded-full bg-arena-accent/70"
+                  initial={false}
+                  animate={
+                    mobileClubPhase === "impact"
+                      ? { opacity: [0, 1, 0], scaleX: [0.3, 1.1, 1.4], rotate: [0, -18, -28] }
+                      : { opacity: 0, scaleX: 0.3, rotate: -28 }
+                  }
+                  transition={{ duration: 0.34, ease: "easeOut" }}
+                  style={{ x: "-50%", y: "-50%" }}
+                />
+                <motion.span
+                  className="pointer-events-none absolute left-1/2 top-1/2 h-0.5 w-8 rounded-full bg-arena-accent/65"
+                  initial={false}
+                  animate={
+                    mobileClubPhase === "impact"
+                      ? { opacity: [0, 1, 0], scaleX: [0.3, 1.05, 1.3], rotate: [0, 16, 26] }
+                      : { opacity: 0, scaleX: 0.3, rotate: 26 }
+                  }
+                  transition={{ duration: 0.34, delay: 0.03, ease: "easeOut" }}
+                  style={{ x: "-50%", y: "-50%" }}
+                />
+                <span className="relative inline-block">
+                  <span className="relative z-10 inline-block">club</span>
+                  <span
+                    className={`pointer-events-none absolute inset-0 transition-opacity duration-300 ${mobileClubCracked ? "opacity-100" : "opacity-0"}`}
+                    aria-hidden="true"
+                  >
+                    <span className="absolute left-[18%] top-[58%] h-[2px] w-[26%] -rotate-[26deg] rounded-full bg-arena-bg/65" />
+                    <span className="absolute left-[40%] top-[46%] h-[2px] w-[18%] rotate-[58deg] rounded-full bg-arena-bg/65" />
+                    <span className="absolute left-[52%] top-[60%] h-[2px] w-[24%] -rotate-[18deg] rounded-full bg-arena-bg/65" />
+                    <span className="absolute left-[31%] top-[52%] h-[1px] w-[13%] rotate-[24deg] rounded-full bg-white/30" />
+                    <span className="absolute left-[59%] top-[50%] h-[1px] w-[12%] -rotate-[42deg] rounded-full bg-white/25" />
+                  </span>
+                </span>
+              </motion.span>
+              <motion.span
+                className="inline-block"
+                animate={
+                  mobileClubPhase === "impact"
+                    ? {
+                        x: [0, 6, 1, 0],
+                        y: [0, 1, -1, 0],
+                        letterSpacing: ["0em", "0.05em", "0.01em", "0em"],
+                      }
+                    : { x: 0, y: 0, letterSpacing: "0em" }
+                }
+                transition={{
+                  duration: mobileClubPhase === "impact" ? 0.42 : 0.18,
+                  ease: [0.22, 1, 0.36, 1],
+                }}
+              >
+                needs
+              </motion.span>
+              </span>
             </h2>
             <h2
+              ref={clubHeadingRef}
               className="hidden md:block font-display text-4xl md:text-5xl font-bold uppercase tracking-tight mb-4"
-              style={{ perspective: "800px" }}
             >
-              {"Everything your club needs".split("").map((char, i) =>
-                char === " " ? (
-                  <span key={i} className="inline-block">
-                    &nbsp;
-                  </span>
-                ) : (
-                  <motion.span
-                    key={i}
-                    className="inline-block"
-                    initial={{
-                      y: -(20 + ((i * 13) % 44)),
-                      opacity: 0,
-                      rotateX: -90,
-                    }}
-                    whileInView={{ y: 0, opacity: 1, rotateX: 0 }}
-                    viewport={{ once: false, margin: "-80px" }}
-                    transition={{
-                      type: "spring",
-                      stiffness: 380,
-                      damping: 16,
-                      delay: i * 0.04,
-                    }}
-                  >
-                    <span
-                      style={
-                        i >= 16 && i <= 19
-                          ? { color: "var(--accent)" }
-                          : undefined
+              <span className="inline-flex flex-wrap items-baseline justify-center gap-x-3 gap-y-1">
+              <motion.span
+                className="inline-block"
+                animate={
+                  clubPhase === "impact"
+                    ? {
+                        x: [0, -7, 0],
+                        y: [0, 2, 0],
+                        rotate: [0, -1.5, 0],
+                        opacity: [1, 0.9, 1],
                       }
-                    >
-                      {char}
-                    </span>
-                  </motion.span>
-                ),
-              )}
+                    : { x: 0, y: 0, rotate: 0, opacity: 1 }
+                }
+                transition={{
+                  duration: clubPhase === "impact" ? 0.4 : 0.18,
+                  ease: [0.22, 1, 0.36, 1],
+                }}
+              >
+                Everything your
+              </motion.span>
+              <motion.span
+                className="relative inline-block overflow-visible"
+                style={{ color: "var(--accent)" }}
+                animate={
+                  clubPhase === "impact"
+                    ? {
+                        y: [0, -18, -9, -13, 0],
+                        scale: [1, 1.16, 1.08, 1.03, 1],
+                        rotate: [0, -4, 2.5, -1, 0],
+                        textShadow: [
+                          "0 0 0px rgba(var(--accent-rgb), 0)",
+                          "0 0 28px rgba(var(--accent-rgb), 0.38)",
+                          "0 0 14px rgba(var(--accent-rgb), 0.22)",
+                          "0 0 0px rgba(var(--accent-rgb), 0)"
+                        ],
+                      }
+                    : { y: 0, scale: 1, rotate: 0, textShadow: "0 0 0px rgba(var(--accent-rgb), 0)" }
+                }
+                transition={
+                  clubPhase === "impact"
+                    ? { duration: 0.52, times: [0, 0.18, 0.42, 0.68, 1], ease: "easeOut" }
+                    : { duration: 0 }
+                }
+              >
+                <motion.span
+                  className="pointer-events-none absolute left-1 top-0 text-arena-accent"
+                  initial={false}
+                  animate={
+                    clubPhase === "impact"
+                      ? {
+                          x: [-2, -1, 0, -1, 0],
+                          y: [-36, -16, 0, -5, -1],
+                          rotate: [-18, -8, 20, -7, 0],
+                          scale: [0.9, 0.98, 1.08, 1.03, 1],
+                          opacity: [0.15, 1, 1, 1, 1],
+                        }
+                      : { x: 0, y: -1, rotate: 0, scale: 1, opacity: 1 }
+                  }
+                  transition={
+                    clubPhase === "impact"
+                      ? { duration: 0.54, times: [0, 0.42, 0.56, 0.76, 1], ease: "easeOut" }
+                      : { duration: 0.2 }
+                  }
+                  style={{ translateX: "-42%", translateY: "-78%" }}
+                >
+                  <StrikeClubIcon className="h-14 w-14 rotate-[75deg] drop-shadow-[0_0_18px_rgba(var(--accent-rgb),0.34)]" />
+                </motion.span>
+                <motion.span
+                  className="pointer-events-none absolute left-1/2 top-1/2 h-11 w-11 rounded-full border border-arena-accent/30"
+                  initial={false}
+                  animate={
+                    clubPhase === "impact"
+                      ? { opacity: [0, 1, 0], scale: [0.45, 1.22, 1.8] }
+                      : { opacity: 0, scale: 0.45 }
+                  }
+                  transition={{ duration: 0.44, ease: "easeOut" }}
+                  style={{ x: "-50%", y: "-50%" }}
+                />
+                <motion.span
+                  className="pointer-events-none absolute left-1/2 top-1/2 h-0.5 w-10 rounded-full bg-arena-accent/75"
+                  initial={false}
+                  animate={
+                    clubPhase === "impact"
+                      ? { opacity: [0, 1, 0], scaleX: [0.3, 1.15, 1.45], rotate: [0, -16, -30] }
+                      : { opacity: 0, scaleX: 0.3, rotate: -30 }
+                  }
+                  transition={{ duration: 0.34, ease: "easeOut" }}
+                  style={{ x: "-50%", y: "-50%" }}
+                />
+                <motion.span
+                  className="pointer-events-none absolute left-1/2 top-1/2 h-0.5 w-10 rounded-full bg-arena-accent/70"
+                  initial={false}
+                  animate={
+                    clubPhase === "impact"
+                      ? { opacity: [0, 1, 0], scaleX: [0.3, 1.1, 1.35], rotate: [0, 14, 28] }
+                      : { opacity: 0, scaleX: 0.3, rotate: 28 }
+                  }
+                  transition={{ duration: 0.34, delay: 0.03, ease: "easeOut" }}
+                  style={{ x: "-50%", y: "-50%" }}
+                />
+                <span className="relative inline-block">
+                  <span className="relative z-10 inline-block">club</span>
+                  <span
+                    className={`pointer-events-none absolute inset-0 transition-opacity duration-300 ${clubCracked ? "opacity-100" : "opacity-0"}`}
+                    aria-hidden="true"
+                  >
+                    <span className="absolute left-[16%] top-[58%] h-[2.5px] w-[28%] -rotate-[26deg] rounded-full bg-arena-bg/65" />
+                    <span className="absolute left-[41%] top-[44%] h-[2.5px] w-[18%] rotate-[60deg] rounded-full bg-arena-bg/65" />
+                    <span className="absolute left-[54%] top-[60%] h-[2.5px] w-[24%] -rotate-[18deg] rounded-full bg-arena-bg/65" />
+                    <span className="absolute left-[31%] top-[50%] h-[1.5px] w-[13%] rotate-[24deg] rounded-full bg-white/30" />
+                    <span className="absolute left-[60%] top-[48%] h-[1.5px] w-[12%] -rotate-[42deg] rounded-full bg-white/25" />
+                  </span>
+                </span>
+              </motion.span>
+              <motion.span
+                className="inline-block"
+                animate={
+                  clubPhase === "impact"
+                    ? {
+                        x: [0, 8, 1, 0],
+                        y: [0, 1, -1, 0],
+                        letterSpacing: ["0em", "0.06em", "0.01em", "0em"],
+                      }
+                    : { x: 0, y: 0, letterSpacing: "0em" }
+                }
+                transition={{
+                  duration: clubPhase === "impact" ? 0.44 : 0.18,
+                  ease: [0.22, 1, 0.36, 1],
+                }}
+              >
+                needs
+              </motion.span>
+              </span>
             </h2>
             <p className="text-arena-text-muted text-lg max-w-2xl mx-auto">
               Purpose-built for the chaos of running tournaments at scale.
             </p>
           </Parallax>
 
-          <Parallax
-            offset={80}
-            className="grid md:grid-cols-2 lg:grid-cols-3 gap-6"
-          >
-            {features.map(({ icon: Icon, title, desc }) => (
-              <div
-                key={title}
-                className="glass-card p-6 flex flex-col group hover:-translate-y-1 transition-all duration-300"
-              >
-                <div className="w-12 h-12 rounded-xl bg-arena-accent/10 border border-arena-accent/20 flex items-center justify-center text-arena-accent mb-6 group-hover:scale-110 group-hover:bg-arena-accent group-hover:text-arena-bg transition-all duration-300">
-                  <Icon size={24} />
+          {/* ── Feature Showcases ── */}
+          <div className="space-y-28">
+
+            {/* 1 · Tournament Management */}
+            <motion.div
+              initial={{ opacity: 0, y: 40 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-80px" }}
+              transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+              className="flex flex-col lg:flex-row items-center gap-12 lg:gap-20"
+            >
+              <div className="flex-1 text-center lg:text-left">
+                <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-arena-accent/10 border border-arena-accent/20 text-xs font-bold text-arena-accent mb-5 uppercase tracking-widest">
+                  <Trophy size={12} /> Tournament Management
                 </div>
-                <h3 className="text-xl font-bold text-arena-text mb-2">
-                  {title}
+                <h3 className="font-display text-3xl md:text-4xl font-bold uppercase tracking-tight text-arena-text mb-4">
+                  Brackets on<br />demand
                 </h3>
-                <p className="text-arena-text-muted leading-relaxed">{desc}</p>
+                <p className="text-arena-text-muted text-lg leading-relaxed mb-6">
+                  Create and manage any bracket format in seconds. Single-elimination, double-elimination, round-robin, or swiss — all from the same dashboard.
+                </p>
+                <ul className="space-y-3 text-left max-w-sm mx-auto lg:mx-0">
+                  {["4 bracket formats out of the box", "Live bracket tracking as matches complete", "Filter by E-Sports, Sports, Board, or Card"].map(item => (
+                    <li key={item} className="flex items-start gap-3 text-arena-text-muted text-sm">
+                      <CheckCircle2 size={16} className="text-arena-accent shrink-0 mt-0.5" />
+                      {item}
+                    </li>
+                  ))}
+                </ul>
               </div>
-            ))}
-          </Parallax>
+
+              {/* Mockup: Dashboard */}
+              <div className="flex-1 w-full rounded-2xl border border-arena-border overflow-hidden" style={{ background: "var(--bg-2)" }}>
+                <div className="flex items-center justify-between px-4 py-3 border-b border-arena-border" style={{ background: "var(--bg-3)" }}>
+                  <div className="flex items-center gap-2">
+                    <div className="w-1.5 h-1.5 rounded-full bg-arena-accent animate-pulse" />
+                    <span className="text-xs font-bold text-arena-text uppercase tracking-widest">Dashboard</span>
+                  </div>
+                  <div className="flex gap-1">
+                    {["E-Sports","Sports","Board","Card"].map(c => (
+                      <span key={c} className="text-[10px] px-2 py-0.5 rounded-full border border-arena-border text-arena-text-muted" style={{ background: "var(--surface)" }}>{c}</span>
+                    ))}
+                  </div>
+                </div>
+                <div className="grid grid-cols-3 gap-3 px-4 pt-4 pb-3">
+                  {[
+                    { label: "Tournaments", val: "3", color: "var(--accent)" },
+                    { label: "Live Matches", val: "2", color: "var(--red)" },
+                    { label: "Players",      val: "16", color: "var(--blue)" },
+                  ].map(s => (
+                    <div key={s.label} className="rounded-xl p-3 border border-arena-border text-center" style={{ background: "var(--surface)" }}>
+                      <div className="font-display text-2xl font-bold" style={{ color: s.color }}>{s.val}</div>
+                      <div className="text-[10px] text-arena-text-muted mt-0.5">{s.label}</div>
+                    </div>
+                  ))}
+                </div>
+                <div className="mx-4 mb-4 rounded-xl border border-arena-border p-4 flex items-start justify-between gap-3" style={{ background: "var(--surface)" }}>
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2 mb-1">
+                      <span className="text-sm font-bold text-arena-text truncate">Alpha Team vs Beta Squad</span>
+                      <span className="shrink-0 text-[10px] font-bold px-2 py-0.5 rounded-full bg-arena-accent/10 border border-arena-accent/20 text-arena-accent">Active</span>
+                    </div>
+                    <div className="text-[11px] text-arena-text-muted mb-3">valorant · single-elimination</div>
+                    <div className="w-full h-1.5 rounded-full overflow-hidden" style={{ background: "var(--border)" }}>
+                      <div className="h-full rounded-full bg-arena-accent" style={{ width: "62%" }} />
+                    </div>
+                    <div className="flex items-center justify-between mt-2">
+                      <span className="text-[10px] text-arena-text-muted flex items-center gap-1"><Users size={10} /> 8 / 16 confirmed</span>
+                      <span className="text-[10px] flex items-center gap-1" style={{ color: "var(--red)" }}><Zap size={10} /> 2 live</span>
+                    </div>
+                  </div>
+                  <ChevronRight size={14} className="text-arena-text-muted shrink-0 mt-1" />
+                </div>
+              </div>
+            </motion.div>
+
+            {/* 2 · Live Match Control */}
+            <motion.div
+              initial={{ opacity: 0, y: 40 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-80px" }}
+              transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+              className="flex flex-col-reverse lg:flex-row items-center gap-12 lg:gap-20"
+            >
+              {/* Mockup: Live Control */}
+              <div className="flex-1 w-full rounded-2xl border border-arena-border overflow-hidden" style={{ background: "var(--bg-2)" }}>
+                <div className="flex items-center justify-between px-4 py-3 border-b border-arena-border" style={{ background: "var(--bg-3)" }}>
+                  <div className="flex items-center gap-2">
+                    <div className="w-1.5 h-1.5 rounded-full bg-red-400 animate-pulse" />
+                    <span className="text-xs font-bold text-arena-text uppercase tracking-widest">Live Control</span>
+                  </div>
+                  <span className="text-[10px] font-bold px-2 py-0.5 rounded-full text-red-400 border border-red-400/30" style={{ background: "rgba(255,71,87,0.08)" }}>2 LIVE</span>
+                </div>
+                <div className="p-4 space-y-3">
+                  {[
+                    { ref: "M3 · R2", t1: "Alpha Team",  t2: "Beta Squad", s1: 2, s2: 1 },
+                    { ref: "M4 · R2", t1: "Gamma Force", t2: "Delta Crew", s1: 0, s2: 0 },
+                  ].map(m => (
+                    <div key={m.ref} className="rounded-xl border p-3 flex items-center gap-3" style={{ borderColor: "rgba(255,71,87,0.28)", background: "rgba(255,71,87,0.04)" }}>
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-2 mb-1.5">
+                          <span className="text-[10px] font-bold uppercase tracking-wider text-arena-text-muted">{m.ref}</span>
+                          <span className="text-[10px] font-bold px-1.5 py-px rounded text-red-400" style={{ background: "rgba(255,71,87,0.12)" }}>LIVE</span>
+                        </div>
+                        <div className="flex items-center gap-2 text-xs font-semibold text-arena-text">
+                          <span className="truncate">{m.t1}</span>
+                          <span className="font-display text-base font-bold">{m.s1} – {m.s2}</span>
+                          <span className="truncate">{m.t2}</span>
+                        </div>
+                      </div>
+                      <div className="flex gap-1.5 shrink-0">
+                        <span className="text-[10px] px-2 py-1 rounded-lg border border-arena-border text-arena-text-muted" style={{ background: "var(--surface)" }}>No-show</span>
+                        <span className="text-[10px] px-2 py-1 rounded-lg font-bold text-arena-bg" style={{ background: "var(--accent)" }}>Complete</span>
+                      </div>
+                    </div>
+                  ))}
+                  <div className="rounded-xl border p-3" style={{ borderColor: "rgba(var(--amber-rgb),0.28)", background: "rgba(var(--amber-rgb),0.04)" }}>
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <AlertTriangle size={12} style={{ color: "var(--amber)" }} />
+                        <span className="text-[10px] font-bold" style={{ color: "var(--amber)" }}>DELAYED · M2 · R1</span>
+                      </div>
+                      <span className="text-[10px] px-2 py-0.5 rounded border border-arena-border text-arena-text-muted" style={{ background: "var(--surface)" }}>Reschedule</span>
+                    </div>
+                    <div className="mt-1.5 text-xs text-arena-text-muted">Omega Unit vs Zeta Elite</div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="flex-1 text-center lg:text-left">
+                <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-red-500/10 border border-red-500/20 text-xs font-bold text-red-400 mb-5 uppercase tracking-widest">
+                  <Zap size={12} /> Live Match Control
+                </div>
+                <h3 className="font-display text-3xl md:text-4xl font-bold uppercase tracking-tight text-arena-text mb-4">
+                  Score. Flag.<br />Move on.
+                </h3>
+                <p className="text-arena-text-muted text-lg leading-relaxed mb-6">
+                  Everything you need on game day — live scoring, no-show flags, delay handling, and room reassignment — without leaving the page.
+                </p>
+                <ul className="space-y-3 text-left max-w-sm mx-auto lg:mx-0">
+                  {["Real-time score entry per match", "One-click no-show and delay reporting", "Instant room reassignment when plans change"].map(item => (
+                    <li key={item} className="flex items-start gap-3 text-arena-text-muted text-sm">
+                      <CheckCircle2 size={16} className="text-arena-accent shrink-0 mt-0.5" />
+                      {item}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </motion.div>
+
+            {/* 3 · Scheduling & Room Booking */}
+            <motion.div
+              initial={{ opacity: 0, y: 40 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-80px" }}
+              transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+              className="flex flex-col lg:flex-row items-center gap-12 lg:gap-20"
+            >
+              <div className="flex-1 text-center lg:text-left">
+                <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-blue-500/10 border border-blue-500/20 text-xs font-bold text-blue-400 mb-5 uppercase tracking-widest">
+                  <Calendar size={12} /> Scheduling & Rooms
+                </div>
+                <h3 className="font-display text-3xl md:text-4xl font-bold uppercase tracking-tight text-arena-text mb-4">
+                  No more<br />spreadsheets.
+                </h3>
+                <p className="text-arena-text-muted text-lg leading-relaxed mb-6">
+                  View the full day's schedule in a grid or list, assign rooms to matches, and catch booking conflicts before they cause problems.
+                </p>
+                <ul className="space-y-3 text-left max-w-sm mx-auto lg:mx-0">
+                  {["Grid and list views per time block", "Room assignment with conflict detection", "Delay alerts surfaced directly in the schedule"].map(item => (
+                    <li key={item} className="flex items-start gap-3 text-arena-text-muted text-sm">
+                      <CheckCircle2 size={16} className="text-arena-accent shrink-0 mt-0.5" />
+                      {item}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+
+              {/* Mockup: Schedule */}
+              <div className="flex-1 w-full rounded-2xl border border-arena-border overflow-hidden" style={{ background: "var(--bg-2)" }}>
+                <div className="flex items-center justify-between px-4 py-3 border-b border-arena-border" style={{ background: "var(--bg-3)" }}>
+                  <span className="text-xs font-bold text-arena-text uppercase tracking-widest">Schedule</span>
+                  <div className="flex items-center gap-2">
+                    <span className="text-[10px] font-bold px-2 py-0.5 rounded-lg border border-arena-accent/30 text-arena-accent" style={{ background: "var(--accent-dim)" }}>Today</span>
+                    <span className="text-[10px] text-arena-text-muted">Mar 22</span>
+                  </div>
+                </div>
+                <div className="p-4">
+                  <div className="rounded-xl border border-arena-border overflow-hidden" style={{ background: "var(--surface)" }}>
+                    <div className="flex items-center gap-2 px-3 py-2 border-b border-arena-border" style={{ background: "var(--bg-3)" }}>
+                      <Clock size={10} className="text-arena-text-muted" />
+                      <span className="text-[10px] font-bold text-arena-text uppercase tracking-wider">Morning · 9 AM – 12 PM</span>
+                    </div>
+                    {[
+                      { ref: "M1", teams: "Alpha Team vs Beta Squad",  room: "Gaming Lab A", status: "completed" },
+                      { ref: "M2", teams: "Gamma Force vs Delta Crew", room: "Room 204",      status: "live"      },
+                      { ref: "M3", teams: "Omega Unit vs Zeta Elite",  room: "Rec Center",   status: "scheduled" },
+                    ].map((m, i) => (
+                      <div key={m.ref} className={`flex items-center gap-3 px-3 py-2.5 ${i < 2 ? "border-b border-arena-border" : ""}`}>
+                        <div className={`w-1.5 h-1.5 rounded-full shrink-0 ${m.status === "live" ? "bg-red-400 animate-pulse" : m.status === "completed" ? "bg-arena-text-muted" : "bg-blue-400"}`} />
+                        <div className="flex-1 min-w-0">
+                          <div className="text-[11px] font-semibold text-arena-text truncate">{m.teams}</div>
+                          <div className="flex items-center gap-1 mt-0.5">
+                            <MapPin size={9} className="text-arena-text-muted" />
+                            <span className="text-[10px] text-arena-text-muted">{m.room}</span>
+                          </div>
+                        </div>
+                        <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full border ${
+                          m.status === "live"      ? "text-red-400 border-red-400/30"  :
+                          m.status === "completed" ? "text-arena-text-muted border-arena-border" :
+                                                     "text-blue-400 border-blue-400/30"
+                        }`} style={{
+                          background: m.status === "live"      ? "rgba(255,71,87,0.08)"  :
+                                      m.status === "completed" ? "var(--bg-3)"            :
+                                                                 "rgba(79,172,254,0.08)"
+                        }}>
+                          {m.status === "live" ? "Live" : m.status === "completed" ? "Done" : "Schedule"}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </motion.div>
+
+            {/* 4 · Participants & Notifications */}
+            <motion.div
+              initial={{ opacity: 0, y: 40 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-80px" }}
+              transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+              className="flex flex-col-reverse lg:flex-row items-center gap-12 lg:gap-20"
+            >
+              {/* Mockup: Participants + Notifications */}
+              <div className="flex-1 w-full grid grid-cols-2 gap-4">
+                <div className="rounded-2xl border border-arena-border overflow-hidden" style={{ background: "var(--bg-2)" }}>
+                  <div className="flex items-center gap-2 px-3 py-3 border-b border-arena-border" style={{ background: "var(--bg-3)" }}>
+                    <Users size={11} className="text-arena-text-muted" />
+                    <span className="text-xs font-bold text-arena-text uppercase tracking-widest">Participants</span>
+                  </div>
+                  <div className="p-3 space-y-2">
+                    {[
+                      { name: "Alpha Team",  status: "confirmed" },
+                      { name: "Beta Squad",  status: "confirmed" },
+                      { name: "Gamma Force", status: "pending"   },
+                      { name: "Delta Crew",  status: "declined"  },
+                    ].map((p, i) => (
+                      <div key={i} className="flex items-center justify-between px-2.5 py-1.5 rounded-lg border border-arena-border" style={{ background: "var(--surface)" }}>
+                        <span className="text-xs font-semibold text-arena-text truncate">{p.name}</span>
+                        <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded border ${
+                          p.status === "confirmed" ? "text-arena-accent border-arena-accent/30" :
+                          p.status === "pending"   ? "text-arena-text-muted border-arena-border" :
+                                                     "text-red-400 border-red-400/20"
+                        }`} style={{ background: p.status === "confirmed" ? "var(--accent-dim)" : p.status === "pending" ? "var(--bg-3)" : "rgba(255,71,87,0.06)" }}>
+                          {p.status === "confirmed" ? "✓" : p.status === "pending" ? "–" : "✗"}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="rounded-2xl border border-arena-border overflow-hidden" style={{ background: "var(--bg-2)" }}>
+                  <div className="flex items-center justify-between px-3 py-3 border-b border-arena-border" style={{ background: "var(--bg-3)" }}>
+                    <div className="flex items-center gap-1.5">
+                      <Bell size={11} className="text-arena-text-muted" />
+                      <span className="text-xs font-bold text-arena-text uppercase tracking-widest">Alerts</span>
+                    </div>
+                    <span className="text-[10px] font-bold px-1.5 py-0.5 rounded-full text-arena-bg" style={{ background: "var(--accent)" }}>3</span>
+                  </div>
+                  <div className="p-3 space-y-1.5">
+                    {[
+                      { Icon: Zap,           color: "var(--red)",    msg: "M3 is now live",       unread: true  },
+                      { Icon: AlertTriangle, color: "var(--amber)",  msg: "M2 delayed",            unread: true  },
+                      { Icon: CheckCircle2,  color: "var(--accent)", msg: "Alpha Team checked in", unread: false },
+                      { Icon: BarChart2,     color: "var(--blue)",   msg: "Schedule generated",   unread: false },
+                    ].map((n, i) => (
+                      <div key={i} className="flex items-start gap-2 px-2 py-1.5 rounded-lg" style={{
+                        background: n.unread ? "var(--surface)" : "transparent",
+                        borderLeft: n.unread ? "2px solid var(--accent)" : "2px solid transparent",
+                      }}>
+                        <n.Icon size={11} style={{ color: n.color }} className="shrink-0 mt-0.5" />
+                        <span className="text-[10px] text-arena-text leading-snug">{n.msg}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+
+              <div className="flex-1 text-center lg:text-left">
+                <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-arena-accent/10 border border-arena-accent/20 text-xs font-bold text-arena-accent mb-5 uppercase tracking-widest">
+                  <Users size={12} /> Players & Alerts
+                </div>
+                <h3 className="font-display text-3xl md:text-4xl font-bold uppercase tracking-tight text-arena-text mb-4">
+                  Keep everyone<br />in the loop.
+                </h3>
+                <p className="text-arena-text-muted text-lg leading-relaxed mb-6">
+                  Manage registrations, track check-ins, and get instant sound alerts when something needs your attention — all from one place.
+                </p>
+                <ul className="space-y-3 text-left max-w-sm mx-auto lg:mx-0">
+                  {["Confirmed / pending / declined tracking", "Notifications alerts", "Time-grouped feed with unread markers"].map(item => (
+                    <li key={item} className="flex items-start gap-3 text-arena-text-muted text-sm">
+                      <CheckCircle2 size={16} className="text-arena-accent shrink-0 mt-0.5" />
+                      {item}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </motion.div>
+
+            {/* 5 · Share Event */}
+            <motion.div
+              initial={{ opacity: 0, y: 40 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-80px" }}
+              transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+              className="flex flex-col lg:flex-row items-center gap-12 lg:gap-20"
+            >
+              <div className="flex-1 text-center lg:text-left">
+                <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-arena-accent/10 border border-arena-accent/20 text-xs font-bold text-arena-accent mb-5 uppercase tracking-widest">
+                  <ArrowUpRight size={12} /> Share Event
+                </div>
+                <h3 className="font-display text-3xl md:text-4xl font-bold uppercase tracking-tight text-arena-text mb-4">
+                  Send the bracket.<br />Fast.
+                </h3>
+                <p className="text-arena-text-muted text-lg leading-relaxed mb-6">
+                  Share a clean event link, QR code, or embed card so players and clubs can jump straight into the tournament page without asking for updates.
+                </p>
+                <ul className="space-y-3 text-left max-w-sm mx-auto lg:mx-0">
+                  {["Copy a direct tournament link", "Generate a QR code for check-in tables", "Embed a compact card on club pages"].map(item => (
+                    <li key={item} className="flex items-start gap-3 text-arena-text-muted text-sm">
+                      <CheckCircle2 size={16} className="text-arena-accent shrink-0 mt-0.5" />
+                      {item}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+
+              <div className="flex-1 w-full max-w-[440px] rounded-[20px] border border-arena-border overflow-hidden shadow-[0_32px_80px_rgba(0,0,0,0.35)]" style={{ background: "var(--surface)" }}>
+                <div className="flex items-center justify-between px-5 py-4 border-b border-arena-border">
+                  <div className="flex items-center gap-3 min-w-0">
+                    <div className="w-9 h-9 rounded-xl flex items-center justify-center text-arena-accent border border-arena-accent/30 shrink-0" style={{ background: "var(--accent-dim)" }}>
+                      <Zap size={15} />
+                    </div>
+                    <div className="min-w-0">
+                      <p className="text-[11px] font-bold uppercase tracking-[0.14em] text-arena-accent">Share Event</p>
+                      <p className="text-sm font-bold text-arena-text truncate">Alpha Team vs Beta Squad</p>
+                    </div>
+                  </div>
+                  <div className="w-8 h-8 rounded-lg border border-arena-border flex items-center justify-center text-arena-text-muted shrink-0" style={{ background: "var(--bg-3)" }}>
+                    <ArrowUpRight size={14} />
+                  </div>
+                </div>
+
+                <div className="flex gap-1 p-3 border-b border-arena-border" style={{ background: "var(--bg-2)" }}>
+                  {[
+                    { label: "QR Code", icon: QrCode, active: true },
+                    { label: "Link", icon: Link2, active: false },
+                    { label: "Widget", icon: Code2, active: false },
+                  ].map(tab => (
+                    <div
+                      key={tab.label}
+                      className={`flex-1 inline-flex items-center justify-center gap-1.5 rounded-lg px-3 py-2 text-[11px] font-bold ${
+                        tab.active ? "text-arena-bg" : "text-arena-text-muted"
+                      }`}
+                      style={{ background: tab.active ? "var(--accent)" : "transparent" }}
+                    >
+                      <tab.icon size={12} />
+                      {tab.label}
+                    </div>
+                  ))}
+                </div>
+
+                <div className="p-5">
+                  <div className="relative mx-auto mb-4 h-[180px] w-[180px] rounded-2xl border border-arena-border flex items-center justify-center" style={{ background: "var(--bg-2)" }}>
+                    <div className="absolute left-[-4px] top-[-4px] h-5 w-5 rounded-tl-md border-l-[2.5px] border-t-[2.5px] border-arena-accent" />
+                    <div className="absolute right-[-4px] top-[-4px] h-5 w-5 rounded-tr-md border-r-[2.5px] border-t-[2.5px] border-arena-accent" />
+                    <div className="absolute left-[-4px] bottom-[-4px] h-5 w-5 rounded-bl-md border-b-[2.5px] border-l-[2.5px] border-arena-accent" />
+                    <div className="absolute right-[-4px] bottom-[-4px] h-5 w-5 rounded-br-md border-b-[2.5px] border-r-[2.5px] border-arena-accent" />
+                    <div className="grid grid-cols-5 gap-1">
+                      {Array.from({ length: 25 }).map((_, i) => (
+                        <span
+                          key={i}
+                          className="h-5 w-5 rounded-[3px]"
+                          style={{
+                            background:
+                              [0, 1, 4, 5, 6, 8, 10, 12, 14, 16, 18, 19, 20, 22, 24].includes(i)
+                                ? "var(--text)"
+                                : "rgba(127,127,127,0.15)",
+                          }}
+                        />
+                      ))}
+                    </div>
+                  </div>
+
+                  <p className="text-xs text-arena-text-muted text-center mb-4">Scan to open the live event page</p>
+
+                  <div className="rounded-xl border border-arena-border px-3 py-2.5 flex items-center gap-3 mb-4" style={{ background: "var(--bg-2)" }}>
+                    <Link2 size={13} className="text-arena-text-muted shrink-0" />
+                    <span className="text-[11px] text-arena-text truncate">arenaops.gg/tournaments/alpha-vs-beta</span>
+                    <span className="ml-auto shrink-0 rounded-lg px-2.5 py-1 text-[10px] font-bold text-arena-accent border border-arena-accent/30" style={{ background: "var(--accent-dim)" }}>
+                      Copy
+                    </span>
+                  </div>
+
+                  <div className="grid grid-cols-3 gap-2">
+                    {["Email", "Discord", "Copy Link"].map(action => (
+                      <div
+                        key={action}
+                        className="rounded-lg border border-arena-border px-3 py-2 text-center text-[11px] font-semibold text-arena-text-muted"
+                        style={{ background: "var(--bg-2)" }}
+                      >
+                        {action}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </motion.div>
+
+          </div>{/* end feature showcases */}
         </div>
       </section>
 
@@ -3210,6 +4426,8 @@ export default function Landing() {
         <Parallax
           offset={60}
           className="max-w-4xl mx-auto glass-panel p-12 text-center relative overflow-visible group"
+          onMouseEnter={() => setCtaLevelHovered(true)}
+          onMouseLeave={() => setCtaLevelHovered(false)}
         >
           <div className="absolute inset-0 bg-linear-to-br from-arena-accent/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
           <div className="pointer-events-none absolute inset-0">
@@ -3224,71 +4442,43 @@ export default function Landing() {
             ))}
           </div>
           <div className="relative z-10">
-            <h2 className="font-display text-4xl md:text-5xl font-bold uppercase tracking-tight mb-4">
-              Ready to{" "}
+            <h2
+              ref={ctaLevelRef}
+              className="font-display text-[2.15rem] sm:text-4xl md:text-5xl font-bold uppercase tracking-tight mb-4 flex flex-wrap items-end justify-center gap-x-2 sm:gap-x-3 gap-y-2 text-center leading-[0.95]"
+            >
+              <span>Ready to</span>
               <motion.span
-                className="relative inline-flex items-center text-arena-accent"
+                className="relative inline-flex items-end justify-center text-arena-accent leading-none cursor-pointer"
                 initial={{
                   y: 0,
                   scale: 1,
                   textShadow: "0 0 0px rgba(var(--accent-rgb), 0)",
                 }}
-                whileInView={{
-                  y: [0, -10, 0],
-                  scale: [1, 1.06, 1],
-                  textShadow: [
-                    "0 0 0px rgba(var(--accent-rgb), 0)",
-                    "0 0 18px rgba(var(--accent-rgb), 0.35)",
-                    "0 0 0px rgba(var(--accent-rgb), 0)",
-                  ],
+                animate={ctaLevelControls}
+                onClick={() => navigate("/register")}
+                role="link"
+                tabIndex={0}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" || e.key === " ") {
+                    e.preventDefault();
+                    navigate("/register");
+                  }
                 }}
-                whileHover={{
-                  y: [0, -10, 0],
-                  scale: [1, 1.06, 1],
-                  textShadow: [
-                    "0 0 0px rgba(var(--accent-rgb), 0)",
-                    "0 0 18px rgba(var(--accent-rgb), 0.35)",
-                    "0 0 0px rgba(var(--accent-rgb), 0)",
-                  ],
-                }}
-                viewport={{ once: false, margin: "-20% 0px -20% 0px" }}
-                transition={{ duration: 0.75, ease: "easeOut" }}
               >
                 <span>level</span>
-              </motion.span>{" "}
-              up your events?
+                <motion.span
+                  className="absolute left-1/2 -top-4 sm:-top-5 inline-flex -translate-x-1/2"
+                  initial={{ y: 2, rotate: 0, opacity: 0.9 }}
+                  animate={ctaLevelArrowControls}
+                >
+                  <ArrowUp size={18} strokeWidth={2.4} className="sm:h-5 sm:w-5" />
+                </motion.span>
+              </motion.span>
+              <span>up your events?</span>
             </h2>
             <p className="text-arena-text-muted text-lg mb-8 max-w-xl mx-auto">
               Join hundreds of clubs & organisations already using ArenaOPS.
             </p>
-            <button
-              className="group/cta relative flex items-center justify-center gap-2 px-8 py-4 mx-auto bg-arena-accent hover:bg-[#dfff00] text-[#0a0a09] font-bold rounded-xl text-lg shadow-[0_0_30px_rgba(232,255,71,0.2)] hover:shadow-[0_0_50px_rgba(232,255,71,0.4)] transition-all active:scale-95"
-              onClick={() => navigate("/register")}
-              aria-label="Create your account"
-            >
-              <span className="relative inline-flex items-center">
-                <span className="relative inline-block">
-                  <span className="pointer-events-none absolute left-full top-full ml-2 mt-4 -translate-x-3 translate-y-2 opacity-0 transition-all duration-200 group-hover/cta:translate-x-0 group-hover/cta:translate-y-0 group-hover/cta:opacity-100 group-active/cta:translate-x-0 group-active/cta:translate-y-0 group-active/cta:opacity-100">
-                    <span className="relative flex items-center whitespace-nowrap rounded-2xl border border-arena-accent/25 bg-arena-surface/95 px-4 py-2 text-xs font-semibold uppercase tracking-[0.16em] text-arena-text shadow-[0_12px_28px_rgba(0,0,0,0.14)]">
-                      Create your account
-                      <span className="absolute left-4 bottom-full h-3 w-3 translate-y-1/2 rotate-45 border-t border-l border-arena-accent/25 bg-arena-surface/95" />
-                    </span>
-                  </span>
-                  <span className="relative inline-flex h-[1.35em] items-center overflow-hidden transition-transform duration-200 group-hover/cta:-translate-x-0.5 group-active/cta:-translate-x-0.5">
-                    <span className="transition-all duration-200 group-hover/cta:-translate-y-full group-hover/cta:opacity-0 group-active/cta:-translate-y-full group-active/cta:opacity-0">
-                      Yes!
-                    </span>
-                    <span className="absolute left-0 top-full transition-all duration-200 group-hover/cta:top-0 group-hover/cta:opacity-100 group-active/cta:top-0 group-active/cta:opacity-100 opacity-0">
-                      Yay!
-                    </span>
-                  </span>
-                </span>
-              </span>
-              <ArrowRight
-                size={20}
-                className="transition-transform group-hover/cta:translate-x-1 group-active/cta:translate-x-1"
-              />
-            </button>
           </div>
         </Parallax>
       </section>
