@@ -4344,13 +4344,13 @@ export default function Landing() {
               </FadeUp>
 
               <motion.div
-                className="flex-1 w-full"
+                className="flex-1 w-full flex justify-center lg:justify-start"
                 initial={{ opacity: 0, x: 60 }}
                 whileInView={{ opacity: 1, x: 0 }}
                 viewport={{ once: true, margin: "-80px" }}
                 transition={{ duration: 0.55, ease: "easeOut" }}
               >
-              <div className="w-full max-w-[440px] rounded-[20px] border border-arena-border overflow-hidden shadow-[0_32px_80px_rgba(0,0,0,0.35)]" style={{ background: "var(--surface)" }}>
+              <div className="w-full max-w-[340px] rounded-[20px] border border-arena-border overflow-hidden shadow-[0_32px_80px_rgba(0,0,0,0.35)]" style={{ background: "var(--surface)" }}>
                 <div className="flex items-center justify-between px-5 py-4 border-b border-arena-border">
                   <div className="flex items-center gap-3 min-w-0">
                     <div className="w-9 h-9 rounded-xl flex items-center justify-center text-arena-accent border border-arena-accent/30 shrink-0" style={{ background: "var(--accent-dim)" }}>
@@ -4385,17 +4385,17 @@ export default function Landing() {
                   ))}
                 </div>
 
-                <div className="p-5">
-                  <div className="relative mx-auto mb-4 h-[180px] w-[180px] rounded-2xl border border-arena-border flex items-center justify-center" style={{ background: "var(--bg-2)" }}>
+                <div className="p-4">
+                  <div className="relative mx-auto mb-4 h-[140px] w-[140px] rounded-2xl border border-arena-border flex items-center justify-center" style={{ background: "var(--bg-2)" }}>
                     <div className="absolute left-[-4px] top-[-4px] h-5 w-5 rounded-tl-md border-l-[2.5px] border-t-[2.5px] border-arena-accent" />
                     <div className="absolute right-[-4px] top-[-4px] h-5 w-5 rounded-tr-md border-r-[2.5px] border-t-[2.5px] border-arena-accent" />
                     <div className="absolute left-[-4px] bottom-[-4px] h-5 w-5 rounded-bl-md border-b-[2.5px] border-l-[2.5px] border-arena-accent" />
                     <div className="absolute right-[-4px] bottom-[-4px] h-5 w-5 rounded-br-md border-b-[2.5px] border-r-[2.5px] border-arena-accent" />
-                    <div className="grid grid-cols-5 gap-1">
+                    <div className="grid grid-cols-5 gap-[3px]">
                       {Array.from({ length: 25 }).map((_, i) => (
                         <span
                           key={i}
-                          className="h-5 w-5 rounded-[3px]"
+                          className="h-4 w-4 rounded-[3px]"
                           style={{
                             background:
                               [0, 1, 4, 5, 6, 8, 10, 12, 14, 16, 18, 19, 20, 22, 24].includes(i)
