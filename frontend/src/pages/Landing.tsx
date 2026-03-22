@@ -3640,15 +3640,18 @@ export default function Landing() {
               </motion.span>
             ))}
           </h2>
-          <p className="text-arena-text-muted text-lg max-w-xl mx-auto">
-            From FPS to fighting games — run professional tournaments for every
-            major title.
-          </p>
+          <FadeUp>
+            <p className="text-arena-text-muted text-lg max-w-xl mx-auto">
+              From FPS to fighting games — run professional tournaments for every
+              major title.
+            </p>
+          </FadeUp>
         </Parallax>
 
         {/* ── Browse Tournaments ── */}
         <Parallax offset={40} className="max-w-6xl mx-auto px-6">
           {/* Category tabs */}
+          <FadeUp>
           <div className="mx-auto mb-10 grid max-w-md grid-cols-2 gap-3 sm:flex sm:max-w-none sm:flex-wrap sm:items-center sm:justify-center sm:gap-6">
             {CATEGORIES.map((cat) => (
               <CategoryButton
@@ -3660,6 +3663,7 @@ export default function Landing() {
               />
             ))}
           </div>
+          </FadeUp>
         </Parallax>
 
         {/* Mobile browse scroller */}
