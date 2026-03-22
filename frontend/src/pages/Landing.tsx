@@ -2378,29 +2378,29 @@ function FormatPreview({ format }: { format: string }) {
             {[0,1,2,3].map((i) => (
               <motion.div key={i} className="h-3.5 w-3.5 rounded-full border border-arena-accent/40 bg-arena-accent/20"
                 initial={{ opacity: 0, scale: 0.4 }} animate={{ opacity: 1, scale: 1 }}
-                transition={{ duration: 0.6, delay: i * 0.16, ease }} />
+                transition={{ duration: 0.9, delay: i * 0.24, ease }} />
             ))}
           </div>
           <div className="flex flex-col gap-[22px]">
             {[0,1].map((i) => (
               <motion.div key={i} className="h-[2px] w-5 origin-left rounded-full bg-arena-accent/30"
                 initial={{ scaleX: 0, opacity: 0 }} animate={{ scaleX: 1, opacity: 1 }}
-                transition={{ duration: 0.5, delay: 0.75 + i * 0.15, ease }} />
+                transition={{ duration: 0.75, delay: 1.1 + i * 0.22, ease }} />
             ))}
           </div>
           <div className="flex flex-col gap-6">
             {[0,1].map((i) => (
               <motion.div key={i} className="h-3.5 w-3.5 rounded-full border border-arena-accent/40 bg-arena-accent/20"
                 initial={{ opacity: 0, scale: 0.4 }} animate={{ opacity: 1, scale: 1 }}
-                transition={{ duration: 0.6, delay: 1.1 + i * 0.2, ease }} />
+                transition={{ duration: 0.9, delay: 1.6 + i * 0.3, ease }} />
             ))}
           </div>
           <motion.div className="h-[2px] w-5 origin-left rounded-full bg-arena-accent/30"
             initial={{ scaleX: 0, opacity: 0 }} animate={{ scaleX: 1, opacity: 1 }}
-            transition={{ duration: 0.5, delay: 1.6, ease }} />
+            transition={{ duration: 0.75, delay: 2.4, ease }} />
           <motion.div className="h-4 w-4 rounded-full bg-arena-accent"
             initial={{ opacity: 0, scale: 0.3 }} animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.7, delay: 2.0, ease: [0.22, 1, 0.36, 1] }}
+            transition={{ duration: 1.0, delay: 3.0, ease: [0.22, 1, 0.36, 1] }}
             style={{ boxShadow: "0 0 18px rgba(232,255,71,0.5)" }} />
         </div>
       );
@@ -2409,25 +2409,25 @@ function FormatPreview({ format }: { format: string }) {
         <div className="grid h-28 grid-cols-2 gap-3">
           <motion.div className="rounded-2xl border border-arena-border/70 bg-arena-surface/80 p-3"
             initial={{ opacity: 0, x: -12 }} animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.65, ease }}>
+            transition={{ duration: 1.0, ease }}>
             <p className="mb-2 text-[10px] font-semibold uppercase tracking-[0.18em] text-arena-text-muted">Upper</p>
             <div className="space-y-2">
               {(["w-full","w-4/5","w-3/5"] as const).map((w, i) => (
                 <motion.div key={i} className={`h-3 ${w} origin-left rounded-xl border border-arena-accent/40 bg-arena-accent/20`}
                   initial={{ scaleX: 0, opacity: 0 }} animate={{ scaleX: 1, opacity: 1 }}
-                  transition={{ duration: 0.55, delay: 0.4 + i * 0.2, ease }} />
+                  transition={{ duration: 0.85, delay: 0.6 + i * 0.3, ease }} />
               ))}
             </div>
           </motion.div>
           <motion.div className="rounded-2xl border border-arena-accent/20 bg-arena-accent/10 p-3"
             initial={{ opacity: 0, x: 12 }} animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.65, delay: 1.0, ease }}>
+            transition={{ duration: 1.0, delay: 1.5, ease }}>
             <p className="mb-2 text-[10px] font-semibold uppercase tracking-[0.18em] text-arena-accent">Lower</p>
             <div className="space-y-2">
               {(["w-3/5","w-4/5","w-full"] as const).map((w, i) => (
                 <motion.div key={i} className={`h-3 ${w} origin-left rounded-xl border border-arena-accent/40 ${i === 2 ? "bg-arena-accent/30" : "bg-arena-accent/20"}`}
                   initial={{ scaleX: 0, opacity: 0 }} animate={{ scaleX: 1, opacity: 1 }}
-                  transition={{ duration: 0.55, delay: 1.4 + i * 0.2, ease }} />
+                  transition={{ duration: 0.85, delay: 2.1 + i * 0.3, ease }} />
               ))}
             </div>
           </motion.div>
@@ -2439,8 +2439,8 @@ function FormatPreview({ format }: { format: string }) {
           {["Player A vs Player B", "Player A vs Player C", "Player B vs Player C"].map((pair, i) => (
             <motion.div key={pair}
               className="flex items-center justify-center rounded-2xl border border-arena-border/70 bg-arena-surface/80 px-1.5 text-center text-[9px] font-semibold leading-tight text-arena-text-muted"
-              initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: i * 0.28, ease }}>
+              initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.9, delay: i * 0.42, ease }}>
               {pair}
             </motion.div>
           ))}
@@ -2458,23 +2458,23 @@ function FormatPreview({ format }: { format: string }) {
           ? "border-red-400/20 bg-red-400/5 text-red-400/70"
           : "border-arena-border/70 bg-arena-surface/80 text-arena-text-muted";
       return (
-        <div className="grid h-28 grid-cols-2 gap-2">
+        <div className="grid h-28 grid-cols-2 gap-2 overflow-hidden">
           {rounds.map((round, ri) => (
-            <motion.div key={ri} className="flex flex-col gap-1.5 rounded-2xl border border-arena-border/70 bg-arena-surface/80 p-2.5"
-              initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.55, delay: ri * 0.75, ease }}>
-              <motion.span className="text-[9px] font-bold uppercase tracking-wider text-arena-text-muted"
+            <motion.div key={ri} className="flex flex-col gap-1 rounded-2xl border border-arena-border/70 bg-arena-surface/80 p-2 overflow-hidden"
+              initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.85, delay: ri * 1.1, ease }}>
+              <motion.span className="shrink-0 text-[9px] font-bold uppercase tracking-wider text-arena-text-muted"
                 initial={{ opacity: 0 }} animate={{ opacity: 1 }}
-                transition={{ delay: ri * 0.75 + 0.2 }}>
+                transition={{ delay: ri * 1.1 + 0.3 }}>
                 {round.label}
               </motion.span>
               {round.pairs.map((pair, pi) => (
                 <div key={pi} className="flex items-center gap-1">
                   {pair.map((rec, si) => (
                     <motion.div key={si}
-                      className={`flex h-6 flex-1 items-center justify-center rounded-md border text-[10px] font-bold ${swissColor(rec, ri)}`}
+                      className={`flex h-5 flex-1 items-center justify-center rounded-md border text-[10px] font-bold ${swissColor(rec, ri)}`}
                       initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }}
-                      transition={{ duration: 0.45, delay: ri * 0.75 + 0.35 + pi * 0.18 + si * 0.09, ease }}>
+                      transition={{ duration: 0.7, delay: ri * 1.1 + 0.5 + pi * 0.28 + si * 0.14, ease }}>
                       {rec}
                     </motion.div>
                   ))}
@@ -2490,28 +2490,28 @@ function FormatPreview({ format }: { format: string }) {
         <div className="grid h-28 grid-cols-[1fr_auto_1fr] items-center gap-2">
           <motion.div className="rounded-2xl border border-arena-border/70 bg-arena-surface/80 p-2.5"
             initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.65, ease }}>
+            transition={{ duration: 1.0, ease }}>
             <p className="mb-1.5 text-[9px] font-semibold uppercase tracking-[0.18em] text-arena-text-muted">Groups</p>
             <div className="grid grid-cols-2 gap-1.5">
               {[0,1,2,3].map((i) => (
                 <motion.div key={i} className="h-3 w-full origin-left rounded-lg border border-arena-accent/40 bg-arena-accent/20"
                   initial={{ scaleX: 0, opacity: 0 }} animate={{ scaleX: 1, opacity: 1 }}
-                  transition={{ duration: 0.5, delay: 0.35 + i * 0.16, ease }} />
+                  transition={{ duration: 0.75, delay: 0.5 + i * 0.24, ease }} />
               ))}
             </div>
           </motion.div>
           <motion.div className="h-[2px] w-6 origin-left rounded-full bg-arena-accent/40"
             initial={{ scaleX: 0, opacity: 0 }} animate={{ scaleX: 1, opacity: 1 }}
-            transition={{ duration: 0.55, delay: 1.25, ease }} />
+            transition={{ duration: 0.85, delay: 1.85, ease }} />
           <motion.div className="rounded-2xl border border-arena-accent/20 bg-arena-accent/10 p-2.5"
             initial={{ opacity: 0, x: 10 }} animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.65, delay: 1.45, ease }}>
+            transition={{ duration: 1.0, delay: 2.1, ease }}>
             <p className="mb-1.5 text-[9px] font-semibold uppercase tracking-[0.18em] text-arena-accent">Finals</p>
             <div className="space-y-1.5">
               {[["w-full","bg-arena-accent/20"],["w-3/5","bg-arena-accent/35"]].map(([w,bg], i) => (
                 <motion.div key={i} className={`h-3 ${w} origin-left rounded-lg border border-arena-accent/30 ${bg}`}
                   initial={{ scaleX: 0, opacity: 0 }} animate={{ scaleX: 1, opacity: 1 }}
-                  transition={{ duration: 0.5, delay: 1.75 + i * 0.2, ease }} />
+                  transition={{ duration: 0.75, delay: 2.6 + i * 0.3, ease }} />
               ))}
             </div>
           </motion.div>
@@ -2520,20 +2520,20 @@ function FormatPreview({ format }: { format: string }) {
     case "Battle Royale": {
       const dots = [
         { ix: -52, iy: -28, winner: false, delay: 0    },
-        { ix:  52, iy: -28, winner: false, delay: 0.12 },
-        { ix: -44, iy:  28, winner: false, delay: 0.24 },
-        { ix:  44, iy:  28, winner: false, delay: 0.36 },
-        { ix:   0, iy: -38, winner: false, delay: 0.16 },
-        { ix:   0, iy:   0, winner: true,  delay: 0.5  },
+        { ix:  52, iy: -28, winner: false, delay: 0.18 },
+        { ix: -44, iy:  28, winner: false, delay: 0.36 },
+        { ix:  44, iy:  28, winner: false, delay: 0.54 },
+        { ix:   0, iy: -38, winner: false, delay: 0.24 },
+        { ix:   0, iy:   0, winner: true,  delay: 0.75 },
       ];
       return (
         <div className="relative flex h-28 items-center justify-center overflow-hidden rounded-[28px] border border-arena-border/70 bg-arena-surface/80">
           <motion.div className="absolute h-20 w-20 rounded-full border border-arena-accent/20"
             initial={{ opacity: 0, scale: 0.4 }} animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.9, ease }} />
+            transition={{ duration: 1.4, ease }} />
           <motion.div className="absolute h-10 w-10 rounded-full border border-arena-accent/30"
             initial={{ opacity: 0, scale: 0.4 }} animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.9, delay: 0.2, ease }} />
+            transition={{ duration: 1.4, delay: 0.3, ease }} />
           {dots.map((d, i) => (
             <motion.div key={i}
               className={`absolute h-2.5 w-2.5 rounded-full ${d.winner ? "bg-arena-accent" : "bg-arena-text-muted/60"}`}
@@ -2541,7 +2541,7 @@ function FormatPreview({ format }: { format: string }) {
               animate={d.winner
                 ? { x: 0, y: 0, opacity: 1, scale: 1 }
                 : { x: d.ix * 0.12, y: d.iy * 0.12, opacity: 0, scale: 0.3 }}
-              transition={{ duration: 1.2, delay: d.delay + 0.85, ease: [0.22, 1, 0.36, 1] }}
+              transition={{ duration: 1.8, delay: d.delay + 1.3, ease: [0.22, 1, 0.36, 1] }}
               style={d.winner ? { boxShadow: "0 0 18px rgba(232,255,71,0.5)" } : undefined} />
           ))}
         </div>
@@ -2562,10 +2562,10 @@ function FormatPreview({ format }: { format: string }) {
                 className={`w-11 origin-bottom rounded-xl border ${i === 3 ? "border-arena-accent/40 bg-arena-accent/20" : "border-arena-border/70 bg-arena-surface/80"}`}
                 style={{ height: s.h }}
                 initial={{ scaleY: 0, opacity: 0 }} animate={{ scaleY: 1, opacity: 1 }}
-                transition={{ duration: 0.85, delay: i * 0.2, ease: [0.22, 1, 0.36, 1] }} />
+                transition={{ duration: 1.3, delay: i * 0.3, ease: [0.22, 1, 0.36, 1] }} />
               <motion.span className="text-[10px] font-semibold uppercase tracking-[0.16em] text-arena-text-muted"
                 initial={{ opacity: 0 }} animate={{ opacity: 1 }}
-                transition={{ delay: 0.55 + i * 0.2 }}>
+                transition={{ delay: 0.8 + i * 0.3 }}>
                 {s.rank}
               </motion.span>
             </div>
@@ -2583,7 +2583,7 @@ function FormatPreview({ format }: { format: string }) {
                         : "border-arena-border/70 bg-arena-surface/80 text-arena-text-muted"
               }`}
               initial={{ opacity: 0, scale: 0.85 }} animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.55, delay: i * 0.16, ease: [0.22, 1, 0.36, 1] }}>
+              transition={{ duration: 0.85, delay: i * 0.24, ease: [0.22, 1, 0.36, 1] }}>
               {place}
             </motion.div>
           ))}
@@ -4414,13 +4414,13 @@ export default function Landing() {
               </FadeUp>
 
               <motion.div
-                className="flex-1 w-full flex justify-center lg:justify-start"
+                className="flex-1 w-full flex justify-center"
                 initial={{ opacity: 0, x: 60 }}
                 whileInView={{ opacity: 1, x: 0 }}
                 viewport={{ once: false, margin: "-80px" }}
                 transition={{ duration: 0.55, ease: "easeOut" }}
               >
-              <div className="w-full max-w-[340px] rounded-[20px] border border-arena-border overflow-hidden shadow-[0_32px_80px_rgba(0,0,0,0.35)]" style={{ background: "var(--surface)" }}>
+              <div className="w-full max-w-[280px] sm:max-w-[320px] lg:max-w-[340px] mx-auto rounded-[20px] border border-arena-border overflow-hidden shadow-[0_32px_80px_rgba(0,0,0,0.35)]" style={{ background: "var(--surface)" }}>
                 <div className="flex items-center justify-between px-5 py-4 border-b border-arena-border">
                   <div className="flex items-center gap-3 min-w-0">
                     <div className="w-9 h-9 rounded-xl flex items-center justify-center text-arena-accent border border-arena-accent/30 shrink-0" style={{ background: "var(--accent-dim)" }}>
@@ -4529,14 +4529,15 @@ export default function Landing() {
           </div>
           <FadeUp>
           <div className="relative z-10">
-            <div className="pointer-events-none absolute inset-x-0 top-0 bottom-0">
-              <span className="absolute left-0 top-[18%] inline-flex -translate-x-3 opacity-0 transition-all duration-300 group-hover:translate-x-0 group-hover:opacity-100 sm:left-[6%] sm:top-[22%]">
+            <div className="relative inline-block">
+            <div className="pointer-events-none absolute inset-0">
+              <span className="absolute left-[-0.75rem] top-[24%] inline-flex -translate-x-3 -translate-y-1/2 opacity-0 transition-all duration-300 group-hover:translate-x-0 group-hover:opacity-100 sm:left-[-2.5rem]">
                 <svg viewBox="0 0 52 20" className="h-4 w-12 text-arena-accent/80 sm:h-5 sm:w-14" fill="none" aria-hidden="true">
                   <path d="M2 10h38" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" />
                   <path d="m34 4 8 6-8 6" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" />
                 </svg>
               </span>
-              <span className="absolute right-0 top-[18%] inline-flex translate-x-3 opacity-0 transition-all duration-300 group-hover:translate-x-0 group-hover:opacity-100 sm:right-[6%] sm:top-[22%]">
+              <span className="absolute right-[-0.75rem] top-[24%] inline-flex translate-x-3 -translate-y-1/2 opacity-0 transition-all duration-300 group-hover:translate-x-0 group-hover:opacity-100 sm:right-[-2.5rem]">
                 <svg viewBox="0 0 52 20" className="h-4 w-12 text-arena-accent/80 sm:h-5 sm:w-14" fill="none" aria-hidden="true">
                   <path d="M50 10H12" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" />
                   <path d="m18 4-8 6 8 6" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" />
@@ -4568,7 +4569,7 @@ export default function Landing() {
               >
                 <span>level</span>
                 <motion.span
-                  className="absolute left-1/2 -top-4 sm:-top-5 inline-flex -translate-x-1/2"
+                  className="absolute left-1/2 -top-8 sm:-top-10 inline-flex -translate-x-1/2"
                   initial={{ y: 2, rotate: 0, opacity: 0.9 }}
                   animate={ctaLevelArrowControls}
                 >
@@ -4577,6 +4578,7 @@ export default function Landing() {
               </motion.span>
               <span>up your events?</span>
             </h2>
+            </div>
             <p className="text-arena-text-muted text-lg mb-8 max-w-xl mx-auto">
               Join hundreds of clubs & organisations already using ArenaOPS.
             </p>
