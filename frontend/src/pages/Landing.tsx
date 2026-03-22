@@ -766,6 +766,167 @@ function renderGameWatermark(game: Game) {
   );
 }
 
+function getBrowseCardWatermarkVariants(game: Game): Variants {
+  let seed = 0;
+  for (const char of game.name) seed += char.charCodeAt(0);
+
+  const categoryTuning: Record<Game["category"], { x: number; y: number; rotate: number; duration: number }> = {
+    "E-Sports": { x: 13, y: 10, rotate: 13, duration: 4.8 },
+    Sports: { x: 15, y: 8, rotate: 10, duration: 5.2 },
+    Board: { x: 9, y: 7, rotate: 8, duration: 6.2 },
+    Card: { x: 11, y: 9, rotate: 11, duration: 5.5 },
+  };
+
+  const tuning = categoryTuning[game.category];
+  const directionX = seed % 2 === 0 ? 1 : -1;
+  const directionY = seed % 3 === 0 ? 1 : -1;
+  const directionRotate = seed % 5 < 2 ? 1 : -1;
+
+  const xLead = tuning.x + (seed % 5);
+  const xTrail = 4 + ((seed >> 1) % 7);
+  const yLead = tuning.y + ((seed >> 2) % 4);
+  const yTrail = 2 + ((seed >> 3) % 5);
+  const rotateLead = tuning.rotate + ((seed >> 4) % 6);
+  const rotateTrail = 3 + ((seed >> 5) % 6);
+  const scalePeak = 1.1 + ((seed % 9) * 0.012);
+  const scaleMid = 0.97 + (((seed >> 2) % 6) * 0.01);
+  const scaleFloor = 0.92 + (((seed >> 3) % 4) * 0.01);
+  const opacityPeak = 0.92 + (((seed >> 1) % 4) * 0.02);
+  const opacityMid = 0.76 + (((seed >> 2) % 5) * 0.02);
+  const opacityFloor = 0.66 + (((seed >> 4) % 5) * 0.02);
+  const duration = tuning.duration + ((seed % 7) * 0.22);
+  const hoverDuration = 0.8 + ((seed % 4) * 0.07);
+  const patterns = [
+    {
+      idle: {
+        rotate: [0, rotateLead * directionRotate, -rotateTrail * directionRotate, 0],
+        scale: [scaleFloor, scalePeak, scaleMid, scaleFloor],
+        x: [0, xLead * directionX, -xTrail * directionX, 0],
+        y: [0, -yLead * directionY, yTrail * directionY, 0],
+      },
+      hover: {
+        rotate: [0, (rotateLead + 4) * directionRotate, -2 * directionRotate],
+        scale: [scaleMid, Math.min(scalePeak + 0.08, 1.24), scalePeak],
+        x: [0, (xLead + 3) * directionX, 3 * directionX],
+        y: [0, -(yLead + 3) * directionY, -2 * directionY],
+      },
+    },
+    {
+      idle: {
+        rotate: [-rotateTrail * directionRotate, -2 * directionRotate, rotateLead * directionRotate, -rotateTrail * directionRotate],
+        scale: [scaleMid, scaleFloor, scalePeak, scaleMid],
+        x: [0, -(xTrail + 2) * directionX, xLead * directionX, 0],
+        y: [0, yTrail * directionY, -(yLead + 2) * directionY, 0],
+      },
+      hover: {
+        rotate: [-rotateTrail * directionRotate, (rotateLead + 5) * directionRotate, 3 * directionRotate],
+        scale: [scaleFloor, Math.min(scalePeak + 0.1, 1.25), scalePeak],
+        x: [0, -(xTrail + 5) * directionX, 4 * directionX],
+        y: [0, (yTrail + 3) * directionY, -3 * directionY],
+      },
+    },
+    {
+      idle: {
+        rotate: [3 * directionRotate, 0, -rotateTrail * directionRotate, rotateLead * directionRotate, 3 * directionRotate],
+        scale: [scaleFloor, scaleMid, scalePeak, scaleMid, scaleFloor],
+        x: [0, xTrail * directionX, 0, -xLead * directionX, 0],
+        y: [0, -3 * directionY, -yLead * directionY, 2 * directionY, 0],
+      },
+      hover: {
+        rotate: [0, -(rotateTrail + 2) * directionRotate, (rotateLead + 5) * directionRotate],
+        scale: [scaleMid, Math.min(scalePeak + 0.09, 1.23), scalePeak],
+        x: [0, (xTrail + 4) * directionX, -(xLead - 2) * directionX],
+        y: [0, -(yLead + 2) * directionY, 1 * directionY],
+      },
+    },
+    {
+      idle: {
+        rotate: [-2 * directionRotate, rotateLead * directionRotate, 1 * directionRotate, -(rotateTrail + 1) * directionRotate, -2 * directionRotate],
+        scale: [scaleFloor, scalePeak, scaleFloor + 0.02, scaleMid, scaleFloor],
+        x: [0, 0, xLead * directionX, -xTrail * directionX, 0],
+        y: [0, -(yLead + 2) * directionY, 0, yTrail * directionY, 0],
+      },
+      hover: {
+        rotate: [-2 * directionRotate, (rotateLead + 6) * directionRotate, -4 * directionRotate],
+        scale: [scaleFloor, Math.min(scalePeak + 0.11, 1.25), scalePeak],
+        x: [0, 0, (xLead + 5) * directionX],
+        y: [0, -(yLead + 5) * directionY, 0],
+      },
+    },
+    {
+      idle: {
+        rotate: [rotateTrail * directionRotate, -rotateLead * directionRotate, rotateTrail * directionRotate, 0],
+        scale: [scalePeak, scaleFloor, scaleMid, scalePeak],
+        x: [0, -(xLead + 1) * directionX, xTrail * directionX, 0],
+        y: [0, -2 * directionY, (yLead + 1) * directionY, 0],
+      },
+      hover: {
+        rotate: [rotateTrail * directionRotate, -(rotateLead + 6) * directionRotate, 2 * directionRotate],
+        scale: [scaleMid, Math.min(scalePeak + 0.08, 1.22), scalePeak],
+        x: [0, -(xLead + 4) * directionX, 2 * directionX],
+        y: [0, (yLead + 4) * directionY, -2 * directionY],
+      },
+    },
+    {
+      idle: {
+        rotate: [0, 0, rotateLead * directionRotate, -(rotateTrail + 2) * directionRotate, 0],
+        scale: [scaleFloor, scaleMid, scalePeak, scaleMid, scaleFloor],
+        x: [0, xLead * directionX, xLead * directionX, -xTrail * directionX, 0],
+        y: [0, 0, -(yLead + 1) * directionY, yTrail * directionY, 0],
+      },
+      hover: {
+        rotate: [0, (rotateLead + 4) * directionRotate, -(rotateTrail + 1) * directionRotate],
+        scale: [scaleMid, Math.min(scalePeak + 0.07, 1.21), scalePeak],
+        x: [0, (xLead + 4) * directionX, -(xTrail - 1) * directionX],
+        y: [0, 0, -(yLead + 4) * directionY],
+      },
+    },
+    {
+      idle: {
+        rotate: [-(rotateTrail + 1) * directionRotate, 4 * directionRotate, rotateLead * directionRotate, -(rotateTrail + 1) * directionRotate],
+        scale: [scaleMid, scalePeak, scaleFloor, scaleMid],
+        x: [0, -xTrail * directionX, xLead * directionX, 0],
+        y: [0, -(yLead + 2) * directionY, -(yLead - 2) * directionY, 0],
+      },
+      hover: {
+        rotate: [-(rotateTrail + 1) * directionRotate, (rotateLead + 5) * directionRotate, 1 * directionRotate],
+        scale: [scaleFloor, Math.min(scalePeak + 0.12, 1.24), scalePeak],
+        x: [0, -(xTrail + 4) * directionX, (xLead + 2) * directionX],
+        y: [0, -(yLead + 5) * directionY, -1 * directionY],
+      },
+    },
+    {
+      idle: {
+        rotate: [0, -rotateLead * directionRotate, 0, rotateTrail * directionRotate, 0],
+        scale: [scaleFloor, scalePeak, scaleFloor, scaleMid, scaleFloor],
+        x: [0, xLead * directionX, -2 * directionX, -(xTrail + 2) * directionX, 0],
+        y: [0, yTrail * directionY, -(yLead + 2) * directionY, 0, 0],
+      },
+      hover: {
+        rotate: [0, -(rotateLead + 6) * directionRotate, rotateTrail * directionRotate],
+        scale: [scaleMid, Math.min(scalePeak + 0.09, 1.22), scalePeak],
+        x: [0, (xLead + 3) * directionX, -(xTrail + 1) * directionX],
+        y: [0, (yTrail + 3) * directionY, -(yLead + 3) * directionY],
+      },
+    },
+  ];
+
+  const pattern = patterns[seed % patterns.length];
+
+  return {
+    idle: {
+      ...pattern.idle,
+      opacity: [opacityFloor, opacityPeak, opacityMid, opacityFloor],
+      transition: { duration, repeat: Infinity, ease: "easeInOut" },
+    },
+    hover: {
+      ...pattern.hover,
+      opacity: [Math.min(opacityMid + 0.04, 0.92), 1, Math.min(opacityPeak, 0.96)],
+      transition: { duration: hoverDuration, ease: "easeOut" },
+    },
+  };
+}
+
 function ScrabbleBadgeIcon({ className, style }: BadgeIconProps) {
   return (
     <svg
@@ -1930,8 +2091,13 @@ function InteractiveGrid() {
 
 // ── Browse card (used in the scrolling Browse Tournaments strips) ──────────────
 function BrowseCard({ game }: { game: Game }) {
+  const watermarkVariants = getBrowseCardWatermarkVariants(game);
+
   return (
-    <div
+    <motion.div
+      initial={false}
+      animate="idle"
+      whileHover="hover"
       className="relative shrink-0 w-68 h-40 rounded-2xl overflow-hidden border cursor-pointer group select-none"
       style={{
         background:
@@ -1966,9 +2132,12 @@ function BrowseCard({ game }: { game: Game }) {
             background: `linear-gradient(180deg, ${game.accent}08 0%, transparent 78%)`,
           }}
         />
-        <div className="absolute inset-x-1 top-3 h-24 opacity-[0.8] dark:opacity-[0.25]">
+        <motion.div
+          variants={watermarkVariants}
+          className="absolute inset-x-1 top-3 h-24 origin-center opacity-[0.8] dark:opacity-[0.25]"
+        >
           {renderGameWatermark(game)}
-        </div>
+        </motion.div>
         <div
           className="absolute left-4 top-8 h-px w-24"
           style={{
@@ -2057,7 +2226,7 @@ function BrowseCard({ game }: { game: Game }) {
           Browse Tournaments <ArrowRight size={12} />
         </span>
       </div>
-    </div>
+    </motion.div>
   );
 }
 
@@ -2338,11 +2507,10 @@ export default function Landing() {
 
         <h1
           ref={heroTextRef}
-          className="font-display text-6xl md:text-8xl font-black uppercase leading-[0.9] tracking-tight mb-6"
+          className="font-display text-[2.5rem] sm:text-6xl md:text-8xl font-black uppercase leading-[0.92] tracking-tight mb-6"
           aria-label="Run your tournaments. Not spreadsheets."
         >
-          {/* Line 1 — scoreboard decode, character by character */}
-          <span aria-hidden="true">
+          <span aria-hidden="true" className="inline-block whitespace-nowrap">
             {line1Display.split("").map((char, i) => (
               <span
                 key={i}
@@ -2359,7 +2527,6 @@ export default function Landing() {
 
           <br />
 
-          {/* Line 2 — impact slam with glow burst */}
           <motion.span
             className={`text-accent-gradient drop-shadow-md inline-block${slamGlow ? " slam-glow" : ""}`}
             aria-hidden="true"
@@ -2735,10 +2902,10 @@ export default function Landing() {
             variants={fadeUp}
             className="max-w-6xl mx-auto px-6 py-16"
           >
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10 sm:gap-8">
               {/* Brand */}
-              <div className="md:col-span-2 lg:col-span-1">
-                <div className="flex items-center gap-2 mb-4">
+              <div className="sm:col-span-2 lg:col-span-1 text-center sm:text-left">
+                <div className="flex items-center justify-center sm:justify-start gap-2 mb-4">
                   <div className="p-1.5 bg-arena-accent/10 rounded-lg text-arena-accent">
                     <Zap size={18} className="fill-current" />
                   </div>
@@ -2746,11 +2913,11 @@ export default function Landing() {
                     Arena<span className="text-arena-accent">OPS</span>
                   </span>
                 </div>
-                <p className="text-sm text-arena-text-muted leading-relaxed mb-6 max-w-xs">
+                <p className="text-sm text-arena-text-muted leading-relaxed mb-6 max-w-sm sm:max-w-xs mx-auto sm:mx-0">
                   The all-in-one tournament platform built for clubs &
                   organisations — from first registration to final bracket.
                 </p>
-                <div className="flex items-center gap-2">
+                <div className="flex items-center justify-center sm:justify-start gap-2">
                   {[
                     { icon: Github, label: "GitHub" },
                     { icon: Globe, label: "Website" },
@@ -2768,8 +2935,8 @@ export default function Landing() {
               </div>
 
               {/* Platform */}
-              <div>
-                <h4 className="font-display text-xs uppercase tracking-[0.15em] text-arena-text font-bold mb-5">
+              <div className="text-center sm:text-left">
+                <h4 className="font-display text-xs uppercase tracking-[0.15em] text-arena-text font-bold mb-4 sm:mb-5">
                   Platform
                 </h4>
                 <ul className="space-y-3">
@@ -2794,8 +2961,8 @@ export default function Landing() {
               </div>
 
               {/* Resources */}
-              <div>
-                <h4 className="font-display text-xs uppercase tracking-[0.15em] text-arena-text font-bold mb-5">
+              <div className="text-center sm:text-left">
+                <h4 className="font-display text-xs uppercase tracking-[0.15em] text-arena-text font-bold mb-4 sm:mb-5">
                   Resources
                 </h4>
                 <ul className="space-y-3">
@@ -2820,8 +2987,8 @@ export default function Landing() {
               </div>
 
               {/* Legal */}
-              <div>
-                <h4 className="font-display text-xs uppercase tracking-[0.15em] text-arena-text font-bold mb-5">
+              <div className="text-center sm:text-left sm:col-span-2 lg:col-span-1">
+                <h4 className="font-display text-xs uppercase tracking-[0.15em] text-arena-text font-bold mb-4 sm:mb-5">
                   Legal
                 </h4>
                 <ul className="space-y-3">
@@ -2853,11 +3020,11 @@ export default function Landing() {
             variants={fadeUp}
             className="border-t border-arena-border"
           >
-            <div className="max-w-6xl mx-auto px-6 py-5 flex flex-col sm:flex-row items-center justify-between gap-3">
+            <div className="max-w-6xl mx-auto px-6 py-5 flex flex-col sm:flex-row items-center justify-between gap-3 text-center sm:text-left">
               <p className="text-xs text-arena-text-muted">
                 © 2026 ArenaOPS · All rights reserved
               </p>
-              <div className="flex items-center gap-1.5 text-xs text-arena-text-muted">
+              <div className="flex flex-wrap items-center justify-center gap-1.5 text-xs text-arena-text-muted">
                 <span>Built for every organiser</span>
                 <span className="text-arena-border">·</span>
                 <span className="text-arena-accent font-semibold">
