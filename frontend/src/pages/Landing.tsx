@@ -2368,154 +2368,218 @@ function FormatChipIcon({ format }: { format: string }) {
 }
 
 function FormatPreview({ format }: { format: string }) {
-  const nodeBase =
-    "h-3.5 w-3.5 rounded-full border border-arena-accent/40 bg-arena-accent/20";
-  const lineBase = "rounded-full bg-arena-accent/30";
+  const ease = "easeOut" as const;
 
   switch (format) {
     case "Single Elimination":
       return (
-        <div className="flex h-28 items-center justify-center gap-4">
-          <div className="space-y-3">
-            <div className={nodeBase} />
-            <div className={nodeBase} />
-            <div className={nodeBase} />
-            <div className={nodeBase} />
+        <div className="flex h-28 items-center justify-center gap-3">
+          <div className="flex flex-col gap-2.5">
+            {[0,1,2,3].map((i) => (
+              <motion.div key={i} className="h-3.5 w-3.5 rounded-full border border-arena-accent/40 bg-arena-accent/20"
+                initial={{ opacity: 0, scale: 0.4 }} animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.3, delay: i * 0.08, ease }} />
+            ))}
           </div>
-          <div className="flex h-20 items-center">
-            <div className={`h-[2px] w-8 ${lineBase}`} />
+          <div className="flex flex-col gap-[22px]">
+            {[0,1].map((i) => (
+              <motion.div key={i} className="h-[2px] w-5 origin-left rounded-full bg-arena-accent/30"
+                initial={{ scaleX: 0, opacity: 0 }} animate={{ scaleX: 1, opacity: 1 }}
+                transition={{ duration: 0.25, delay: 0.4 + i * 0.08, ease }} />
+            ))}
           </div>
-          <div className="space-y-6">
-            <div className={nodeBase} />
-            <div className={nodeBase} />
+          <div className="flex flex-col gap-6">
+            {[0,1].map((i) => (
+              <motion.div key={i} className="h-3.5 w-3.5 rounded-full border border-arena-accent/40 bg-arena-accent/20"
+                initial={{ opacity: 0, scale: 0.4 }} animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.3, delay: 0.55 + i * 0.1, ease }} />
+            ))}
           </div>
-          <div className="flex h-10 items-center">
-            <div className={`h-[2px] w-8 ${lineBase}`} />
-          </div>
-          <div className="space-y-2">
-            <div className="h-4 w-4 rounded-full bg-arena-accent shadow-[0_0_18px_rgba(232,255,71,0.35)]" />
-          </div>
+          <motion.div className="h-[2px] w-5 origin-left rounded-full bg-arena-accent/30"
+            initial={{ scaleX: 0, opacity: 0 }} animate={{ scaleX: 1, opacity: 1 }}
+            transition={{ duration: 0.25, delay: 0.8, ease }} />
+          <motion.div className="h-4 w-4 rounded-full bg-arena-accent"
+            initial={{ opacity: 0, scale: 0.3 }} animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.4, delay: 1.0, ease: [0.22, 1, 0.36, 1] }}
+            style={{ boxShadow: "0 0 18px rgba(232,255,71,0.5)" }} />
         </div>
       );
     case "Double Elimination":
       return (
-        <div className="grid h-28 grid-cols-2 gap-4">
-          <div className="rounded-2xl border border-arena-border/70 bg-arena-surface/80 p-3">
-            <p className="mb-2 text-[10px] font-semibold uppercase tracking-[0.18em] text-arena-text-muted">
-              Upper
-            </p>
+        <div className="grid h-28 grid-cols-2 gap-3">
+          <motion.div className="rounded-2xl border border-arena-border/70 bg-arena-surface/80 p-3"
+            initial={{ opacity: 0, x: -12 }} animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.35, ease }}>
+            <p className="mb-2 text-[10px] font-semibold uppercase tracking-[0.18em] text-arena-text-muted">Upper</p>
             <div className="space-y-2">
-              <div className={`${nodeBase} w-full rounded-xl`} />
-              <div className={`${nodeBase} w-4/5 rounded-xl`} />
-              <div className={`${nodeBase} w-3/5 rounded-xl`} />
+              {(["w-full","w-4/5","w-3/5"] as const).map((w, i) => (
+                <motion.div key={i} className={`h-3 ${w} origin-left rounded-xl border border-arena-accent/40 bg-arena-accent/20`}
+                  initial={{ scaleX: 0, opacity: 0 }} animate={{ scaleX: 1, opacity: 1 }}
+                  transition={{ duration: 0.3, delay: 0.2 + i * 0.1, ease }} />
+              ))}
             </div>
-          </div>
-          <div className="rounded-2xl border border-arena-accent/20 bg-arena-accent/10 p-3">
-            <p className="mb-2 text-[10px] font-semibold uppercase tracking-[0.18em] text-arena-accent">
-              Lower
-            </p>
+          </motion.div>
+          <motion.div className="rounded-2xl border border-arena-accent/20 bg-arena-accent/10 p-3"
+            initial={{ opacity: 0, x: 12 }} animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.35, delay: 0.5, ease }}>
+            <p className="mb-2 text-[10px] font-semibold uppercase tracking-[0.18em] text-arena-accent">Lower</p>
             <div className="space-y-2">
-              <div className={`${nodeBase} w-3/5 rounded-xl`} />
-              <div className={`${nodeBase} w-4/5 rounded-xl`} />
-              <div className={`${nodeBase} w-full rounded-xl bg-arena-accent/30`} />
+              {(["w-3/5","w-4/5","w-full"] as const).map((w, i) => (
+                <motion.div key={i} className={`h-3 ${w} origin-left rounded-xl border border-arena-accent/40 ${i === 2 ? "bg-arena-accent/30" : "bg-arena-accent/20"}`}
+                  initial={{ scaleX: 0, opacity: 0 }} animate={{ scaleX: 1, opacity: 1 }}
+                  transition={{ duration: 0.3, delay: 0.7 + i * 0.1, ease }} />
+              ))}
             </div>
-          </div>
+          </motion.div>
         </div>
       );
     case "Round Robin":
       return (
         <div className="grid h-28 grid-cols-3 gap-3">
-          {["A vs B", "A vs C", "B vs C"].map((pair) => (
-            <div
-              key={pair}
+          {["A vs B", "A vs C", "B vs C"].map((pair, i) => (
+            <motion.div key={pair}
               className="flex items-center justify-center rounded-2xl border border-arena-border/70 bg-arena-surface/80 text-[10px] font-semibold uppercase tracking-[0.14em] text-arena-text-muted"
-            >
+              initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.3, delay: i * 0.14, ease }}>
               {pair}
-            </div>
+            </motion.div>
           ))}
         </div>
       );
-    case "Swiss":
+    case "Swiss": {
+      const rounds = [
+        { records: ["1-0","1-0","0-1","0-1"], label: "Rd 1" },
+        { records: ["2-0","1-1","1-1","0-2"], label: "Rd 2" },
+      ];
       return (
-        <div className="grid h-28 grid-cols-3 gap-3">
-          {["1-0", "1-0", "0-1", "0-1", "2-0", "1-1"].map((record, i) => (
-            <div
-              key={`${record}-${i}`}
-              className="flex items-center justify-center rounded-2xl border border-arena-border/70 bg-arena-surface/80 text-xs font-bold text-arena-text"
-            >
-              {record}
+        <div className="flex h-28 flex-col justify-center gap-2">
+          {rounds.map((round, ri) => (
+            <div key={ri} className="flex items-center gap-2">
+              <motion.span className="w-7 text-[9px] font-bold uppercase tracking-wider text-arena-text-muted"
+                initial={{ opacity: 0 }} animate={{ opacity: 1 }}
+                transition={{ delay: ri * 0.45 + 0.1 }}>
+                {round.label}
+              </motion.span>
+              <div className="flex gap-1.5">
+                {round.records.map((rec, i) => (
+                  <motion.div key={i}
+                    className={`flex h-7 w-9 items-center justify-center rounded-lg border text-[10px] font-bold ${
+                      rec === "2-0" || (ri === 0 && rec === "1-0") ? "border-arena-accent/30 bg-arena-accent/15 text-arena-accent"
+                      : rec === "0-2" ? "border-red-400/20 bg-red-400/5 text-red-400/70"
+                      : "border-arena-border/70 bg-arena-surface/80 text-arena-text-muted"
+                    }`}
+                    initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }}
+                    transition={{ duration: 0.25, delay: ri * 0.45 + 0.2 + i * 0.07, ease }}>
+                    {rec}
+                  </motion.div>
+                ))}
+              </div>
             </div>
           ))}
         </div>
       );
+    }
     case "Group Stage":
       return (
-        <div className="grid h-28 grid-cols-[1fr_auto_1fr] items-center gap-3">
-          <div className="rounded-2xl border border-arena-border/70 bg-arena-surface/80 p-3">
-            <p className="mb-2 text-[10px] font-semibold uppercase tracking-[0.18em] text-arena-text-muted">
-              Groups
-            </p>
-            <div className="grid grid-cols-2 gap-2">
-              <div className={`${nodeBase} w-full rounded-xl`} />
-              <div className={`${nodeBase} w-full rounded-xl`} />
-              <div className={`${nodeBase} w-full rounded-xl`} />
-              <div className={`${nodeBase} w-full rounded-xl`} />
+        <div className="grid h-28 grid-cols-[1fr_auto_1fr] items-center gap-2">
+          <motion.div className="rounded-2xl border border-arena-border/70 bg-arena-surface/80 p-2.5"
+            initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.35, ease }}>
+            <p className="mb-1.5 text-[9px] font-semibold uppercase tracking-[0.18em] text-arena-text-muted">Groups</p>
+            <div className="grid grid-cols-2 gap-1.5">
+              {[0,1,2,3].map((i) => (
+                <motion.div key={i} className="h-3 w-full origin-left rounded-lg border border-arena-accent/40 bg-arena-accent/20"
+                  initial={{ scaleX: 0, opacity: 0 }} animate={{ scaleX: 1, opacity: 1 }}
+                  transition={{ duration: 0.25, delay: 0.2 + i * 0.08, ease }} />
+              ))}
             </div>
-          </div>
-          <div className={`h-[2px] w-8 ${lineBase}`} />
-          <div className="rounded-2xl border border-arena-accent/20 bg-arena-accent/10 p-3">
-            <p className="mb-2 text-[10px] font-semibold uppercase tracking-[0.18em] text-arena-accent">
-              Finals
-            </p>
-            <div className="space-y-2">
-              <div className={`${nodeBase} w-full rounded-xl`} />
-              <div className={`${nodeBase} w-3/5 rounded-xl bg-arena-accent/30`} />
+          </motion.div>
+          <motion.div className="h-[2px] w-6 origin-left rounded-full bg-arena-accent/40"
+            initial={{ scaleX: 0, opacity: 0 }} animate={{ scaleX: 1, opacity: 1 }}
+            transition={{ duration: 0.3, delay: 0.65, ease }} />
+          <motion.div className="rounded-2xl border border-arena-accent/20 bg-arena-accent/10 p-2.5"
+            initial={{ opacity: 0, x: 10 }} animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.35, delay: 0.75, ease }}>
+            <p className="mb-1.5 text-[9px] font-semibold uppercase tracking-[0.18em] text-arena-accent">Finals</p>
+            <div className="space-y-1.5">
+              {[["w-full","bg-arena-accent/20"],["w-3/5","bg-arena-accent/35"]].map(([w,bg], i) => (
+                <motion.div key={i} className={`h-3 ${w} origin-left rounded-lg border border-arena-accent/30 ${bg}`}
+                  initial={{ scaleX: 0, opacity: 0 }} animate={{ scaleX: 1, opacity: 1 }}
+                  transition={{ duration: 0.25, delay: 0.9 + i * 0.1, ease }} />
+              ))}
             </div>
-          </div>
+          </motion.div>
         </div>
       );
-    case "Battle Royale":
+    case "Battle Royale": {
+      const dots = [
+        { ix: -52, iy: -28, winner: false, delay: 0    },
+        { ix:  52, iy: -28, winner: false, delay: 0.06 },
+        { ix: -44, iy:  28, winner: false, delay: 0.12 },
+        { ix:  44, iy:  28, winner: false, delay: 0.18 },
+        { ix:   0, iy: -38, winner: false, delay: 0.08 },
+        { ix:   0, iy:   0, winner: true,  delay: 0.25 },
+      ];
       return (
         <div className="relative flex h-28 items-center justify-center overflow-hidden rounded-[28px] border border-arena-border/70 bg-arena-surface/80">
-          <div className="absolute h-20 w-20 rounded-full border border-arena-accent/20" />
-          <div className="absolute h-12 w-12 rounded-full border border-arena-accent/30" />
-          <div className="absolute h-2.5 w-2.5 rounded-full bg-arena-accent shadow-[0_0_18px_rgba(232,255,71,0.35)]" />
-          <div className="absolute left-7 top-7 h-2.5 w-2.5 rounded-full bg-arena-text-muted/60" />
-          <div className="absolute right-8 top-9 h-2.5 w-2.5 rounded-full bg-arena-text-muted/60" />
-          <div className="absolute bottom-7 left-10 h-2.5 w-2.5 rounded-full bg-arena-text-muted/60" />
-          <div className="absolute bottom-8 right-10 h-2.5 w-2.5 rounded-full bg-arena-text-muted/60" />
+          <motion.div className="absolute h-20 w-20 rounded-full border border-arena-accent/20"
+            initial={{ opacity: 0, scale: 0.4 }} animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.5, ease }} />
+          <motion.div className="absolute h-10 w-10 rounded-full border border-arena-accent/30"
+            initial={{ opacity: 0, scale: 0.4 }} animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.5, delay: 0.1, ease }} />
+          {dots.map((d, i) => (
+            <motion.div key={i}
+              className={`absolute h-2.5 w-2.5 rounded-full ${d.winner ? "bg-arena-accent" : "bg-arena-text-muted/60"}`}
+              initial={{ x: d.ix, y: d.iy, opacity: d.winner ? 0 : 0.85, scale: d.winner ? 0 : 1 }}
+              animate={d.winner
+                ? { x: 0, y: 0, opacity: 1, scale: 1 }
+                : { x: d.ix * 0.12, y: d.iy * 0.12, opacity: 0, scale: 0.3 }}
+              transition={{ duration: 0.7, delay: d.delay + 0.45, ease: [0.22, 1, 0.36, 1] }}
+              style={d.winner ? { boxShadow: "0 0 18px rgba(232,255,71,0.5)" } : undefined} />
+          ))}
         </div>
       );
-    case "Ladder":
+    }
+    case "Ladder": {
+      const steps = [
+        { rank: "#4", h: 36 },
+        { rank: "#3", h: 48 },
+        { rank: "#2", h: 60 },
+        { rank: "#1", h: 74 },
+      ];
       return (
-        <div className="flex h-28 items-center justify-center gap-3">
-          {[1, 2, 3, 4].map((step) => (
-            <div key={step} className="flex flex-col items-center gap-2">
-              <div
-                className="w-12 rounded-2xl border border-arena-border/70 bg-arena-surface/80"
-                style={{ height: `${24 + step * 12}px` }}
-              />
-              <span className="text-[10px] font-semibold uppercase tracking-[0.16em] text-arena-text-muted">
-                #{5 - step}
-              </span>
+        <div className="flex h-28 items-end justify-center gap-3 pb-1">
+          {steps.map((s, i) => (
+            <div key={i} className="flex flex-col items-center gap-1.5">
+              <motion.div
+                className={`w-11 origin-bottom rounded-xl border ${i === 3 ? "border-arena-accent/40 bg-arena-accent/20" : "border-arena-border/70 bg-arena-surface/80"}`}
+                style={{ height: s.h }}
+                initial={{ scaleY: 0, opacity: 0 }} animate={{ scaleY: 1, opacity: 1 }}
+                transition={{ duration: 0.45, delay: i * 0.1, ease: [0.22, 1, 0.36, 1] }} />
+              <motion.span className="text-[10px] font-semibold uppercase tracking-[0.16em] text-arena-text-muted"
+                initial={{ opacity: 0 }} animate={{ opacity: 1 }}
+                transition={{ delay: 0.3 + i * 0.1 }}>
+                {s.rank}
+              </motion.span>
             </div>
           ))}
         </div>
       );
+    }
     case "Free for All":
       return (
-        <div className="grid h-28 grid-cols-3 gap-3">
-          {["1st", "2nd", "3rd", "4th", "5th", "6th"].map((place, i) => (
-            <div
-              key={place}
+        <div className="grid h-28 grid-cols-3 gap-2">
+          {["1st","2nd","3rd","4th","5th","6th"].map((place, i) => (
+            <motion.div key={place}
               className={`flex items-center justify-center rounded-2xl border text-xs font-bold ${
-                i === 0
-                  ? "border-arena-accent/30 bg-arena-accent/15 text-arena-accent"
-                  : "border-arena-border/70 bg-arena-surface/80 text-arena-text-muted"
+                i === 0 ? "border-arena-accent/40 bg-arena-accent/15 text-arena-accent"
+                        : "border-arena-border/70 bg-arena-surface/80 text-arena-text-muted"
               }`}
-            >
+              initial={{ opacity: 0, scale: 0.85 }} animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.3, delay: i * 0.08, ease: [0.22, 1, 0.36, 1] }}>
               {place}
-            </div>
+            </motion.div>
           ))}
         </div>
       );
@@ -4456,6 +4520,30 @@ export default function Landing() {
                 +
               </span>
             ))}
+            <span className="absolute left-[26%] top-[33%] inline-flex -translate-y-1/2 -translate-x-3 opacity-0 transition-all duration-300 group-hover:translate-x-0 group-hover:opacity-100 sm:left-[31%]">
+              <svg viewBox="0 0 44 18" className="h-4 w-11 text-arena-accent/80" fill="none" aria-hidden="true">
+                <path d="M2 9h32" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" />
+                <path d="m28 4 6 5-6 5" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+            </span>
+            <span className="absolute right-[26%] top-[33%] inline-flex translate-x-3 -translate-y-1/2 opacity-0 transition-all duration-300 group-hover:translate-x-0 group-hover:opacity-100 sm:right-[31%]">
+              <svg viewBox="0 0 44 18" className="h-4 w-11 text-arena-accent/80" fill="none" aria-hidden="true">
+                <path d="M42 9H10" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" />
+                <path d="m16 4-6 5 6 5" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+            </span>
+            <span className="absolute left-1/2 top-[11%] inline-flex -translate-x-1/2 -translate-y-3 opacity-0 transition-all duration-300 group-hover:translate-y-0 group-hover:opacity-100 sm:top-[13%]">
+              <svg viewBox="0 0 18 44" className="h-11 w-4 text-arena-accent/80" fill="none" aria-hidden="true">
+                <path d="M9 42V10" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" />
+                <path d="m4 16 5-6 5 6" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+            </span>
+            <span className="absolute left-1/2 top-[52%] inline-flex -translate-x-1/2 translate-y-3 opacity-0 transition-all duration-300 group-hover:translate-y-0 group-hover:opacity-100 sm:top-[49%]">
+              <svg viewBox="0 0 18 44" className="h-11 w-4 text-arena-accent/80" fill="none" aria-hidden="true">
+                <path d="M9 2v32" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" />
+                <path d="m4 28 5 6 5-6" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+            </span>
           </div>
           <FadeUp>
           <div className="relative z-10">
