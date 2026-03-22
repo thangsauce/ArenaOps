@@ -2436,9 +2436,9 @@ function FormatPreview({ format }: { format: string }) {
     case "Round Robin":
       return (
         <div className="grid h-28 grid-cols-3 gap-3">
-          {["A vs B", "A vs C", "B vs C"].map((pair, i) => (
+          {["Player A vs Player B", "Player A vs Player C", "Player B vs Player C"].map((pair, i) => (
             <motion.div key={pair}
-              className="flex items-center justify-center rounded-2xl border border-arena-border/70 bg-arena-surface/80 text-[10px] font-semibold uppercase tracking-[0.14em] text-arena-text-muted"
+              className="flex items-center justify-center rounded-2xl border border-arena-border/70 bg-arena-surface/80 px-1.5 text-center text-[9px] font-semibold leading-tight text-arena-text-muted"
               initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: i * 0.28, ease }}>
               {pair}
@@ -2448,8 +2448,8 @@ function FormatPreview({ format }: { format: string }) {
       );
     case "Swiss": {
       const rounds = [
-        { label: "Rd 1", pairs: [["1-0","0-1"],["1-0","0-1"]] },
-        { label: "Rd 2", pairs: [["2-0","1-1"],["1-1","0-2"]] },
+        { label: "Round 1", pairs: [["1-0","0-1"],["1-0","0-1"]] },
+        { label: "Round 2", pairs: [["2-0","1-1"],["1-1","0-2"]] },
       ];
       const swissColor = (rec: string, ri: number) =>
         rec === "2-0" || (ri === 0 && rec === "1-0")
