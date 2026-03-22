@@ -56,6 +56,44 @@ export default function Participants() {
     declined: allParticipants.filter(p => p.status === 'declined').length,
   };
 
+  const participantStats = (() => {
+    const visibleParticipants = hideDeclined
+      ? allParticipants.filter(p => p.status !== 'declined')
+      : allParticipants;
+
+    const matchAssignments = new Set<string>();
+
+    tournaments.forEach(tournament => {
+      tournament.matches.forEach(match => {
+        if (match.participant1Id) matchAssignments.add(`${match.participant1Id}-${tournament.id}`);
+        if (match.participant2Id) matchAssignments.add(`${match.participant2Id}-${tournament.id}`);
+      });
+    });
+
+    const readyToSchedule = visibleParticipants.filter(
+      participant => participant.status === 'confirmed' && participant.availability.length > 0
+    ).length;
+
+    const needsFollowUp = visibleParticipants.filter(
+      participant => participant.status !== 'declined' && participant.availability.length === 0
+    ).length;
+
+    const assignedToMatches = visibleParticipants.filter(
+      participant => matchAssignments.has(`${participant.id}-${participant.tournamentId}`)
+    ).length;
+
+    const availabilityAverage = visibleParticipants.length > 0
+      ? visibleParticipants.reduce((sum, participant) => sum + participant.availability.length, 0) / visibleParticipants.length
+      : 0;
+
+    return {
+      readyToSchedule,
+      needsFollowUp,
+      assignedToMatches,
+      availabilityAverage,
+    };
+  })();
+
   const handleSendInvite = () => {
     if (!inviteName.trim() || !inviteEmail.trim()) return;
     setShowInviteModal(false);
@@ -87,6 +125,29 @@ export default function Participants() {
             <span className={styles.summaryLabel}>{s === 'all' ? 'Total' : statusLabel[s as ParticipantStatus]}</span>
           </button>
         ))}
+      </div>
+
+      <div className={styles.statsRow}>
+        <div className={styles.statCard}>
+          <span className={styles.statValue} data-tone="accent">{participantStats.readyToSchedule}</span>
+          <span className={styles.statLabel}>Ready to schedule</span>
+          <span className={styles.statHint}>Confirmed with availability submitted</span>
+        </div>
+        <div className={styles.statCard}>
+          <span className={styles.statValue} data-tone="blue">{participantStats.assignedToMatches}</span>
+          <span className={styles.statLabel}>Assigned to matches</span>
+          <span className={styles.statHint}>Already placed into the bracket</span>
+        </div>
+        <div className={styles.statCard}>
+          <span className={styles.statValue} data-tone="amber">{participantStats.needsFollowUp}</span>
+          <span className={styles.statLabel}>Need follow-up</span>
+          <span className={styles.statHint}>No availability on file yet</span>
+        </div>
+        <div className={styles.statCard}>
+          <span className={styles.statValue}>{participantStats.availabilityAverage.toFixed(1)}</span>
+          <span className={styles.statLabel}>Avg. time slots</span>
+          <span className={styles.statHint}>Availability per visible participant</span>
+        </div>
       </div>
 
       {/* Search */}

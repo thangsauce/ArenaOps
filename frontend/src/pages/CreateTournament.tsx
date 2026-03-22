@@ -1,21 +1,137 @@
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, CheckCircle2 } from 'lucide-react';
+import { ArrowLeft, CheckCircle2, CalendarDays, ChevronLeft, ChevronRight } from 'lucide-react';
 import type { TournamentFormat } from '../types';
 import { useApp } from '../store/store';
 import styles from './CreateTournament.module.css';
 
+const GAME_CATALOG = [
+  {
+    category: 'E-Sports', icon: '⚡',
+    games: ['Valorant','League of Legends','CS2','Rocket League','Overwatch 2','Apex Legends','Smash Bros','Street Fighter 6','Fortnite','Tekken 8'],
+  },
+  {
+    category: 'Sports', icon: '🏆',
+    games: ['Soccer','American Football','Basketball','Tennis','Volleyball','Badminton','Table Tennis','Baseball'],
+  },
+  {
+    category: 'Board & Card', icon: '♟️',
+    games: ['Chess','Checkers','Poker','Magic: The Gathering','Hearthstone','Go'],
+  },
+];
+
 const formats: { value: TournamentFormat; label: string; desc: string }[] = [
   { value: 'single-elimination', label: 'Single Elimination', desc: 'Lose once and you\'re out' },
   { value: 'double-elimination', label: 'Double Elimination', desc: 'Two losses to be eliminated' },
-  { value: 'round-robin', label: 'Round Robin', desc: 'Everyone plays everyone' },
-  { value: 'swiss', label: 'Swiss', desc: 'Paired by record each round' },
+  { value: 'round-robin',        label: 'Round Robin',        desc: 'Everyone plays everyone' },
+  { value: 'swiss',              label: 'Swiss',              desc: 'Paired by record each round' },
+  { value: 'free-for-all',       label: 'Free for All',       desc: 'All players compete simultaneously, ranked by score' },
+  { value: 'group-stage',        label: 'Group Stage',        desc: 'Groups first, then knockout bracket' },
+  { value: 'battle-royale',      label: 'Battle Royale',      desc: 'Last one standing wins each match' },
+  { value: 'ladder',             label: 'Ladder',             desc: 'Challenge players above you to climb the ranks' },
 ];
+
+const MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+const WEEKDAYS = ['Su','Mo','Tu','We','Th','Fr','Sa'];
+
+function DatePicker({ value, onChange }: { value: string; onChange: (v: string) => void }) {
+  const [open, setOpen] = useState(false);
+  const [viewDate, setViewDate] = useState(() => value ? new Date(value + 'T00:00:00') : new Date());
+  const ref = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handler = (e: MouseEvent) => {
+      if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false);
+    };
+    document.addEventListener('mousedown', handler);
+    return () => document.removeEventListener('mousedown', handler);
+  }, []);
+
+  const selected = value ? new Date(value + 'T00:00:00') : null;
+  const today = new Date(); today.setHours(0, 0, 0, 0);
+  const year = viewDate.getFullYear();
+  const month = viewDate.getMonth();
+  const firstDay = new Date(year, month, 1).getDay();
+  const daysInMonth = new Date(year, month + 1, 0).getDate();
+
+  const cells: (number | null)[] = [
+    ...Array(firstDay).fill(null),
+    ...Array.from({ length: daysInMonth }, (_, i) => i + 1),
+  ];
+  while (cells.length % 7 !== 0) cells.push(null);
+
+  const selectDay = (day: number) => {
+    const d = new Date(year, month, day);
+    onChange(`${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`);
+    setOpen(false);
+  };
+
+  const displayValue = selected
+    ? selected.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })
+    : '';
+
+  return (
+    <div ref={ref} style={{ position: 'relative' }}>
+      <button
+        type="button"
+        className={styles.dateTrigger}
+        onClick={() => { setOpen(o => !o); if (value) setViewDate(new Date(value + 'T00:00:00')); }}
+      >
+        <CalendarDays size={16} className={styles.dateIcon} />
+        <span className={value ? styles.dateValue : styles.datePlaceholder}>
+          {displayValue || 'Select a date'}
+        </span>
+        <ChevronRight size={14} className={`${styles.dateCaret} ${open ? styles.dateCaretOpen : ''}`} />
+      </button>
+
+      {open && (
+        <div className={styles.calendarDropdown}>
+          <div className={styles.calendarHeader}>
+            <button type="button" className={styles.calendarNav} onClick={() => setViewDate(new Date(year, month - 1, 1))}>
+              <ChevronLeft size={15} />
+            </button>
+            <span className={styles.calendarMonth}>{MONTHS[month]} {year}</span>
+            <button type="button" className={styles.calendarNav} onClick={() => setViewDate(new Date(year, month + 1, 1))}>
+              <ChevronRight size={15} />
+            </button>
+          </div>
+          <div className={styles.calendarGrid}>
+            {WEEKDAYS.map(d => <div key={d} className={styles.calendarWeekday}>{d}</div>)}
+            {cells.map((day, i) => {
+              if (!day) return <div key={i} />;
+              const thisDate = new Date(year, month, day);
+              const isSel = selected && thisDate.getTime() === selected.getTime();
+              const isToday = thisDate.getTime() === today.getTime();
+              const isPast = thisDate < today;
+              return (
+                <button
+                  key={i}
+                  type="button"
+                  disabled={isPast}
+                  className={[
+                    styles.calendarDay,
+                    isSel ? styles.daySelected : '',
+                    isToday && !isSel ? styles.dayToday : '',
+                    isPast ? styles.dayPast : '',
+                  ].join(' ')}
+                  onClick={() => selectDay(day)}
+                >
+                  {day}
+                </button>
+              );
+            })}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
 
 export default function CreateTournament() {
   const navigate = useNavigate();
   const { addTournament } = useApp();
   const [step, setStep] = useState(1);
+  const [gameCategory, setGameCategory] = useState('');
   const [form, setForm] = useState({
     name: '',
     game: '',
@@ -29,7 +145,7 @@ export default function CreateTournament() {
   type FormField = keyof typeof form;
   const set = (field: FormField, value: string) => setForm(f => ({ ...f, [field]: value }));
 
-  const canNext1 = form.name && form.game && form.format;
+  const canNext1 = form.name && gameCategory && form.game && form.format;
   const canNext2 = form.maxParticipants && form.startDate && form.organizerName;
 
   return (
@@ -65,12 +181,42 @@ export default function CreateTournament() {
 
           <div className={styles.field}>
             <label>Game / Sport</label>
-            <input
-              className={styles.input}
-              placeholder="e.g. Chess, Soccer, Rocket League"
-              value={form.game}
-              onChange={e => set('game', e.target.value)}
-            />
+            <div className={styles.gameCategoryTabs}>
+              {GAME_CATALOG.map(({ category, icon }) => (
+                <button
+                  key={category}
+                  type="button"
+                  className={`${styles.gameCategoryTab} ${gameCategory === category ? styles.gameCategoryTabActive : ''}`}
+                  onClick={() => { setGameCategory(category); set('game', ''); }}
+                >
+                  <span>{icon}</span> {category}
+                </button>
+              ))}
+            </div>
+            {gameCategory && (
+              <div className={styles.gameGrid}>
+                {GAME_CATALOG.find(c => c.category === gameCategory)?.games.map(game => (
+                  <button
+                    key={game}
+                    type="button"
+                    className={`${styles.gameChip} ${form.game === game ? styles.gameChipSelected : ''}`}
+                    onClick={() => set('game', game)}
+                  >
+                    {game}
+                  </button>
+                ))}
+              </div>
+            )}
+            <div className={styles.gameCustomRow}>
+              <span className={styles.gameCustomDivider}>or enter a custom game</span>
+              <input
+                className={styles.input}
+                placeholder={gameCategory ? 'e.g. Dota 2, Pickleball, Magic...' : 'Pick a category first'}
+                value={GAME_CATALOG.flatMap(c => c.games).includes(form.game) ? '' : form.game}
+                onChange={e => set('game', e.target.value)}
+                disabled={!gameCategory}
+              />
+            </div>
           </div>
 
           <div className={styles.field}>
@@ -108,7 +254,7 @@ export default function CreateTournament() {
             </div>
             <div className={styles.field}>
               <label>Start Date</label>
-              <input type="date" className={styles.input} value={form.startDate} onChange={e => set('startDate', e.target.value)} />
+              <DatePicker value={form.startDate} onChange={v => set('startDate', v)} />
             </div>
           </div>
 
@@ -128,9 +274,14 @@ export default function CreateTournament() {
             />
           </div>
 
-          <button className={styles.nextBtn} disabled={!canNext2} onClick={() => setStep(3)}>
-            Continue →
-          </button>
+          <div className={styles.btnRow}>
+            <button className={styles.cancelBtn} onClick={() => navigate('/dashboard')}>
+              Cancel
+            </button>
+            <button className={styles.nextBtn} disabled={!canNext2} onClick={() => setStep(3)}>
+              Continue →
+            </button>
+          </div>
         </div>
       )}
 
@@ -157,7 +308,11 @@ export default function CreateTournament() {
             </div>
             <div className={styles.reviewRow}>
               <span className={styles.reviewLabel}>Start Date</span>
-              <span className={styles.reviewValue}>{form.startDate}</span>
+              <span className={styles.reviewValue}>
+                {form.startDate
+                  ? new Date(form.startDate + 'T00:00:00').toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })
+                  : '—'}
+              </span>
             </div>
             <div className={styles.reviewRow}>
               <span className={styles.reviewLabel}>Organizer</span>
@@ -166,6 +321,9 @@ export default function CreateTournament() {
           </div>
 
           <div className={styles.actionRow}>
+            <button className={styles.cancelBtn} onClick={() => navigate('/dashboard')}>
+              Cancel
+            </button>
             <button className={styles.draftBtn} onClick={() => {
               addTournament({
                 id: `t${Date.now()}`,

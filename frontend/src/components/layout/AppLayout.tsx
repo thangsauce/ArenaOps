@@ -4,6 +4,7 @@ import Sidebar from './Sidebar';
 import { motion } from 'framer-motion';
 import { useApp } from '../../store/store';
 import ThemeToggle from '../ThemeToggle';
+import InteractiveGrid from '../InteractiveGrid';
 import { useEffect } from 'react';
 
 export default function AppLayout() {
@@ -25,7 +26,10 @@ export default function AppLayout() {
 
   return (
     <div className="min-h-screen bg-arena-bg flex font-sans text-arena-text overflow-hidden relative transition-colors duration-300">
-      {/* Global Background Glows for App */}
+      {/* Interactive grid background */}
+      <InteractiveGrid />
+
+      {/* Ambient glow blobs */}
       <div className="absolute top-[-10%] left-1/3 w-[800px] h-[500px] bg-arena-accent/5 blur-[120px] rounded-full pointer-events-none" />
       <div className="absolute bottom-[-10%] right-[-5%] w-[600px] h-[600px] bg-blue-500/5 blur-[150px] rounded-full pointer-events-none" />
 

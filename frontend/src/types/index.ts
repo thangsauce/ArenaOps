@@ -1,4 +1,12 @@
-export type TournamentFormat = 'single-elimination' | 'double-elimination' | 'round-robin' | 'swiss';
+export type TournamentFormat =
+  | 'single-elimination'
+  | 'double-elimination'
+  | 'round-robin'
+  | 'swiss'
+  | 'free-for-all'
+  | 'group-stage'
+  | 'battle-royale'
+  | 'ladder';
 export type TournamentStatus = 'draft' | 'registration' | 'active' | 'completed';
 export type MatchStatus = 'scheduled' | 'live' | 'completed' | 'delayed' | 'cancelled';
 export type ParticipantStatus = 'confirmed' | 'pending' | 'declined';

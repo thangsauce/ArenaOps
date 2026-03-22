@@ -48,12 +48,35 @@
   text-transform: capitalize;
 }
 
+.headerRight {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 10px;
+}
+
 .headerMeta {
   display: flex;
   flex-direction: column;
   align-items: flex-end;
   gap: 6px;
 }
+
+.shareBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  padding: 8px 16px;
+  border-radius: var(--radius-sm);
+  background: var(--accent-dim);
+  border: 1px solid var(--accent);
+  color: var(--accent);
+  transition: background 0.15s, transform 0.15s;
+  cursor: pointer;
+}
+.shareBtn:hover { background: var(--accent); color: var(--accent-fg); transform: translateY(-1px); }
 
 .metaItem {
   display: flex;
@@ -74,7 +97,41 @@
   margin-bottom: 14px;
 }
 
-/* Bracket */
+/* ── Bracket header & view switcher ── */
+.bracketHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+.bracketHeader .sectionTitle { margin-bottom: 0; }
+
+.viewSwitcher {
+  display: flex;
+  background: var(--surface);
+  border: 1px solid var(--border-2);
+  border-radius: var(--radius-sm);
+  padding: 3px;
+  gap: 2px;
+}
+
+.viewBtn {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--text-3);
+  padding: 5px 10px;
+  border-radius: calc(var(--radius-sm) - 2px);
+  transition: background 0.15s, color 0.15s;
+}
+.viewBtn:hover { color: var(--text); background: var(--bg-3); }
+.viewBtnActive { background: var(--accent) !important; color: var(--accent-fg) !important; }
+
+/* ── Flow View ── */
 .bracket {
   display: flex;
   gap: 20px;
@@ -101,6 +158,30 @@
   border-radius: var(--radius);
   padding: 12px 14px;
   transition: border-color 0.15s;
+}
+
+.matchCardCompact {
+  padding: 9px 10px;
+}
+
+.matchCardCompact .matchHeader {
+  margin-bottom: 6px;
+}
+
+.matchCardCompact .matchups {
+  gap: 2px;
+}
+
+.matchCardCompact .matchup {
+  padding: 3px 5px;
+}
+
+.matchCardCompact .participantName {
+  font-size: 0.74rem;
+}
+
+.matchCardCompact .score {
+  font-size: 0.9rem;
 }
 
 .matchLive {
@@ -156,7 +237,7 @@
 .matchup {
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  gap: 6px;
   padding: 4px 6px;
   border-radius: 4px;
   transition: background 0.1s;
@@ -174,7 +255,7 @@
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  width: 100%;
+  flex: 1;
 }
 
 .score {
@@ -185,8 +266,163 @@
   text-align: right;
 }
 
-/* Participants */
+/* ── Tree View ── */
+.treeBracketScroll {
+  overflow-x: auto;
+  padding: 4px 0 16px;
+}
+
+.treeBracket {
+  display: flex;
+  gap: 44px; /* must match COL_GAP constant */
+  align-items: flex-start;
+  min-width: max-content;
+  padding: 0 2px;
+}
+
+.treeRound {
+  min-width: 206px;
+  position: relative;
+  overflow: visible;
+}
+
+.treeRoundBody {
+  display: grid;
+  position: relative;
+}
+
+.treeMatchSlot {
+  display: flex;
+  align-items: center;
+  position: relative;
+}
+
+.treeMatchCardWrap {
+  width: 100%;
+  position: relative;
+  z-index: 1;
+}
+
+.treeConnectorLeft,
+.treeConnectorExit,
+.treeConnectorVertical {
+  position: absolute;
+  background: color-mix(in srgb, var(--accent) 26%, var(--text) 74%);
+  box-shadow: 0 0 6px color-mix(in srgb, var(--accent) 12%, transparent);
+  pointer-events: none;
+}
+
+.treeConnectorLeft,
+.treeConnectorExit {
+  top: 50%;
+  height: 2px;
+}
+
+.treeConnectorRight {
+  position: absolute;
+  top: 0;
+  height: 100%;
+  pointer-events: none;
+}
+
+.treeConnectorVertical {
+  width: 2px;
+}
+
+/* ── List View ── */
+.listView { display: flex; flex-direction: column; gap: 20px; }
+
+.listRoundLabel {
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-3);
+  margin-bottom: 8px;
+  padding-bottom: 6px;
+  border-bottom: 1px solid var(--border);
+}
+
+.listMatches { display: flex; flex-direction: column; gap: 6px; }
+
+.listMatchRow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 10px 14px;
+  transition: border-color 0.15s;
+}
+.listMatchLive { border-color: rgba(255, 71, 87, 0.4); background: rgba(255, 71, 87, 0.03); }
+
+.listMatchNum {
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  color: var(--text-3);
+  min-width: 26px;
+}
+
+.listParticipant {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  flex: 1;
+  padding: 3px 6px;
+  border-radius: 6px;
+  transition: background 0.1s;
+}
+.listWinner { background: var(--accent-dim); }
+.listWinner .listName { color: var(--accent); font-weight: 600; }
+
+.listName {
+  font-size: 0.82rem;
+  color: var(--text);
+  flex: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.listScore {
+  font-family: var(--font-display);
+  font-size: 1rem;
+  color: var(--text);
+  min-width: 18px;
+  text-align: right;
+}
+
+.listVs {
+  font-size: 0.6rem;
+  font-weight: 700;
+  color: var(--text-3);
+  letter-spacing: 0.1em;
+  flex-shrink: 0;
+}
+
+.listStatus {
+  font-size: 0.68rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex-shrink: 0;
+  min-width: 58px;
+  justify-content: flex-end;
+}
+
+/* ── Participants ── */
 .participantList { display: flex; flex-direction: column; gap: 6px; }
+
+.logoHint {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.72rem;
+  color: var(--text-3);
+}
 
 .participantRow {
   display: flex;
@@ -195,8 +431,30 @@
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: var(--radius-sm);
-  padding: 10px 14px;
+  padding: 9px 14px;
 }
+
+/* Avatar upload button */
+.avatarBtn {
+  position: relative;
+  cursor: pointer;
+  border-radius: 50%;
+  flex-shrink: 0;
+  display: flex;
+}
+.avatarOverlay {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.55);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  opacity: 0;
+  transition: opacity 0.15s;
+}
+.avatarBtn:hover .avatarOverlay { opacity: 1; }
 
 .seed {
   font-size: 0.7rem;

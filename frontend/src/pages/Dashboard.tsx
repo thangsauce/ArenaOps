@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Trophy, Users, Zap, Clock, ChevronRight, ArrowUpRight } from 'lucide-react';
 import { useApp } from '../store/store';
@@ -98,15 +99,34 @@ function TournamentCard({ t }: { t: Tournament }) {
   );
 }
 
+const GAME_CATEGORIES: Record<string, string[]> = {
+  'E-Sports':     ['valorant', 'league of legends', 'cs2', 'rocket league', 'overwatch 2', 'apex legends', 'smash bros', 'street fighter 6', 'fortnite', 'tekken 8'],
+  'Sports':       ['soccer', 'american football', 'basketball', 'tennis', 'volleyball', 'badminton', 'table tennis', 'baseball'],
+  'Board & Card': ['chess', 'checkers', 'poker', 'magic: the gathering', 'hearthstone', 'go'],
+};
+
+const CATEGORY_TABS = [
+  { label: 'All',          icon: '🎮' },
+  { label: 'E-Sports',     icon: '⚡' },
+  { label: 'Sports',       icon: '🏆' },
+  { label: 'Board & Card', icon: '♟️' },
+];
+
 export default function Dashboard() {
   const navigate = useNavigate();
-  // Safe default for useApp to prevent destructuring undefined if store not mocked correctly
   const state = useApp();
   const tournaments = state?.tournaments || [];
-  
-  const active = tournaments.filter((t: Tournament) => t.status === 'active');
-  const upcoming = tournaments.filter((t: Tournament) => t.status === 'registration');
-  const all = tournaments;
+
+  const [categoryFilter, setCategoryFilter] = useState('All');
+
+  const filtered = categoryFilter === 'All'
+    ? tournaments
+    : tournaments.filter((t: Tournament) =>
+        (GAME_CATEGORIES[categoryFilter] ?? []).includes(t.game.toLowerCase())
+      );
+  const active   = filtered.filter((t: Tournament) => t.status === 'active');
+  const upcoming = filtered.filter((t: Tournament) => t.status === 'registration');
+  const all      = filtered;
 
   const totalParticipants = all.reduce((acc: number, t: Tournament) => acc + t.participants.filter(p => p.status === 'confirmed').length, 0);
   const liveNow = all.reduce((acc: number, t: Tournament) => acc + t.matches.filter(m => m.status === 'live').length, 0);
@@ -151,6 +171,23 @@ export default function Dashboard() {
           </motion.div>
         ))}
       </motion.div>
+
+      {/* Category filter */}
+      <div className="flex flex-wrap items-center gap-2 mb-8 data-[density=compact]:mb-4">
+        {CATEGORY_TABS.map(({ label, icon }) => (
+          <button
+            key={label}
+            onClick={() => setCategoryFilter(label)}
+            className={`flex items-center gap-1.5 px-4 py-1.5 rounded-full text-sm font-semibold border transition-all active:scale-95 ${
+              categoryFilter === label
+                ? 'bg-arena-accent text-arena-bg border-arena-accent shadow-[0_0_12px_rgba(232,255,71,0.25)]'
+                : 'bg-arena-surface border-arena-border text-arena-text-muted hover:border-arena-accent/40 hover:text-arena-text'
+            }`}
+          >
+            <span>{icon}</span><span>{label}</span>
+          </button>
+        ))}
+      </div>
 
       {active.length > 0 && (
         <section className="mb-12 data-[density=compact]:mb-6">
