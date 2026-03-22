@@ -2553,7 +2553,7 @@ export function FadeUp({
     <motion.div
       initial={{ opacity: 0, y: 22 }}
       whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: "-80px" }}
+      viewport={{ once: false, margin: "-80px" }}
       transition={{ duration: 0.55, ease: "easeOut", delay }}
       className={className}
     >
@@ -2584,7 +2584,7 @@ export function FadeUpGrid({
       variants={fadeUpGridVariants}
       initial="hidden"
       whileInView="show"
-      viewport={{ once: true, margin: "-80px" }}
+      viewport={{ once: false, margin: "-80px" }}
       className={className}
     >
       {children}
@@ -4034,7 +4034,7 @@ export default function Landing() {
                 className="flex-1 w-full"
                 initial={{ opacity: 0, x: 60 }}
                 whileInView={{ opacity: 1, x: 0 }}
-                viewport={{ once: true, margin: "-80px" }}
+                viewport={{ once: false, margin: "-80px" }}
                 transition={{ duration: 0.55, ease: "easeOut" }}
               >
               <div className="rounded-2xl border border-arena-border overflow-hidden" style={{ background: "var(--bg-2)" }}>
@@ -4089,7 +4089,7 @@ export default function Landing() {
                 className="flex-1 w-full"
                 initial={{ opacity: 0, x: -60 }}
                 whileInView={{ opacity: 1, x: 0 }}
-                viewport={{ once: true, margin: "-80px" }}
+                viewport={{ once: false, margin: "-80px" }}
                 transition={{ duration: 0.55, ease: "easeOut" }}
               >
               <div className="rounded-2xl border border-arena-border overflow-hidden" style={{ background: "var(--bg-2)" }}>
@@ -4185,7 +4185,7 @@ export default function Landing() {
                 className="flex-1 w-full"
                 initial={{ opacity: 0, x: 60 }}
                 whileInView={{ opacity: 1, x: 0 }}
-                viewport={{ once: true, margin: "-80px" }}
+                viewport={{ once: false, margin: "-80px" }}
                 transition={{ duration: 0.55, ease: "easeOut" }}
               >
               <div className="rounded-2xl border border-arena-border overflow-hidden" style={{ background: "var(--bg-2)" }}>
@@ -4242,7 +4242,7 @@ export default function Landing() {
                 className="flex-1 w-full"
                 initial={{ opacity: 0, x: -60 }}
                 whileInView={{ opacity: 1, x: 0 }}
-                viewport={{ once: true, margin: "-80px" }}
+                viewport={{ once: false, margin: "-80px" }}
                 transition={{ duration: 0.55, ease: "easeOut" }}
               >
               <div className="grid grid-cols-2 gap-4">
@@ -4347,7 +4347,7 @@ export default function Landing() {
                 className="flex-1 w-full flex justify-center lg:justify-start"
                 initial={{ opacity: 0, x: 60 }}
                 whileInView={{ opacity: 1, x: 0 }}
-                viewport={{ once: true, margin: "-80px" }}
+                viewport={{ once: false, margin: "-80px" }}
                 transition={{ duration: 0.55, ease: "easeOut" }}
               >
               <div className="w-full max-w-[340px] rounded-[20px] border border-arena-border overflow-hidden shadow-[0_32px_80px_rgba(0,0,0,0.35)]" style={{ background: "var(--surface)" }}>
