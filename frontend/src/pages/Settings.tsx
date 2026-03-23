@@ -206,7 +206,7 @@ export default function Settings() {
   // Provide safe defaults if state is undefined
   const settings = state?.settings || {
     timePrefs: { timezone: 'UTC', format: '12h' as TimeFormat },
-    appearance: { theme: 'dark' as Theme, density: 'comfortable' as Density },
+    appearance: { theme: 'light' as Theme, density: 'comfortable' as Density },
     notifications: { matchStart: true, delays: true, noShows: true, roomChanges: true, sound: false },
     tournamentDefaults: { format: 'single-elimination' as DefaultFormat, maxParticipants: '16' as DefaultMaxParticipants, organizerName: 'Admin' },
     schedulePrefs: { defaultView: 'grid' as DefaultScheduleView, weekStart: 'monday' as WeekStart },

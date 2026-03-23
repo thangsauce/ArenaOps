@@ -12,6 +12,9 @@ import {
   ArrowUp,
   Shield,
   Gamepad2,
+  Dumbbell,
+  Brain,
+  Diamond,
   Github,
   Mail,
   Globe,
@@ -93,24 +96,35 @@ function StrikeClubIcon({ className, style }: BadgeIconProps) {
       aria-hidden="true"
     >
       <path
-        d="M21.6 4.2c3.8 0 6.8 2.4 6.8 5.5 0 2.7-2.2 4.9-5.3 5.4l-4.9.9-3.7-8.8 4-1.8c1-.8 2-1.2 3.1-1.2Z"
+        d="M11.2 4.4c.7 0 1.3.6 1.3 1.3v20.6h-2.6V5.7c0-.7.6-1.3 1.3-1.3Z"
         fill="currentColor"
       />
       <path
-        d="M13.6 10.2c.8-.4 1.8-.1 2.2.7l7.2 17c.4 1 0 2.1-1 2.5l-2.2 1c-1 .4-2.1 0-2.5-1l-7.2-17c-.4-1 0-2.1 1-2.5l2.5-1.1Z"
+        d="M12.5 6.7h10.1c1.2 0 1.8 1.6.9 2.4L20 12l3.5 2.8c.9.8.3 2.4-.9 2.4H12.5V6.7Z"
         fill="currentColor"
       />
       <path
-        d="M15 11.4 21.6 27M18.4 7.2l1.6 3.8m-6.6 1.4 1.7-.8m1.6 3.9 1.7-.8m1.6 3.9 1.7-.8m1.6 3.9 1.7-.8"
-        stroke="rgba(255,255,255,0.26)"
-        strokeWidth="1.6"
+        d="M12.5 8.8h7.6l-2.7 2.1 2.7 2.1h-7.6"
+        stroke="rgba(255,255,255,0.24)"
+        strokeWidth="1.2"
         strokeLinecap="round"
         strokeLinejoin="round"
       />
       <path
-        d="M18.6 5.7c1.5-1 3.2-1.5 5-1.5"
-        stroke="rgba(0,0,0,0.14)"
-        strokeWidth="1.2"
+        d="M6.2 28.1c1.9-2.1 4.1-3.1 6.6-3.1s4.7 1 6.6 3.1"
+        stroke="rgba(255,255,255,0.8)"
+        strokeWidth="1.4"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+      <path
+        d="M18.7 26.4a1.9 1.9 0 1 0 0 3.8 1.9 1.9 0 0 0 0-3.8Z"
+        fill="rgba(255,255,255,0.95)"
+      />
+      <path
+        d="M17.9 27.7h1.5m-1.1.8h1.1"
+        stroke="rgba(0,0,0,0.18)"
+        strokeWidth="0.65"
         strokeLinecap="round"
       />
     </svg>
@@ -1837,16 +1851,6 @@ const CTA_PLUS_BURST = [
   },
 ] as const;
 
-const CATEGORY_IMAGES: Record<Category, string> = {
-  "E-Sports":
-    "https://images.unsplash.com/photo-1542751371-adc38448a05e?w=80&h=80&fit=crop&q=80",
-  Sports:
-    "https://images.unsplash.com/photo-1461896836934-ffe607ba8211?w=80&h=80&fit=crop&q=80",
-  Board:
-    "https://images.unsplash.com/photo-1611996575749-79a3a250f948?w=80&h=80&fit=crop&q=80",
-  Card: "https://images.unsplash.com/photo-1541278107931-e006523892df?w=80&h=80&fit=crop&q=80",
-};
-
 // ── Games data ─────────────────────────────────────────────────────────────────
 const games: Game[] = [
   // E-Sports
@@ -3049,41 +3053,44 @@ function BrowseCard({ game }: { game: Game }) {
         </span>
       </motion.div>
 
-      {/* Mobile: always-visible tap strip */}
+      {/* Mobile: centered CTA */}
       <div
-        className="sm:hidden absolute bottom-0 inset-x-0 flex items-center justify-between px-4 py-2"
+        className="sm:hidden absolute inset-0 flex items-center justify-center"
         style={{
-          background: "linear-gradient(to top, color-mix(in srgb, var(--bg) 72%, transparent) 0%, transparent 100%)",
+          background: "color-mix(in srgb, var(--bg) 10%, transparent)",
         }}
       >
-        <span className="text-[11px] font-bold" style={{ color: "var(--text-main)" }}>
-          Browse
-        </span>
         <span
-          className="flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-md border"
+          className="flex items-center gap-1.5 rounded-lg border px-3 py-1.5 text-[11px] font-bold backdrop-blur-sm"
           style={{
             color: "var(--text-main)",
             background: "color-mix(in srgb, var(--surface) 80%, transparent)",
             borderColor: "color-mix(in srgb, var(--border) 90%, transparent)",
           }}
         >
-          Tap <ArrowRight size={9} />
+          Browse Tournaments <ArrowRight size={11} />
         </span>
       </div>
     </motion.div>
   );
 }
 
-// ── Repulsive category button ───────────────────────────────────────────────────
+// ── Category icon map ───────────────────────────────────────────────────────────
+const CATEGORY_ICONS: Record<Category, React.ElementType> = {
+  "E-Sports": Gamepad2,
+  Sports:     Dumbbell,
+  Board:      Brain,
+  Card:       Diamond,
+};
+
+// ── Category button ─────────────────────────────────────────────────────────────
 function CategoryButton({
   cat,
   isActive,
-  imgSrc,
   onClick,
 }: {
   cat: Category;
   isActive: boolean;
-  imgSrc: string;
   onClick: () => void;
 }) {
   const ref = useRef<HTMLButtonElement>(null);
@@ -3100,8 +3107,8 @@ function CategoryButton({
     const dx = cx - e.clientX;
     const dy = cy - e.clientY;
     const dist = Math.sqrt(dx * dx + dy * dy) || 1;
-    rawX.set((dx / dist) * 18);
-    rawY.set((dy / dist) * 18);
+    rawX.set((dx / dist) * 16);
+    rawY.set((dy / dist) * 16);
   };
 
   const handleMouseLeave = () => {
@@ -3109,8 +3116,7 @@ function CategoryButton({
     rawY.set(0);
   };
 
-  const mobileLabel =
-    cat === "E-Sports" ? "Esports" : cat;
+  const Icon = CATEGORY_ICONS[cat];
 
   return (
     <motion.button
@@ -3123,60 +3129,30 @@ function CategoryButton({
         y,
         ...(isActive
           ? {
-              background: "rgba(var(--accent-rgb), 0.15)",
-              borderColor: "rgba(var(--accent-rgb), 0.6)",
-              color: "var(--arena-accent)",
-              boxShadow: "0 0 18px rgba(var(--accent-rgb), 0.25)",
+              background: "rgba(var(--accent-rgb), 0.12)",
+              borderColor: "rgba(var(--accent-rgb), 0.55)",
+              color: "var(--accent)",
+              boxShadow:
+                "0 0 22px rgba(var(--accent-rgb), 0.22), inset 0 1px 0 rgba(var(--accent-rgb), 0.12)",
             }
           : {
-              background: "transparent",
-              borderColor: "var(--arena-border)",
-              color: "var(--arena-text-muted)",
+              background: "color-mix(in srgb, var(--surface) 85%, transparent)",
+              borderColor: "var(--border)",
+              color: "var(--text-muted)",
+              boxShadow: "none",
             }),
       }}
       whileHover={
         !isActive
-          ? {
-              scale: [1, 1.15, 1.07],
-              filter: "brightness(1.4)",
-              transition: {
-                duration: 0.25,
-                times: [0, 0.2, 1],
-                ease: "easeOut",
-              },
-            }
+          ? { scale: 1.07, transition: { duration: 0.16, ease: "easeOut" } }
           : {}
       }
-      whileTap={{ scale: 0.88, filter: "brightness(0.9)" }}
-      transition={{ type: "spring", stiffness: 500, damping: 12 }}
-      className="relative flex min-w-0 items-center justify-center gap-2 rounded-full border px-3 py-2 text-xs font-bold sm:justify-start sm:pl-1.5 sm:pr-5 sm:py-1.5 sm:text-sm"
+      whileTap={{ scale: 0.92 }}
+      transition={{ type: "spring", stiffness: 500, damping: 15 }}
+      className="inline-flex items-center gap-2 rounded-full border px-4 py-2 text-xs font-bold uppercase tracking-[0.08em] transition-colors"
     >
-      {/* thumbnail */}
-      <span className="relative w-6 h-6 shrink-0 rounded-full overflow-hidden">
-        <img
-          src={imgSrc}
-          alt=""
-          className="w-full h-full object-cover"
-          style={{
-            filter: isActive
-              ? "brightness(1.1) saturate(1.2)"
-              : "brightness(0.7) saturate(0.8)",
-          }}
-        />
-        <span
-          className="absolute inset-0 rounded-full"
-          style={{
-            background: isActive
-              ? "rgba(var(--accent-rgb), 0.3)"
-              : "rgba(0,0,0,0.35)",
-            boxShadow: isActive
-              ? "inset 0 0 0 1.5px rgba(var(--accent-rgb),0.5)"
-              : undefined,
-          }}
-        />
-      </span>
-      <span className="sm:hidden">{mobileLabel}</span>
-      <span className="hidden sm:inline">{cat}</span>
+      <Icon size={12} className="shrink-0" />
+      <span>{cat}</span>
     </motion.button>
   );
 }
@@ -3722,13 +3698,12 @@ export default function Landing() {
         <Parallax offset={40} className="max-w-6xl mx-auto px-6">
           {/* Category tabs */}
           <FadeUp>
-          <div className="mx-auto mb-10 grid max-w-md grid-cols-2 gap-3 sm:flex sm:max-w-none sm:flex-wrap sm:items-center sm:justify-center sm:gap-6">
+          <div className="mb-10 flex flex-wrap items-center justify-center gap-2.5">
             {CATEGORIES.map((cat) => (
               <CategoryButton
                 key={cat}
                 cat={cat}
                 isActive={activeCategory === cat}
-                imgSrc={CATEGORY_IMAGES[cat]}
                 onClick={() => handleTabChange(cat)}
               />
             ))}
@@ -3840,7 +3815,7 @@ export default function Landing() {
                 }
               >
                 <motion.span
-                  className="pointer-events-none absolute left-1 top-0 text-arena-accent"
+                  className="pointer-events-none absolute left-1/2 top-0 text-arena-accent"
                   initial={false}
                   animate={
                     mobileClubPhase === "impact"
@@ -3858,9 +3833,9 @@ export default function Landing() {
                       ? { duration: 0.5, times: [0, 0.42, 0.56, 0.76, 1], ease: "easeOut" }
                       : { duration: 0.18 }
                   }
-                  style={{ translateX: "-42%", translateY: "-74%" }}
+                  style={{ translateX: "-50%", translateY: "-92%" }}
                 >
-                  <StrikeClubIcon className="h-10 w-10 rotate-[75deg] drop-shadow-[0_0_14px_rgba(var(--accent-rgb),0.32)]" />
+                  <StrikeClubIcon className="h-12 w-12 drop-shadow-[0_0_14px_rgba(var(--accent-rgb),0.32)]" />
                 </motion.span>
                 <motion.span
                   className="pointer-events-none absolute left-1/2 top-1/2 h-9 w-9 rounded-full border border-arena-accent/30"
@@ -3978,7 +3953,7 @@ export default function Landing() {
                 }
               >
                 <motion.span
-                  className="pointer-events-none absolute left-1 top-0 text-arena-accent"
+                  className="pointer-events-none absolute left-1/2 top-0 text-arena-accent"
                   initial={false}
                   animate={
                     clubPhase === "impact"
@@ -3996,9 +3971,9 @@ export default function Landing() {
                       ? { duration: 0.54, times: [0, 0.42, 0.56, 0.76, 1], ease: "easeOut" }
                       : { duration: 0.2 }
                   }
-                  style={{ translateX: "-42%", translateY: "-78%" }}
+                  style={{ translateX: "-50%", translateY: "-98%" }}
                 >
-                  <StrikeClubIcon className="h-14 w-14 rotate-[75deg] drop-shadow-[0_0_18px_rgba(var(--accent-rgb),0.34)]" />
+                  <StrikeClubIcon className="h-16 w-16 drop-shadow-[0_0_18px_rgba(var(--accent-rgb),0.34)]" />
                 </motion.span>
                 <motion.span
                   className="pointer-events-none absolute left-1/2 top-1/2 h-11 w-11 rounded-full border border-arena-accent/30"
@@ -4134,7 +4109,7 @@ export default function Landing() {
                 <div className="mx-4 mb-4 rounded-xl border border-arena-border p-4 flex items-start justify-between gap-3" style={{ background: "var(--surface)" }}>
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 mb-1">
-                      <span className="text-sm font-bold text-arena-text truncate">Alpha Team vs Beta Squad</span>
+                      <span className="text-sm font-bold text-arena-text truncate">UCF Knights Gold vs USF Bulls Red</span>
                       <span className="shrink-0 text-[10px] font-bold px-2 py-0.5 rounded-full bg-arena-accent/10 border border-arena-accent/20 text-arena-accent">Active</span>
                     </div>
                     <div className="text-[11px] text-arena-text-muted mb-3">valorant · single-elimination</div>
@@ -4172,24 +4147,33 @@ export default function Landing() {
                 </div>
                 <div className="p-4 space-y-3">
                   {[
-                    { ref: "M3 · R2", t1: "Alpha Team",  t2: "Beta Squad", s1: 2, s2: 1 },
-                    { ref: "M4 · R2", t1: "Gamma Force", t2: "Delta Crew", s1: 0, s2: 0 },
+                    { ref: "Match 3 · Round 2", t1: "UCF Knights Gold", t2: "USF Bulls Red", s1: 2, s2: 1 },
+                    { ref: "Match 4 · Round 2", t1: "FIU Panther Blue", t2: "FAU Owls Black", s1: 0, s2: 0 },
                   ].map(m => (
-                    <div key={m.ref} className="rounded-xl border p-3 flex items-center gap-3" style={{ borderColor: "rgba(255,71,87,0.28)", background: "rgba(255,71,87,0.04)" }}>
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center gap-2 mb-1.5">
+                    <div
+                      key={m.ref}
+                      className="rounded-xl border p-3"
+                      style={{ borderColor: "rgba(255,71,87,0.28)", background: "rgba(255,71,87,0.04)" }}
+                    >
+                      {/* header */}
+                      <div className="flex items-center justify-between mb-2">
+                        <div className="flex items-center gap-2">
                           <span className="text-[10px] font-bold uppercase tracking-wider text-arena-text-muted">{m.ref}</span>
                           <span className="text-[10px] font-bold px-1.5 py-px rounded text-red-400" style={{ background: "rgba(255,71,87,0.12)" }}>LIVE</span>
                         </div>
-                        <div className="flex items-center gap-2 text-xs font-semibold text-arena-text">
-                          <span className="truncate">{m.t1}</span>
-                          <span className="font-display text-base font-bold">{m.s1} – {m.s2}</span>
-                          <span className="truncate">{m.t2}</span>
+                        <div className="flex gap-1">
+                          <span className="text-[10px] px-1.5 py-0.5 rounded border border-arena-border text-arena-text-muted" style={{ background: "var(--surface)" }}>No-show</span>
+                          <span className="text-[10px] px-1.5 py-0.5 rounded font-bold text-arena-bg" style={{ background: "var(--accent)" }}>Done</span>
                         </div>
                       </div>
-                      <div className="flex gap-1.5 shrink-0">
-                        <span className="text-[10px] px-2 py-1 rounded-lg border border-arena-border text-arena-text-muted" style={{ background: "var(--surface)" }}>No-show</span>
-                        <span className="text-[10px] px-2 py-1 rounded-lg font-bold text-arena-bg" style={{ background: "var(--accent)" }}>Complete</span>
+                      {/* scoreboard rows */}
+                      <div className="space-y-1">
+                        {[{ name: m.t1, score: m.s1 }, { name: m.t2, score: m.s2 }].map((row, ri) => (
+                          <div key={ri} className="flex items-center justify-between gap-2">
+                            <span className="truncate text-[11px] font-semibold text-arena-text">{row.name}</span>
+                            <span className="shrink-0 font-display text-sm font-bold text-arena-text tabular-nums">{row.score}</span>
+                          </div>
+                        ))}
                       </div>
                     </div>
                   ))}
@@ -4197,11 +4181,11 @@ export default function Landing() {
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-2">
                         <AlertTriangle size={12} style={{ color: "var(--amber)" }} />
-                        <span className="text-[10px] font-bold" style={{ color: "var(--amber)" }}>DELAYED · M2 · R1</span>
+                        <span className="text-[10px] font-bold" style={{ color: "var(--amber)" }}>DELAYED · Match 2 · Round 1</span>
                       </div>
                       <span className="text-[10px] px-2 py-0.5 rounded border border-arena-border text-arena-text-muted" style={{ background: "var(--surface)" }}>Reschedule</span>
                     </div>
-                    <div className="mt-1.5 text-xs text-arena-text-muted">Omega Unit vs Zeta Elite</div>
+                    <div className="mt-1.5 text-xs text-arena-text-muted">Miami Hurricanes White vs Tampa Spartans Green</div>
                   </div>
                 </div>
               </div>
@@ -4273,9 +4257,9 @@ export default function Landing() {
                       <span className="text-[10px] font-bold text-arena-text uppercase tracking-wider">Morning · 9 AM – 12 PM</span>
                     </div>
                     {[
-                      { ref: "M1", teams: "Alpha Team vs Beta Squad",  room: "Gaming Lab A", status: "completed" },
-                      { ref: "M2", teams: "Gamma Force vs Delta Crew", room: "Room 204",      status: "live"      },
-                      { ref: "M3", teams: "Omega Unit vs Zeta Elite",  room: "Rec Center",   status: "scheduled" },
+                      { ref: "M1", teams: "UCF Knights Gold vs USF Bulls Red", room: "Gaming Lab A", status: "completed" },
+                      { ref: "M2", teams: "FIU Panther Blue vs FAU Owls Black", room: "Room 204",      status: "live"      },
+                      { ref: "M3", teams: "Miami Hurricanes White vs Tampa Spartans Green", room: "Rec Center", status: "scheduled" },
                     ].map((m, i) => (
                       <div key={m.ref} className={`flex items-center gap-3 px-3 py-2.5 ${i < 2 ? "border-b border-arena-border" : ""}`}>
                         <div className={`w-1.5 h-1.5 rounded-full shrink-0 ${m.status === "live" ? "bg-red-400 animate-pulse" : m.status === "completed" ? "bg-arena-text-muted" : "bg-blue-400"}`} />
@@ -4323,10 +4307,10 @@ export default function Landing() {
                   </div>
                   <div className="p-3 space-y-2">
                     {[
-                      { name: "Alpha Team",  status: "confirmed" },
-                      { name: "Beta Squad",  status: "confirmed" },
-                      { name: "Gamma Force", status: "pending"   },
-                      { name: "Delta Crew",  status: "declined"  },
+                      { name: "UCF Knights Gold", status: "confirmed" },
+                      { name: "USF Bulls Red", status: "confirmed" },
+                      { name: "FIU Panther Blue", status: "pending"   },
+                      { name: "FAU Owls Black", status: "declined"  },
                     ].map((p, i) => (
                       <div key={i} className="flex items-center justify-between px-2.5 py-1.5 rounded-lg border border-arena-border" style={{ background: "var(--surface)" }}>
                         <span className="text-xs font-semibold text-arena-text truncate">{p.name}</span>
@@ -4352,9 +4336,9 @@ export default function Landing() {
                   </div>
                   <div className="p-3 space-y-1.5">
                     {[
-                      { Icon: Zap,           color: "var(--red)",    msg: "M3 is now live",       unread: true  },
-                      { Icon: AlertTriangle, color: "var(--amber)",  msg: "M2 delayed",            unread: true  },
-                      { Icon: CheckCircle2,  color: "var(--accent)", msg: "Alpha Team checked in", unread: false },
+                      { Icon: Zap,           color: "var(--red)",    msg: "Match 3 is now live", unread: true  },
+                      { Icon: AlertTriangle, color: "var(--amber)",  msg: "Match 2 delayed",       unread: true  },
+                      { Icon: CheckCircle2,  color: "var(--accent)", msg: "UCF Knights Gold checked in", unread: false },
                       { Icon: BarChart2,     color: "var(--blue)",   msg: "Schedule generated",   unread: false },
                     ].map((n, i) => (
                       <div key={i} className="flex items-start gap-2 px-2 py-1.5 rounded-lg" style={{
@@ -4421,18 +4405,18 @@ export default function Landing() {
                 transition={{ duration: 0.55, ease: "easeOut" }}
               >
               <div className="w-full max-w-[280px] sm:max-w-[320px] lg:max-w-[340px] mx-auto rounded-[20px] border border-arena-border overflow-hidden shadow-[0_32px_80px_rgba(0,0,0,0.35)]" style={{ background: "var(--surface)" }}>
-                <div className="flex items-center justify-between px-5 py-4 border-b border-arena-border">
-                  <div className="flex items-center gap-3 min-w-0">
-                    <div className="w-9 h-9 rounded-xl flex items-center justify-center text-arena-accent border border-arena-accent/30 shrink-0" style={{ background: "var(--accent-dim)" }}>
-                      <Zap size={15} />
-                    </div>
-                    <div className="min-w-0">
-                      <p className="text-[11px] font-bold uppercase tracking-[0.14em] text-arena-accent">Share Event</p>
-                      <p className="text-sm font-bold text-arena-text truncate">Alpha Team vs Beta Squad</p>
-                    </div>
+                <div className="flex items-center gap-2 px-4 py-3 border-b border-arena-border">
+                  <div className="w-8 h-8 rounded-xl flex items-center justify-center text-arena-accent border border-arena-accent/30 shrink-0" style={{ background: "var(--accent-dim)" }}>
+                    <Zap size={13} />
                   </div>
-                  <div className="w-8 h-8 rounded-lg border border-arena-border flex items-center justify-center text-arena-text-muted shrink-0" style={{ background: "var(--bg-3)" }}>
-                    <ArrowUpRight size={14} />
+                  <div className="flex-1 flex flex-col items-center min-w-0">
+                    <p className="text-[10px] font-bold uppercase tracking-[0.14em] text-arena-accent mb-1">Share Event</p>
+                    <p className="text-[11px] font-bold text-arena-text leading-tight text-center w-full truncate">UCF Knights Gold</p>
+                    <p className="text-[9px] font-semibold uppercase tracking-widest text-arena-text-muted my-0.5">vs</p>
+                    <p className="text-[11px] font-bold text-arena-text leading-tight text-center w-full truncate">USF Bulls Red</p>
+                  </div>
+                  <div className="w-7 h-7 rounded-lg border border-arena-border flex items-center justify-center text-arena-text-muted shrink-0" style={{ background: "var(--bg-3)" }}>
+                    <ArrowUpRight size={12} />
                   </div>
                 </div>
 
@@ -4531,13 +4515,13 @@ export default function Landing() {
           <div className="relative z-10">
             <div className="relative inline-block">
             <div className="pointer-events-none absolute inset-0">
-              <span className="absolute left-[-0.75rem] top-[24%] inline-flex -translate-x-3 -translate-y-1/2 opacity-0 transition-all duration-300 group-hover:translate-x-0 group-hover:opacity-100 sm:left-[-2.5rem]">
+              <span className="absolute left-[-3.75rem] top-[30%] inline-flex -translate-x-3 -translate-y-1/2 opacity-0 transition-all duration-300 group-hover:translate-x-0 group-hover:opacity-100 sm:left-[-8rem]">
                 <svg viewBox="0 0 52 20" className="h-4 w-12 text-arena-accent/80 sm:h-5 sm:w-14" fill="none" aria-hidden="true">
                   <path d="M2 10h38" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" />
                   <path d="m34 4 8 6-8 6" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" />
                 </svg>
               </span>
-              <span className="absolute right-[-0.75rem] top-[24%] inline-flex translate-x-3 -translate-y-1/2 opacity-0 transition-all duration-300 group-hover:translate-x-0 group-hover:opacity-100 sm:right-[-2.5rem]">
+              <span className="absolute right-[-3.75rem] top-[30%] inline-flex translate-x-3 -translate-y-1/2 opacity-0 transition-all duration-300 group-hover:translate-x-0 group-hover:opacity-100 sm:right-[-8rem]">
                 <svg viewBox="0 0 52 20" className="h-4 w-12 text-arena-accent/80 sm:h-5 sm:w-14" fill="none" aria-hidden="true">
                   <path d="M50 10H12" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" />
                   <path d="m18 4-8 6 8 6" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" />

@@ -91,7 +91,7 @@ export const DEFAULT_SETTINGS: AppSettings = {
     timezone: 'America/New_York',
     format: '12h',
   },
-  appearance: { theme: 'dark', density: 'comfortable' },
+  appearance: { theme: 'light', density: 'comfortable' },
   notifications: { matchStart: true, delays: true, noShows: true, roomChanges: true, sound: false },
   tournamentDefaults: { format: 'single-elimination', maxParticipants: '8', organizerName: 'Thang Le' },
   schedulePrefs: { weekStart: 'sunday', defaultView: 'grid' },
