@@ -838,8 +838,7 @@
         align-items: flex-start;
     }
 
-    .delayTop .delayChip,
-    .delayTimer {
+    .delayTop .delayChip {
         display: none;
     }
 

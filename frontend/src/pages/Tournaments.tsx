@@ -20,6 +20,13 @@ const CATEGORY_TABS = [
   { label: 'Card',         Icon: Diamond },
 ];
 
+const STATUS_SPOTS = [
+  { key: 'active', label: 'Active' },
+  { key: 'draft', label: 'Draft' },
+  { key: 'registration', label: 'Register' },
+  { key: 'completed', label: 'Completed' },
+] as const;
+
 const INDIVIDUAL_GAMES = new Set([
   'chess',
   'checkers',
@@ -40,13 +47,23 @@ export default function Tournaments() {
   const { tournaments } = useApp();
 
   const [categoryFilter, setCategoryFilter] = useState('All');
+  const [statusFilter, setStatusFilter] = useState<
+    'all' | 'active' | 'draft' | 'registration' | 'completed'
+  >('all');
   const categoryTabRefs = useRef<Array<HTMLButtonElement | null>>([]);
 
-  const filtered = categoryFilter === 'All'
+  const categoryFiltered = categoryFilter === 'All'
     ? tournaments
     : tournaments.filter(t =>
         (GAME_CATEGORIES[categoryFilter] ?? []).includes(t.game.toLowerCase())
       );
+  const filtered = statusFilter === 'all'
+    ? categoryFiltered
+    : categoryFiltered.filter((tournament) => tournament.status === statusFilter);
+  const statusCounts = STATUS_SPOTS.map((spot) => ({
+    ...spot,
+    count: categoryFiltered.filter((tournament) => tournament.status === spot.key).length,
+  }));
 
   const handleCategoryKeyDown = (
     e: React.KeyboardEvent<HTMLButtonElement>,
@@ -93,12 +110,32 @@ export default function Tournaments() {
         ))}
       </div>
 
+      <div className={styles.statusSpots}>
+        {statusCounts.map((spot) => (
+          <button
+            key={spot.key}
+            type="button"
+            className={styles.statusSpot}
+            data-status={spot.key}
+            data-active={statusFilter === spot.key}
+            data-available={spot.count > 0}
+            onClick={() =>
+              setStatusFilter((current) => (current === spot.key ? 'all' : spot.key))
+            }
+          >
+            <span className={styles.statusSpotLabel}>{spot.label}</span>
+            <span className={styles.statusSpotCount}>{spot.count}</span>
+          </button>
+        ))}
+      </div>
+
       <div className={styles.list}>
         {filtered.map(t => {
           const confirmed = t.participants.filter(p => p.status === 'confirmed').length;
           const isIndividualGame = INDIVIDUAL_GAMES.has(t.game.toLowerCase());
           const StatIcon = isIndividualGame ? User : Users;
           const participantLabel = isIndividualGame ? 'players' : 'teams';
+          const hasSetup = Boolean(t.selectedTimeBlockId) && Boolean(t.venueLocationId);
           return (
             <div key={t.id} className={styles.row} onClick={() => navigate(`/tournaments/${t.id}`)}>
               <div className={styles.rowIcon}>
@@ -113,6 +150,11 @@ export default function Tournaments() {
                   <StatIcon size={13} />
                   <span>{confirmed}/{t.maxParticipants} {participantLabel}</span>
                 </div>
+                {!hasSetup && (
+                  <span className={styles.setupChip} data-ready={false}>
+                    Room / Slot Missing
+                  </span>
+                )}
                 <span className={styles.statusChip} data-status={t.status}>{t.status}</span>
               </div>
               <ChevronRight size={14} className={styles.arrow} />

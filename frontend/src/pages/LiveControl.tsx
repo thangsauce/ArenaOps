@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import {
-  Zap,
+  Radio,
   AlertTriangle,
   CheckCircle2,
   Clock,
@@ -17,6 +17,20 @@ import { formatTime } from "../utils/time";
 import { useToast } from "../components/Toast";
 import ConfirmDialog from "../components/ConfirmDialog";
 import styles from "./LiveControl.module.css";
+
+const SOURCE_TIMEZONE = "America/New_York";
+
+function getTournamentDateTime(dateStr: string, timeStr: string) {
+  const [hours, minutes] = timeStr.split(":").map(Number);
+  const naiveUtc = new Date(
+    `${dateStr}T${String(hours).padStart(2, "0")}:${String(minutes).padStart(2, "0")}:00Z`,
+  );
+  const sourceLocal = new Date(
+    naiveUtc.toLocaleString("en-US", { timeZone: SOURCE_TIMEZONE }),
+  );
+  const offsetMs = naiveUtc.getTime() - sourceLocal.getTime();
+  return new Date(naiveUtc.getTime() + offsetMs);
+}
 
 function MatchScore({
   score = 0,
@@ -109,6 +123,7 @@ export default function LiveControl() {
   const [liveScores, setLiveScores] = useState<
     Record<string, { score1: number; score2: number }>
   >({});
+  const [now, setNow] = useState(() => Date.now());
   const [elapsedSeconds, setElapsedSeconds] = useState<Record<string, number>>(
     {},
   );
@@ -121,11 +136,12 @@ export default function LiveControl() {
   // Tick every second to update elapsed counters from store timers
   useEffect(() => {
     const timer = setInterval(() => {
-      const now = Date.now();
+      const currentNow = Date.now();
+      setNow(currentNow);
       setElapsedSeconds(() => {
         const next: Record<string, number> = {};
         Object.entries(delayedMatchTimersRef.current).forEach(([id, t]) => {
-          next[id] = Math.floor((now - t.startAt) / 1000);
+          next[id] = Math.floor((currentNow - t.startAt) / 1000);
         });
         return next;
       });
@@ -140,6 +156,21 @@ export default function LiveControl() {
     const m = Math.floor(remaining / 60);
     const s = remaining % 60;
     return `${String(m).padStart(2, "0")}:${String(s).padStart(2, "0")}`;
+  };
+
+  const formatTimeRemaining = (timeBlockId?: string) => {
+    const slot = getSlot(timeBlockId);
+    if (!slot) return null;
+    const endAt = getTournamentDateTime(slot.date, slot.end).getTime();
+    const remaining = Math.max(0, Math.floor((endAt - now) / 1000));
+    if (remaining <= 0) return null;
+    const hours = Math.floor(remaining / 3600);
+    const minutes = Math.floor((remaining % 3600) / 60);
+    const seconds = remaining % 60;
+    if (hours > 0) {
+      return `${String(hours).padStart(2, "0")}:${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
+    }
+    return `${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
   };
 
   const getP = (id: string | null) =>
@@ -251,7 +282,7 @@ export default function LiveControl() {
       {/* Live matches */}
       <section className={styles.section}>
         <h2 className={styles.sectionTitle} style={{ color: "var(--red)" }}>
-          <Zap size={13} /> Live Now
+          <Radio size={13} /> Live Now
         </h2>
         {live.length === 0 && (
           <div className={styles.empty}>No matches live right now.</div>
@@ -326,6 +357,12 @@ export default function LiveControl() {
                       {formatSlotTime(slot)}
                     </span>
                   )}
+                  {slot && (
+                    <span>
+                      <Clock size={11} />
+                      {formatTimeRemaining(m.timeBlockId)} remaining
+                    </span>
+                  )}
                 </div>
                 <div className={styles.matchActions}>
                   <button
@@ -360,32 +397,40 @@ export default function LiveControl() {
             <AlertTriangle size={13} /> Delay
           </h2>
           <div className={styles.matchGrid}>
-            {delayed.map((m) => (
-              <div key={m.id} className={styles.delayCard}>
-                <div className={styles.delayTop}>
-                  <span className={styles.matchRef}>
-                    Match {m.matchNumber} · Round {m.round}
-                  </span>
-                </div>
-                <p className={styles.delayPlayers}>
-                  {getName(m.participant1Id)} vs {getName(m.participant2Id)}
-                </p>
-                {delayedMatchTimers[m.id] !== undefined && (
-                  <div className={styles.delayTimer}>
-                    <Clock size={11} />
-                    {formatCountdown(m.id)} remaining
+            {delayed.map((m) => {
+              return (
+                <div key={m.id} className={styles.delayCard}>
+                  <div className={styles.delayTop}>
+                    <span className={styles.matchRef}>
+                      Match {m.matchNumber} · Round {m.round}
+                    </span>
                   </div>
-                )}
-                <div className={styles.matchActions}>
-                  <button
-                    className={styles.rescheduleBtn}
-                    onClick={() => setConfirmResume({ matchId: m.id })}
-                  >
-                    <SkipForward size={13} /> Resume now
-                  </button>
+                  <p className={styles.delayPlayers}>
+                    {getName(m.participant1Id)} vs {getName(m.participant2Id)}
+                  </p>
+                  {delayedMatchTimers[m.id] !== undefined && (
+                    <div className={styles.delayTimer}>
+                      <Clock size={11} />
+                      {formatCountdown(m.id)} remaining
+                    </div>
+                  )}
+                  {formatTimeRemaining(m.timeBlockId) && (
+                    <div className={styles.delayTimer}>
+                      <Clock size={11} />
+                      {formatTimeRemaining(m.timeBlockId)} remaining in slot
+                    </div>
+                  )}
+                  <div className={styles.matchActions}>
+                    <button
+                      className={styles.rescheduleBtn}
+                      onClick={() => setConfirmResume({ matchId: m.id })}
+                    >
+                      <SkipForward size={13} /> Resume now
+                    </button>
+                  </div>
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </section>
       )}

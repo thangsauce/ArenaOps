@@ -62,6 +62,11 @@
   display: flex;
   align-items: center;
   gap: 10px;
+  width: 100%;
+}
+
+.headerActions .shareBtn:last-child {
+  margin-left: auto;
 }
 
 .shareBtn {
@@ -1053,7 +1058,7 @@
   }
 
   .headerActions .shareBtn:last-child {
-    margin-left: 0;
+    margin-left: auto;
   }
 
   .bracketHeader {

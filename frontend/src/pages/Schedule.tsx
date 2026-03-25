@@ -6,6 +6,7 @@ import {
   ChevronRight,
   MapPin,
   Zap,
+  Radio,
   Clock,
   AlertTriangle,
   LayoutGrid,
@@ -213,7 +214,7 @@ export default function Schedule() {
         <div className={styles.alertBar}>
           {liveMatches.length > 0 && (
             <div className={styles.alert} data-type="live">
-              <Zap size={14} />
+              <Radio size={14} />
               <strong>{liveMatches.length} live now</strong>
               {liveMatches.map((m) => (
                 <span key={m.id} className={styles.alertChip}>

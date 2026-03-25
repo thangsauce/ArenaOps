@@ -328,14 +328,15 @@ export default function Participants() {
             }}
             key={s}
             className={`${styles.summaryCard} ${filter === s ? styles.summaryActive : ''}`}
+            data-status={s}
             onClick={() => setFilter(s)}
             onKeyDown={(e) => handleSummaryFilterKeyDown(e, index)}
             role="tab"
             aria-selected={filter === s}
             tabIndex={filter === s ? 0 : -1}
           >
-            <span className={styles.summaryCount} data-status={s}>{counts[s]}</span>
             <span className={styles.summaryLabel}>{s === 'all' ? 'Total' : statusLabel[s as ParticipantStatus]}</span>
+            <span className={styles.summaryCount} data-status={s}>{counts[s]}</span>
           </button>
         ))}
       </div>

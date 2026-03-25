@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Trophy, Users, User, Zap, Clock, ChevronRight, ArrowUpRight, Gamepad2, Dumbbell, Brain, Diamond, LayoutGrid, Search, FileText } from 'lucide-react';
+import { Trophy, Users, User, Radio, Clock, ChevronRight, ArrowUpRight, Gamepad2, Dumbbell, Brain, Diamond, LayoutGrid, Search, FileText } from 'lucide-react';
 import { useApp } from '../store/store';
 import type { Tournament } from '../types';
 import { motion } from 'framer-motion';
@@ -75,7 +75,7 @@ function TournamentCard({ t }: { t: Tournament }) {
           <h3 className="text-lg font-bold text-arena-text group-hover:text-arena-accent transition-colors truncate pr-2">{t.name}</h3>
           <p className="text-sm text-arena-text-muted mt-1 capitalize">{t.game} <span className="ox-2 opacity-50">•</span> {t.format.replace(/-/g, ' ')}</p>
         </div>
-        <div className={`px-2.5 py-1 text-xs font-bold uppercase tracking-wider rounded border flex items-center gap-1.5 whitespace-nowrap ${statusColors[t.status]} ${statusBgs[t.status]}`}>
+        <div className={`px-2.5 py-1 text-xs font-bold uppercase tracking-wider rounded border flex items-center gap-1.5 whitespace-nowrap ${statusColors[t.status]} ${statusBgs[t.status]} ${liveMatches > 0 ? 'animate-pulse' : ''}`}>
           {liveMatches > 0 && <span className="w-1.5 h-1.5 rounded-full bg-arena-accent shadow-[0_0_8px_rgba(232,255,71,0.8)] animate-pulse" />}
           {statusLabels[t.status]}
         </div>
@@ -96,7 +96,7 @@ function TournamentCard({ t }: { t: Tournament }) {
         </div>
         {liveMatches > 0 && (
           <div className="justify-self-end flex items-center gap-1.5 bg-red-500/10 px-2.5 py-1.5 rounded-lg border border-red-500/20 text-red-400 whitespace-nowrap">
-            <Zap size={14} className="fill-current" />
+            <Radio size={14} />
             <span className="font-bold">{liveMatches} live</span>
           </div>
         )}
@@ -339,7 +339,7 @@ export default function Dashboard() {
         {[
           { label: all.length === 1 ? 'Total Tournament' : 'Total Tournaments', value: all.length,          Icon: Trophy,  color: 'text-arena-text',   iconColor: 'text-arena-text-muted',  top: '' },
           { label: active.length === 1 ? 'Active Tournament' : 'Active Tournaments', value: active.length,      Icon: Trophy,  color: 'text-arena-accent', iconColor: 'text-arena-accent',       top: 'border-t-2 border-arena-accent/40', glow: 'shadow-[0_4px_20px_rgba(232,255,71,0.08)]' },
-          { label: liveNow === 1 ? 'Match Live' : 'Matches Live',      value: liveNow,             Icon: Zap,     color: liveNow > 0 ? 'text-red-400' : 'text-arena-text', iconColor: liveNow > 0 ? 'text-red-400' : 'text-arena-text-muted', top: liveNow > 0 ? 'border-t-2 border-red-500/40' : '', glow: liveNow > 0 ? 'shadow-[0_4px_20px_rgba(248,113,113,0.08)]' : '' },
+          { label: liveNow === 1 ? 'Match Live' : 'Matches Live',      value: liveNow,             Icon: Radio,   color: liveNow > 0 ? 'text-red-400' : 'text-arena-text', iconColor: liveNow > 0 ? 'text-red-400' : 'text-arena-text-muted', top: liveNow > 0 ? 'border-t-2 border-red-500/40' : '', glow: liveNow > 0 ? 'shadow-[0_4px_20px_rgba(248,113,113,0.08)]' : '' },
           { label: teamTournaments === 1 ? 'Team Tournament' : 'Team Tournaments',  value: teamTournaments,     Icon: Users,   color: 'text-arena-text',   iconColor: 'text-arena-text-muted',  top: '' },
           { label: individualTournaments === 1 ? 'Individual Event' : 'Individual Events', value: individualTournaments, Icon: User, color: 'text-arena-text',   iconColor: 'text-arena-text-muted',  top: '' },
         ].map((stat, i) => (
