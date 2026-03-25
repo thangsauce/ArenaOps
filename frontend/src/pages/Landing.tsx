@@ -1292,7 +1292,11 @@ function getBrowseCardWatermarkVariants(game: Game): Variants {
         y: [0, -(yLead + 2) * directionY, 0, yTrail * directionY, 0],
       },
       hover: {
-        rotate: [-2 * directionRotate, (rotateLead + 6) * directionRotate, -4 * directionRotate],
+        rotate: [
+          -2 * directionRotate,
+          (rotateLead + 6) * directionRotate,
+          -4 * directionRotate,
+        ],
         scale: [scaleFloor, Math.min(scalePeak + 0.11, 1.25), scalePeak],
         x: [0, 0, (xLead + 5) * directionX],
         y: [0, -(yLead + 5) * directionY, 0],
@@ -1300,13 +1304,22 @@ function getBrowseCardWatermarkVariants(game: Game): Variants {
     },
     {
       idle: {
-        rotate: [rotateTrail * directionRotate, -rotateLead * directionRotate, rotateTrail * directionRotate, 0],
+        rotate: [
+          rotateTrail * directionRotate,
+          -rotateLead * directionRotate,
+          rotateTrail * directionRotate,
+          0,
+        ],
         scale: [scalePeak, scaleFloor, scaleMid, scalePeak],
         x: [0, -(xLead + 1) * directionX, xTrail * directionX, 0],
         y: [0, -2 * directionY, (yLead + 1) * directionY, 0],
       },
       hover: {
-        rotate: [rotateTrail * directionRotate, -(rotateLead + 6) * directionRotate, 2 * directionRotate],
+        rotate: [
+          rotateTrail * directionRotate,
+          -(rotateLead + 6) * directionRotate,
+          2 * directionRotate,
+        ],
         scale: [scaleMid, Math.min(scalePeak + 0.08, 1.22), scalePeak],
         x: [0, -(xLead + 4) * directionX, 2 * directionX],
         y: [0, (yLead + 4) * directionY, -2 * directionY],
@@ -1314,13 +1327,23 @@ function getBrowseCardWatermarkVariants(game: Game): Variants {
     },
     {
       idle: {
-        rotate: [0, 0, rotateLead * directionRotate, -(rotateTrail + 2) * directionRotate, 0],
+        rotate: [
+          0,
+          0,
+          rotateLead * directionRotate,
+          -(rotateTrail + 2) * directionRotate,
+          0,
+        ],
         scale: [scaleFloor, scaleMid, scalePeak, scaleMid, scaleFloor],
         x: [0, xLead * directionX, xLead * directionX, -xTrail * directionX, 0],
         y: [0, 0, -(yLead + 1) * directionY, yTrail * directionY, 0],
       },
       hover: {
-        rotate: [0, (rotateLead + 4) * directionRotate, -(rotateTrail + 1) * directionRotate],
+        rotate: [
+          0,
+          (rotateLead + 4) * directionRotate,
+          -(rotateTrail + 1) * directionRotate,
+        ],
         scale: [scaleMid, Math.min(scalePeak + 0.07, 1.21), scalePeak],
         x: [0, (xLead + 4) * directionX, -(xTrail - 1) * directionX],
         y: [0, 0, -(yLead + 4) * directionY],
@@ -1328,13 +1351,22 @@ function getBrowseCardWatermarkVariants(game: Game): Variants {
     },
     {
       idle: {
-        rotate: [-(rotateTrail + 1) * directionRotate, 4 * directionRotate, rotateLead * directionRotate, -(rotateTrail + 1) * directionRotate],
+        rotate: [
+          -(rotateTrail + 1) * directionRotate,
+          4 * directionRotate,
+          rotateLead * directionRotate,
+          -(rotateTrail + 1) * directionRotate,
+        ],
         scale: [scaleMid, scalePeak, scaleFloor, scaleMid],
         x: [0, -xTrail * directionX, xLead * directionX, 0],
         y: [0, -(yLead + 2) * directionY, -(yLead - 2) * directionY, 0],
       },
       hover: {
-        rotate: [-(rotateTrail + 1) * directionRotate, (rotateLead + 5) * directionRotate, 1 * directionRotate],
+        rotate: [
+          -(rotateTrail + 1) * directionRotate,
+          (rotateLead + 5) * directionRotate,
+          1 * directionRotate,
+        ],
         scale: [scaleFloor, Math.min(scalePeak + 0.12, 1.24), scalePeak],
         x: [0, -(xTrail + 4) * directionX, (xLead + 2) * directionX],
         y: [0, -(yLead + 5) * directionY, -1 * directionY],
@@ -1342,13 +1374,29 @@ function getBrowseCardWatermarkVariants(game: Game): Variants {
     },
     {
       idle: {
-        rotate: [0, -rotateLead * directionRotate, 0, rotateTrail * directionRotate, 0],
+        rotate: [
+          0,
+          -rotateLead * directionRotate,
+          0,
+          rotateTrail * directionRotate,
+          0,
+        ],
         scale: [scaleFloor, scalePeak, scaleFloor, scaleMid, scaleFloor],
-        x: [0, xLead * directionX, -2 * directionX, -(xTrail + 2) * directionX, 0],
+        x: [
+          0,
+          xLead * directionX,
+          -2 * directionX,
+          -(xTrail + 2) * directionX,
+          0,
+        ],
         y: [0, yTrail * directionY, -(yLead + 2) * directionY, 0, 0],
       },
       hover: {
-        rotate: [0, -(rotateLead + 6) * directionRotate, rotateTrail * directionRotate],
+        rotate: [
+          0,
+          -(rotateLead + 6) * directionRotate,
+          rotateTrail * directionRotate,
+        ],
         scale: [scaleMid, Math.min(scalePeak + 0.09, 1.22), scalePeak],
         x: [0, (xLead + 3) * directionX, -(xTrail + 1) * directionX],
         y: [0, (yTrail + 3) * directionY, -(yLead + 3) * directionY],
@@ -1366,7 +1414,11 @@ function getBrowseCardWatermarkVariants(game: Game): Variants {
     },
     hover: {
       ...pattern.hover,
-      opacity: [Math.min(opacityMid + 0.04, 0.92), 1, Math.min(opacityPeak, 0.96)],
+      opacity: [
+        Math.min(opacityMid + 0.04, 0.92),
+        1,
+        Math.min(opacityPeak, 0.96),
+      ],
       transition: { duration: hoverDuration, ease: "easeOut" },
     },
   };
@@ -2255,31 +2307,38 @@ const games: Game[] = [
 const supportedFormats = [
   {
     title: "Single Elimination",
-    blurb: "One loss and you're out. Fast, clean, and ideal for short event windows.",
+    blurb:
+      "One loss and you're out. Fast, clean, and ideal for short event windows.",
   },
   {
     title: "Double Elimination",
-    blurb: "Teams get a second life through a lower bracket before final elimination.",
+    blurb:
+      "Teams get a second life through a lower bracket before final elimination.",
   },
   {
     title: "Round Robin",
-    blurb: "Everyone plays everyone. Best when you want the fullest set of matchups.",
+    blurb:
+      "Everyone plays everyone. Best when you want the fullest set of matchups.",
   },
   {
     title: "Swiss",
-    blurb: "Players with similar records keep facing each other across each round.",
+    blurb:
+      "Players with similar records keep facing each other across each round.",
   },
   {
     title: "Group Stage",
-    blurb: "Start in pools, then advance top performers into a final knockout bracket.",
+    blurb:
+      "Start in pools, then advance top performers into a final knockout bracket.",
   },
   {
     title: "Battle Royale",
-    blurb: "Many players drop into the same lobby and placements decide scoring.",
+    blurb:
+      "Many players drop into the same lobby and placements decide scoring.",
   },
   {
     title: "Ladder",
-    blurb: "Competitors climb rankings over time by challenging players above them.",
+    blurb:
+      "Competitors climb rankings over time by challenging players above them.",
   },
   {
     title: "Free for All",
@@ -2299,7 +2358,12 @@ function FormatChipIcon({ format }: { format: string }) {
     case "Single Elimination":
       return (
         <svg {...common}>
-          <path d="M5 7h5m-5 10h5m9-5h-5m-4-5v10" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
+          <path
+            d="M5 7h5m-5 10h5m9-5h-5m-4-5v10"
+            stroke="currentColor"
+            strokeWidth="1.8"
+            strokeLinecap="round"
+          />
           <circle cx="5" cy="7" r="1.5" fill="currentColor" />
           <circle cx="5" cy="17" r="1.5" fill="currentColor" />
           <circle cx="19" cy="12" r="1.5" fill="currentColor" />
@@ -2308,7 +2372,12 @@ function FormatChipIcon({ format }: { format: string }) {
     case "Double Elimination":
       return (
         <svg {...common}>
-          <path d="M4.5 7h5m-5 10h5m10-10h-5m5 10h-5m-4-10v10" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
+          <path
+            d="M4.5 7h5m-5 10h5m10-10h-5m5 10h-5m-4-10v10"
+            stroke="currentColor"
+            strokeWidth="1.8"
+            strokeLinecap="round"
+          />
           <circle cx="4.5" cy="7" r="1.4" fill="currentColor" />
           <circle cx="4.5" cy="17" r="1.4" fill="currentColor" />
           <circle cx="19.5" cy="7" r="1.4" fill="currentColor" />
@@ -2321,40 +2390,116 @@ function FormatChipIcon({ format }: { format: string }) {
           <circle cx="12" cy="5.5" r="1.6" fill="currentColor" />
           <circle cx="6" cy="16.5" r="1.6" fill="currentColor" />
           <circle cx="18" cy="16.5" r="1.6" fill="currentColor" />
-          <path d="M12 5.5 6 16.5M12 5.5l6 11M6 16.5h12" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
+          <path
+            d="M12 5.5 6 16.5M12 5.5l6 11M6 16.5h12"
+            stroke="currentColor"
+            strokeWidth="1.6"
+            strokeLinecap="round"
+          />
         </svg>
       );
     case "Swiss":
       return (
         <svg {...common}>
-          <rect x="4" y="5" width="6" height="4" rx="1" stroke="currentColor" strokeWidth="1.5" />
-          <rect x="14" y="5" width="6" height="4" rx="1" stroke="currentColor" strokeWidth="1.5" />
-          <rect x="4" y="15" width="6" height="4" rx="1" stroke="currentColor" strokeWidth="1.5" />
-          <rect x="14" y="15" width="6" height="4" rx="1" stroke="currentColor" strokeWidth="1.5" />
-          <path d="M10 7h4M10 17h4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+          <rect
+            x="4"
+            y="5"
+            width="6"
+            height="4"
+            rx="1"
+            stroke="currentColor"
+            strokeWidth="1.5"
+          />
+          <rect
+            x="14"
+            y="5"
+            width="6"
+            height="4"
+            rx="1"
+            stroke="currentColor"
+            strokeWidth="1.5"
+          />
+          <rect
+            x="4"
+            y="15"
+            width="6"
+            height="4"
+            rx="1"
+            stroke="currentColor"
+            strokeWidth="1.5"
+          />
+          <rect
+            x="14"
+            y="15"
+            width="6"
+            height="4"
+            rx="1"
+            stroke="currentColor"
+            strokeWidth="1.5"
+          />
+          <path
+            d="M10 7h4M10 17h4"
+            stroke="currentColor"
+            strokeWidth="1.5"
+            strokeLinecap="round"
+          />
         </svg>
       );
     case "Group Stage":
       return (
         <svg {...common}>
-          <rect x="4" y="5" width="7" height="14" rx="1.8" stroke="currentColor" strokeWidth="1.6" />
-          <path d="M7.5 8.5h0M7.5 12h0M7.5 15.5h0" stroke="currentColor" strokeWidth="3" strokeLinecap="round" />
-          <path d="M13 12h7" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
+          <rect
+            x="4"
+            y="5"
+            width="7"
+            height="14"
+            rx="1.8"
+            stroke="currentColor"
+            strokeWidth="1.6"
+          />
+          <path
+            d="M7.5 8.5h0M7.5 12h0M7.5 15.5h0"
+            stroke="currentColor"
+            strokeWidth="3"
+            strokeLinecap="round"
+          />
+          <path
+            d="M13 12h7"
+            stroke="currentColor"
+            strokeWidth="1.6"
+            strokeLinecap="round"
+          />
           <circle cx="20" cy="12" r="1.5" fill="currentColor" />
         </svg>
       );
     case "Battle Royale":
       return (
         <svg {...common}>
-          <circle cx="12" cy="12" r="6.5" stroke="currentColor" strokeWidth="1.6" />
+          <circle
+            cx="12"
+            cy="12"
+            r="6.5"
+            stroke="currentColor"
+            strokeWidth="1.6"
+          />
           <circle cx="12" cy="12" r="2" fill="currentColor" />
-          <path d="M12 3.5v3M12 17.5v3M3.5 12h3M17.5 12h3" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
+          <path
+            d="M12 3.5v3M12 17.5v3M3.5 12h3M17.5 12h3"
+            stroke="currentColor"
+            strokeWidth="1.6"
+            strokeLinecap="round"
+          />
         </svg>
       );
     case "Ladder":
       return (
         <svg {...common}>
-          <path d="M7 18V6M17 18V6M7 9h10M7 13h10M7 17h10" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
+          <path
+            d="M7 18V6M17 18V6M7 9h10M7 13h10M7 17h10"
+            stroke="currentColor"
+            strokeWidth="1.8"
+            strokeLinecap="round"
+          />
         </svg>
       );
     case "Free for All":
@@ -2364,7 +2509,12 @@ function FormatChipIcon({ format }: { format: string }) {
           <circle cx="16" cy="8" r="1.7" fill="currentColor" />
           <circle cx="8" cy="16" r="1.7" fill="currentColor" />
           <circle cx="16" cy="16" r="1.7" fill="currentColor" />
-          <path d="M8 8l8 8M16 8l-8 8" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+          <path
+            d="M8 8l8 8M16 8l-8 8"
+            stroke="currentColor"
+            strokeWidth="1.5"
+            strokeLinecap="round"
+          />
         </svg>
       );
     default:
@@ -2380,59 +2530,95 @@ function FormatPreview({ format }: { format: string }) {
       return (
         <div className="flex h-28 items-center justify-center gap-3">
           <div className="flex flex-col gap-2.5">
-            {[0,1,2,3].map((i) => (
-              <motion.div key={i} className="h-3.5 w-3.5 rounded-full border border-arena-accent/40 bg-arena-accent/20"
-                initial={{ opacity: 0, scale: 0.4 }} animate={{ opacity: 1, scale: 1 }}
-                transition={{ duration: 0.9, delay: i * 0.24, ease }} />
+            {[0, 1, 2, 3].map((i) => (
+              <motion.div
+                key={i}
+                className="h-3.5 w-3.5 rounded-full border border-arena-accent/40 bg-arena-accent/20"
+                initial={{ opacity: 0, scale: 0.4 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.9, delay: i * 0.24, ease }}
+              />
             ))}
           </div>
-          <div className="flex flex-col gap-[22px]">
-            {[0,1].map((i) => (
-              <motion.div key={i} className="h-[2px] w-5 origin-left rounded-full bg-arena-accent/30"
-                initial={{ scaleX: 0, opacity: 0 }} animate={{ scaleX: 1, opacity: 1 }}
-                transition={{ duration: 0.75, delay: 1.1 + i * 0.22, ease }} />
+          <div className="flex flex-col gap-5.5">
+            {[0, 1].map((i) => (
+              <motion.div
+                key={i}
+                className="h-0.5 w-5 origin-left rounded-full bg-arena-accent/30"
+                initial={{ scaleX: 0, opacity: 0 }}
+                animate={{ scaleX: 1, opacity: 1 }}
+                transition={{ duration: 0.75, delay: 1.1 + i * 0.22, ease }}
+              />
             ))}
           </div>
           <div className="flex flex-col gap-6">
-            {[0,1].map((i) => (
-              <motion.div key={i} className="h-3.5 w-3.5 rounded-full border border-arena-accent/40 bg-arena-accent/20"
-                initial={{ opacity: 0, scale: 0.4 }} animate={{ opacity: 1, scale: 1 }}
-                transition={{ duration: 0.9, delay: 1.6 + i * 0.3, ease }} />
+            {[0, 1].map((i) => (
+              <motion.div
+                key={i}
+                className="h-3.5 w-3.5 rounded-full border border-arena-accent/40 bg-arena-accent/20"
+                initial={{ opacity: 0, scale: 0.4 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.9, delay: 1.6 + i * 0.3, ease }}
+              />
             ))}
           </div>
-          <motion.div className="h-[2px] w-5 origin-left rounded-full bg-arena-accent/30"
-            initial={{ scaleX: 0, opacity: 0 }} animate={{ scaleX: 1, opacity: 1 }}
-            transition={{ duration: 0.75, delay: 2.4, ease }} />
-          <motion.div className="h-4 w-4 rounded-full bg-arena-accent"
-            initial={{ opacity: 0, scale: 0.3 }} animate={{ opacity: 1, scale: 1 }}
+          <motion.div
+            className="h-0.5 w-5 origin-left rounded-full bg-arena-accent/30"
+            initial={{ scaleX: 0, opacity: 0 }}
+            animate={{ scaleX: 1, opacity: 1 }}
+            transition={{ duration: 0.75, delay: 2.4, ease }}
+          />
+          <motion.div
+            className="h-4 w-4 rounded-full bg-arena-accent"
+            initial={{ opacity: 0, scale: 0.3 }}
+            animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 1.0, delay: 3.0, ease: [0.22, 1, 0.36, 1] }}
-            style={{ boxShadow: "0 0 18px rgba(232,255,71,0.5)" }} />
+            style={{ boxShadow: "0 0 18px rgba(232,255,71,0.5)" }}
+          />
         </div>
       );
     case "Double Elimination":
       return (
         <div className="grid h-28 grid-cols-2 gap-3">
-          <motion.div className="rounded-2xl border border-arena-border/70 bg-arena-surface/80 p-3"
-            initial={{ opacity: 0, x: -12 }} animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 1.0, ease }}>
-            <p className="mb-2 text-[10px] font-semibold uppercase tracking-[0.18em] text-arena-text-muted">Upper</p>
+          <motion.div
+            className="rounded-2xl border border-arena-border/70 bg-arena-surface/80 p-3"
+            initial={{ opacity: 0, x: -12 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 1.0, ease }}
+          >
+            <p className="mb-2 text-[10px] font-semibold uppercase tracking-[0.18em] text-arena-text-muted">
+              Upper
+            </p>
             <div className="space-y-2">
-              {(["w-full","w-4/5","w-3/5"] as const).map((w, i) => (
-                <motion.div key={i} className={`h-3 ${w} origin-left rounded-xl border border-arena-accent/40 bg-arena-accent/20`}
-                  initial={{ scaleX: 0, opacity: 0 }} animate={{ scaleX: 1, opacity: 1 }}
-                  transition={{ duration: 0.85, delay: 0.6 + i * 0.3, ease }} />
+              {(["w-full", "w-4/5", "w-3/5"] as const).map((w, i) => (
+                <motion.div
+                  key={i}
+                  className={`h-3 ${w} origin-left rounded-xl border border-arena-accent/40 bg-arena-accent/20`}
+                  initial={{ scaleX: 0, opacity: 0 }}
+                  animate={{ scaleX: 1, opacity: 1 }}
+                  transition={{ duration: 0.85, delay: 0.6 + i * 0.3, ease }}
+                />
               ))}
             </div>
           </motion.div>
-          <motion.div className="rounded-2xl border border-arena-accent/20 bg-arena-accent/10 p-3"
-            initial={{ opacity: 0, x: 12 }} animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 1.0, delay: 1.5, ease }}>
-            <p className="mb-2 text-[10px] font-semibold uppercase tracking-[0.18em] text-arena-accent">Lower</p>
+          <motion.div
+            className="rounded-2xl border border-arena-accent/20 bg-arena-accent/10 p-3"
+            initial={{ opacity: 0, x: 12 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 1.0, delay: 1.5, ease }}
+          >
+            <p className="mb-2 text-[10px] font-semibold uppercase tracking-[0.18em] text-arena-accent">
+              Lower
+            </p>
             <div className="space-y-2">
-              {(["w-3/5","w-4/5","w-full"] as const).map((w, i) => (
-                <motion.div key={i} className={`h-3 ${w} origin-left rounded-xl border border-arena-accent/40 ${i === 2 ? "bg-arena-accent/30" : "bg-arena-accent/20"}`}
-                  initial={{ scaleX: 0, opacity: 0 }} animate={{ scaleX: 1, opacity: 1 }}
-                  transition={{ duration: 0.85, delay: 2.1 + i * 0.3, ease }} />
+              {(["w-3/5", "w-4/5", "w-full"] as const).map((w, i) => (
+                <motion.div
+                  key={i}
+                  className={`h-3 ${w} origin-left rounded-xl border border-arena-accent/40 ${i === 2 ? "bg-arena-accent/30" : "bg-arena-accent/20"}`}
+                  initial={{ scaleX: 0, opacity: 0 }}
+                  animate={{ scaleX: 1, opacity: 1 }}
+                  transition={{ duration: 0.85, delay: 2.1 + i * 0.3, ease }}
+                />
               ))}
             </div>
           </motion.div>
@@ -2441,11 +2627,18 @@ function FormatPreview({ format }: { format: string }) {
     case "Round Robin":
       return (
         <div className="grid h-28 grid-cols-3 gap-3">
-          {["Player A vs Player B", "Player A vs Player C", "Player B vs Player C"].map((pair, i) => (
-            <motion.div key={pair}
+          {[
+            "Player A vs Player B",
+            "Player A vs Player C",
+            "Player B vs Player C",
+          ].map((pair, i) => (
+            <motion.div
+              key={pair}
               className="flex items-center justify-center rounded-2xl border border-arena-border/70 bg-arena-surface/80 px-1.5 text-center text-[9px] font-semibold leading-tight text-arena-text-muted"
-              initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.9, delay: i * 0.42, ease }}>
+              initial={{ opacity: 0, y: 14 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.9, delay: i * 0.42, ease }}
+            >
               {pair}
             </motion.div>
           ))}
@@ -2453,33 +2646,59 @@ function FormatPreview({ format }: { format: string }) {
       );
     case "Swiss": {
       const rounds = [
-        { label: "Round 1", pairs: [["1-0","0-1"],["1-0","0-1"]] },
-        { label: "Round 2", pairs: [["2-0","1-1"],["1-1","0-2"]] },
+        {
+          label: "Round 1",
+          pairs: [
+            ["1-0", "0-1"],
+            ["1-0", "0-1"],
+          ],
+        },
+        {
+          label: "Round 2",
+          pairs: [
+            ["2-0", "1-1"],
+            ["1-1", "0-2"],
+          ],
+        },
       ];
       const swissColor = (rec: string, ri: number) =>
         rec === "2-0" || (ri === 0 && rec === "1-0")
           ? "border-arena-accent/30 bg-arena-accent/15 text-arena-accent"
           : rec === "0-2"
-          ? "border-red-400/20 bg-red-400/5 text-red-400/70"
-          : "border-arena-border/70 bg-arena-surface/80 text-arena-text-muted";
+            ? "border-red-400/20 bg-red-400/5 text-red-400/70"
+            : "border-arena-border/70 bg-arena-surface/80 text-arena-text-muted";
       return (
         <div className="grid h-28 grid-cols-2 gap-2 overflow-hidden">
           {rounds.map((round, ri) => (
-            <motion.div key={ri} className="flex flex-col gap-1 rounded-2xl border border-arena-border/70 bg-arena-surface/80 p-2 overflow-hidden"
-              initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.85, delay: ri * 1.1, ease }}>
-              <motion.span className="shrink-0 text-[9px] font-bold uppercase tracking-wider text-arena-text-muted"
-                initial={{ opacity: 0 }} animate={{ opacity: 1 }}
-                transition={{ delay: ri * 1.1 + 0.3 }}>
+            <motion.div
+              key={ri}
+              className="flex flex-col gap-1 rounded-2xl border border-arena-border/70 bg-arena-surface/80 p-2 overflow-hidden"
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.85, delay: ri * 1.1, ease }}
+            >
+              <motion.span
+                className="shrink-0 text-[9px] font-bold uppercase tracking-wider text-arena-text-muted"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: ri * 1.1 + 0.3 }}
+              >
                 {round.label}
               </motion.span>
               {round.pairs.map((pair, pi) => (
                 <div key={pi} className="flex items-center gap-1">
                   {pair.map((rec, si) => (
-                    <motion.div key={si}
+                    <motion.div
+                      key={si}
                       className={`flex h-5 flex-1 items-center justify-center rounded-md border text-[10px] font-bold ${swissColor(rec, ri)}`}
-                      initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }}
-                      transition={{ duration: 0.7, delay: ri * 1.1 + 0.5 + pi * 0.28 + si * 0.14, ease }}>
+                      initial={{ opacity: 0, scale: 0.8 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      transition={{
+                        duration: 0.7,
+                        delay: ri * 1.1 + 0.5 + pi * 0.28 + si * 0.14,
+                        ease,
+                      }}
+                    >
                       {rec}
                     </motion.div>
                   ))}
@@ -2493,30 +2712,54 @@ function FormatPreview({ format }: { format: string }) {
     case "Group Stage":
       return (
         <div className="grid h-28 grid-cols-[1fr_auto_1fr] items-center gap-2">
-          <motion.div className="rounded-2xl border border-arena-border/70 bg-arena-surface/80 p-2.5"
-            initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 1.0, ease }}>
-            <p className="mb-1.5 text-[9px] font-semibold uppercase tracking-[0.18em] text-arena-text-muted">Groups</p>
+          <motion.div
+            className="rounded-2xl border border-arena-border/70 bg-arena-surface/80 p-2.5"
+            initial={{ opacity: 0, x: -10 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 1.0, ease }}
+          >
+            <p className="mb-1.5 text-[9px] font-semibold uppercase tracking-[0.18em] text-arena-text-muted">
+              Groups
+            </p>
             <div className="grid grid-cols-2 gap-1.5">
-              {[0,1,2,3].map((i) => (
-                <motion.div key={i} className="h-3 w-full origin-left rounded-lg border border-arena-accent/40 bg-arena-accent/20"
-                  initial={{ scaleX: 0, opacity: 0 }} animate={{ scaleX: 1, opacity: 1 }}
-                  transition={{ duration: 0.75, delay: 0.5 + i * 0.24, ease }} />
+              {[0, 1, 2, 3].map((i) => (
+                <motion.div
+                  key={i}
+                  className="h-3 w-full origin-left rounded-lg border border-arena-accent/40 bg-arena-accent/20"
+                  initial={{ scaleX: 0, opacity: 0 }}
+                  animate={{ scaleX: 1, opacity: 1 }}
+                  transition={{ duration: 0.75, delay: 0.5 + i * 0.24, ease }}
+                />
               ))}
             </div>
           </motion.div>
-          <motion.div className="h-[2px] w-6 origin-left rounded-full bg-arena-accent/40"
-            initial={{ scaleX: 0, opacity: 0 }} animate={{ scaleX: 1, opacity: 1 }}
-            transition={{ duration: 0.85, delay: 1.85, ease }} />
-          <motion.div className="rounded-2xl border border-arena-accent/20 bg-arena-accent/10 p-2.5"
-            initial={{ opacity: 0, x: 10 }} animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 1.0, delay: 2.1, ease }}>
-            <p className="mb-1.5 text-[9px] font-semibold uppercase tracking-[0.18em] text-arena-accent">Finals</p>
+          <motion.div
+            className="h-[2px] w-6 origin-left rounded-full bg-arena-accent/40"
+            initial={{ scaleX: 0, opacity: 0 }}
+            animate={{ scaleX: 1, opacity: 1 }}
+            transition={{ duration: 0.85, delay: 1.85, ease }}
+          />
+          <motion.div
+            className="rounded-2xl border border-arena-accent/20 bg-arena-accent/10 p-2.5"
+            initial={{ opacity: 0, x: 10 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 1.0, delay: 2.1, ease }}
+          >
+            <p className="mb-1.5 text-[9px] font-semibold uppercase tracking-[0.18em] text-arena-accent">
+              Finals
+            </p>
             <div className="space-y-1.5">
-              {[["w-full","bg-arena-accent/20"],["w-3/5","bg-arena-accent/35"]].map(([w,bg], i) => (
-                <motion.div key={i} className={`h-3 ${w} origin-left rounded-lg border border-arena-accent/30 ${bg}`}
-                  initial={{ scaleX: 0, opacity: 0 }} animate={{ scaleX: 1, opacity: 1 }}
-                  transition={{ duration: 0.75, delay: 2.6 + i * 0.3, ease }} />
+              {[
+                ["w-full", "bg-arena-accent/20"],
+                ["w-3/5", "bg-arena-accent/35"],
+              ].map(([w, bg], i) => (
+                <motion.div
+                  key={i}
+                  className={`h-3 ${w} origin-left rounded-lg border border-arena-accent/30 ${bg}`}
+                  initial={{ scaleX: 0, opacity: 0 }}
+                  animate={{ scaleX: 1, opacity: 1 }}
+                  transition={{ duration: 0.75, delay: 2.6 + i * 0.3, ease }}
+                />
               ))}
             </div>
           </motion.div>
@@ -2524,30 +2767,53 @@ function FormatPreview({ format }: { format: string }) {
       );
     case "Battle Royale": {
       const dots = [
-        { ix: -52, iy: -28, winner: false, delay: 0    },
-        { ix:  52, iy: -28, winner: false, delay: 0.18 },
-        { ix: -44, iy:  28, winner: false, delay: 0.36 },
-        { ix:  44, iy:  28, winner: false, delay: 0.54 },
-        { ix:   0, iy: -38, winner: false, delay: 0.24 },
-        { ix:   0, iy:   0, winner: true,  delay: 0.75 },
+        { ix: -52, iy: -28, winner: false, delay: 0 },
+        { ix: 52, iy: -28, winner: false, delay: 0.18 },
+        { ix: -44, iy: 28, winner: false, delay: 0.36 },
+        { ix: 44, iy: 28, winner: false, delay: 0.54 },
+        { ix: 0, iy: -38, winner: false, delay: 0.24 },
+        { ix: 0, iy: 0, winner: true, delay: 0.75 },
       ];
       return (
         <div className="relative flex h-28 items-center justify-center overflow-hidden rounded-[28px] border border-arena-border/70 bg-arena-surface/80">
-          <motion.div className="absolute h-20 w-20 rounded-full border border-arena-accent/20"
-            initial={{ opacity: 0, scale: 0.4 }} animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 1.4, ease }} />
-          <motion.div className="absolute h-10 w-10 rounded-full border border-arena-accent/30"
-            initial={{ opacity: 0, scale: 0.4 }} animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 1.4, delay: 0.3, ease }} />
+          <motion.div
+            className="absolute h-20 w-20 rounded-full border border-arena-accent/20"
+            initial={{ opacity: 0, scale: 0.4 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 1.4, ease }}
+          />
+          <motion.div
+            className="absolute h-10 w-10 rounded-full border border-arena-accent/30"
+            initial={{ opacity: 0, scale: 0.4 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 1.4, delay: 0.3, ease }}
+          />
           {dots.map((d, i) => (
-            <motion.div key={i}
+            <motion.div
+              key={i}
               className={`absolute h-2.5 w-2.5 rounded-full ${d.winner ? "bg-arena-accent" : "bg-arena-text-muted/60"}`}
-              initial={{ x: d.ix, y: d.iy, opacity: d.winner ? 0 : 0.85, scale: d.winner ? 0 : 1 }}
-              animate={d.winner
-                ? { x: 0, y: 0, opacity: 1, scale: 1 }
-                : { x: d.ix * 0.12, y: d.iy * 0.12, opacity: 0, scale: 0.3 }}
-              transition={{ duration: 1.8, delay: d.delay + 1.3, ease: [0.22, 1, 0.36, 1] }}
-              style={d.winner ? { boxShadow: "0 0 18px rgba(232,255,71,0.5)" } : undefined} />
+              initial={{
+                x: d.ix,
+                y: d.iy,
+                opacity: d.winner ? 0 : 0.85,
+                scale: d.winner ? 0 : 1,
+              }}
+              animate={
+                d.winner
+                  ? { x: 0, y: 0, opacity: 1, scale: 1 }
+                  : { x: d.ix * 0.12, y: d.iy * 0.12, opacity: 0, scale: 0.3 }
+              }
+              transition={{
+                duration: 1.8,
+                delay: d.delay + 1.3,
+                ease: [0.22, 1, 0.36, 1],
+              }}
+              style={
+                d.winner
+                  ? { boxShadow: "0 0 18px rgba(232,255,71,0.5)" }
+                  : undefined
+              }
+            />
           ))}
         </div>
       );
@@ -2566,11 +2832,20 @@ function FormatPreview({ format }: { format: string }) {
               <motion.div
                 className={`w-11 origin-bottom rounded-xl border ${i === 0 ? "border-arena-accent/40 bg-arena-accent/20" : "border-arena-border/70 bg-arena-surface/80"}`}
                 style={{ height: s.h }}
-                initial={{ scaleY: 0, opacity: 0 }} animate={{ scaleY: 1, opacity: 1 }}
-                transition={{ duration: 1.3, delay: i * 0.3, ease: [0.22, 1, 0.36, 1] }} />
-              <motion.span className="text-[10px] font-semibold uppercase tracking-[0.16em] text-arena-text-muted"
-                initial={{ opacity: 0 }} animate={{ opacity: 1 }}
-                transition={{ delay: 0.8 + i * 0.3 }}>
+                initial={{ scaleY: 0, opacity: 0 }}
+                animate={{ scaleY: 1, opacity: 1 }}
+                transition={{
+                  duration: 1.3,
+                  delay: i * 0.3,
+                  ease: [0.22, 1, 0.36, 1],
+                }}
+              />
+              <motion.span
+                className="text-[10px] font-semibold uppercase tracking-[0.16em] text-arena-text-muted"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.8 + i * 0.3 }}
+              >
                 {s.rank}
               </motion.span>
             </div>
@@ -2581,14 +2856,22 @@ function FormatPreview({ format }: { format: string }) {
     case "Free for All":
       return (
         <div className="grid h-28 grid-cols-3 gap-2">
-          {["1st","2nd","3rd","4th","5th","6th"].map((place, i) => (
-            <motion.div key={place}
+          {["1st", "2nd", "3rd", "4th", "5th", "6th"].map((place, i) => (
+            <motion.div
+              key={place}
               className={`flex items-center justify-center rounded-2xl border text-xs font-bold ${
-                i === 0 ? "border-arena-accent/40 bg-arena-accent/15 text-arena-accent"
-                        : "border-arena-border/70 bg-arena-surface/80 text-arena-text-muted"
+                i === 0
+                  ? "border-arena-accent/40 bg-arena-accent/15 text-arena-accent"
+                  : "border-arena-border/70 bg-arena-surface/80 text-arena-text-muted"
               }`}
-              initial={{ opacity: 0, scale: 0.85 }} animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.85, delay: i * 0.24, ease: [0.22, 1, 0.36, 1] }}>
+              initial={{ opacity: 0, scale: 0.85 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{
+                duration: 0.85,
+                delay: i * 0.24,
+                ease: [0.22, 1, 0.36, 1],
+              }}
+            >
               {place}
             </motion.div>
           ))}
@@ -3079,9 +3362,9 @@ function BrowseCard({ game }: { game: Game }) {
 // ── Category icon map ───────────────────────────────────────────────────────────
 const CATEGORY_ICONS: Record<Category, React.ElementType> = {
   "E-Sports": Gamepad2,
-  Sports:     Dumbbell,
-  Board:      Brain,
-  Card:       Diamond,
+  Sports: Dumbbell,
+  Board: Brain,
+  Card: Diamond,
 };
 
 // ── Category button ─────────────────────────────────────────────────────────────
@@ -3233,13 +3516,18 @@ function useScorecardReveal(
 // ── Landing page ───────────────────────────────────────────────────────────────
 export default function Landing() {
   const navigate = useNavigate();
-  const [selectedFormat, setSelectedFormat] = useState(supportedFormats[0].title);
+  const [selectedFormat, setSelectedFormat] = useState(
+    supportedFormats[0].title,
+  );
   const [hoveredFormat, setHoveredFormat] = useState<string | null>(null);
   const [activeCategory, setActiveCategory] = useState<Category>("E-Sports");
 
   const [slamGlow, setSlamGlow] = useState(false);
   const heroTextRef = useRef<HTMLHeadingElement>(null);
-  const heroTextInView = useInView(heroTextRef, { once: true, margin: "-100px" });
+  const heroTextInView = useInView(heroTextRef, {
+    once: true,
+    margin: "-100px",
+  });
 
   const {
     display: line1Display,
@@ -3248,8 +3536,13 @@ export default function Landing() {
   } = useScorecardReveal("Run your tournaments.", heroTextInView ? 1 : 0);
 
   const clubHeadingRef = useRef<HTMLHeadingElement>(null);
-  const clubInView = useInView(clubHeadingRef, { once: false, margin: "-20px" });
-  const [clubPhase, setClubPhase] = useState<"idle" | "impact" | "settle">("idle");
+  const clubInView = useInView(clubHeadingRef, {
+    once: false,
+    margin: "-20px",
+  });
+  const [clubPhase, setClubPhase] = useState<"idle" | "impact" | "settle">(
+    "idle",
+  );
   const [clubCracked, setClubCracked] = useState(false);
   useEffect(() => {
     if (!clubInView) {
@@ -3274,7 +3567,9 @@ export default function Landing() {
     once: false,
     margin: "-16px",
   });
-  const [mobileClubPhase, setMobileClubPhase] = useState<"idle" | "impact" | "settle">("idle");
+  const [mobileClubPhase, setMobileClubPhase] = useState<
+    "idle" | "impact" | "settle"
+  >("idle");
   const [mobileClubCracked, setMobileClubCracked] = useState(false);
   useEffect(() => {
     if (!mobileClubInView) {
@@ -3295,7 +3590,10 @@ export default function Landing() {
   }, [mobileClubInView]);
 
   const ctaLevelRef = useRef<HTMLHeadingElement>(null);
-  const ctaLevelInView = useInView(ctaLevelRef, { once: false, margin: "-20% 0px -20% 0px" });
+  const ctaLevelInView = useInView(ctaLevelRef, {
+    once: false,
+    margin: "-20% 0px -20% 0px",
+  });
   const ctaLevelControls = useAnimationControls();
   const ctaLevelArrowControls = useAnimationControls();
   const [ctaLevelHovered, setCtaLevelHovered] = useState(false);
@@ -3309,13 +3607,23 @@ export default function Landing() {
         "0 0 18px rgba(var(--accent-rgb), 0.35)",
         "0 0 0px rgba(var(--accent-rgb), 0)",
       ],
-      transition: { duration: 0.75, ease: "easeOut", repeat, repeatDelay: 0.12 },
+      transition: {
+        duration: 0.75,
+        ease: "easeOut",
+        repeat,
+        repeatDelay: 0.12,
+      },
     });
     void ctaLevelArrowControls.start({
       y: [2, -8, 2],
       rotate: [0, 0, 0],
       opacity: [0.85, 1, 0.9],
-      transition: { duration: 0.75, ease: "easeOut", repeat, repeatDelay: 0.12 },
+      transition: {
+        duration: 0.75,
+        ease: "easeOut",
+        repeat,
+        repeatDelay: 0.12,
+      },
     });
   };
 
@@ -3340,7 +3648,12 @@ export default function Landing() {
       opacity: 0.9,
       transition: { duration: 0.2, ease: "easeOut" },
     });
-  }, [ctaLevelHovered, ctaLevelInView, ctaLevelControls, ctaLevelArrowControls]);
+  }, [
+    ctaLevelHovered,
+    ctaLevelInView,
+    ctaLevelControls,
+    ctaLevelArrowControls,
+  ]);
 
   const filteredGames = games.filter((g) => g.category === activeCategory);
   const activeFormat = hoveredFormat ?? selectedFormat;
@@ -3522,7 +3835,7 @@ export default function Landing() {
             onMouseLeave={() => setHoveredFormat(null)}
           >
             <div className="flex flex-wrap items-center justify-center gap-2">
-              {supportedFormats.map((format) => (
+              {supportedFormats.map((format) =>
                 (() => {
                   const isActive = activeFormat === format.title;
                   const isSelected = selectedFormat === format.title;
@@ -3540,13 +3853,17 @@ export default function Landing() {
                       }}
                       className="inline-flex items-center gap-2 rounded-full border px-3 py-1.5 text-[11px] sm:text-xs font-semibold uppercase tracking-[0.08em] transition-all"
                       animate={
-                        isSelected
-                          ? { y: -3, scale: 1.04 }
-                          : { y: 0, scale: 1 }
+                        isSelected ? { y: -3, scale: 1.04 } : { y: 0, scale: 1 }
                       }
-                      whileHover={!isSelected ? { y: -1.5, scale: 1.015 } : undefined}
+                      whileHover={
+                        !isSelected ? { y: -1.5, scale: 1.015 } : undefined
+                      }
                       whileTap={{ scale: 0.98 }}
-                      transition={{ type: "spring", stiffness: 520, damping: 28 }}
+                      transition={{
+                        type: "spring",
+                        stiffness: 520,
+                        damping: 28,
+                      }}
                       style={{
                         color: isActive ? "var(--bg)" : "var(--text-main)",
                         background: isActive
@@ -3568,8 +3885,8 @@ export default function Landing() {
                       <span>{format.title}</span>
                     </motion.button>
                   );
-                })()
-              ))}
+                })(),
+              )}
             </div>
             <motion.div
               key={activeFormatMeta.title}
@@ -3578,8 +3895,10 @@ export default function Landing() {
               transition={{ duration: 0.22, ease: "easeOut" }}
               className="mx-auto mt-5 grid gap-4 rounded-[28px] border p-4 text-left md:grid-cols-[1.1fr_0.9fr] md:p-5"
               style={{
-                background: "color-mix(in srgb, var(--surface) 92%, transparent)",
-                borderColor: "color-mix(in srgb, var(--border) 90%, transparent)",
+                background:
+                  "color-mix(in srgb, var(--surface) 92%, transparent)",
+                borderColor:
+                  "color-mix(in srgb, var(--border) 90%, transparent)",
               }}
             >
               <div className="flex flex-col justify-center">
@@ -3595,7 +3914,8 @@ export default function Landing() {
                 style={{
                   background:
                     "linear-gradient(135deg, color-mix(in srgb, var(--accent) 10%, transparent), color-mix(in srgb, var(--surface) 88%, transparent))",
-                  borderColor: "color-mix(in srgb, var(--accent) 18%, var(--border))",
+                  borderColor:
+                    "color-mix(in srgb, var(--accent) 18%, var(--border))",
                 }}
               >
                 <FormatPreview format={activeFormatMeta.title} />
@@ -3687,8 +4007,8 @@ export default function Landing() {
           </h2>
           <FadeUp>
             <p className="text-arena-text-muted text-lg max-w-xl mx-auto">
-              From FPS to fighting games — run professional tournaments for every
-              major title.
+              From FPS to fighting games — run professional tournaments for
+              every major title.
             </p>
           </FadeUp>
         </Parallax>
@@ -3697,16 +4017,16 @@ export default function Landing() {
         <Parallax offset={40} className="max-w-6xl mx-auto px-6">
           {/* Category tabs */}
           <FadeUp>
-          <div className="mb-10 flex flex-wrap items-center justify-center gap-2.5">
-            {CATEGORIES.map((cat) => (
-              <CategoryButton
-                key={cat}
-                cat={cat}
-                isActive={activeCategory === cat}
-                onClick={() => handleTabChange(cat)}
-              />
-            ))}
-          </div>
+            <div className="mb-10 flex flex-wrap items-center justify-center gap-2.5">
+              {CATEGORIES.map((cat) => (
+                <CategoryButton
+                  key={cat}
+                  cat={cat}
+                  isActive={activeCategory === cat}
+                  onClick={() => handleTabChange(cat)}
+                />
+              ))}
+            </div>
           </FadeUp>
         </Parallax>
 
@@ -3770,137 +4090,162 @@ export default function Landing() {
               className="font-display text-[2rem] font-bold uppercase tracking-tight leading-[1.05] mb-4 md:hidden"
             >
               <span className="inline-flex flex-wrap items-baseline justify-center gap-x-2 gap-y-1">
-              <motion.span
-                className="inline-block"
-                animate={
-                  mobileClubPhase === "impact"
-                    ? {
-                        x: [0, -5, 0],
-                        y: [0, 2, 0],
-                        rotate: [0, -1.5, 0],
-                        opacity: [1, 0.88, 1],
-                      }
-                    : { x: 0, y: 0, rotate: 0, opacity: 1 }
-                }
-                transition={{
-                  duration: mobileClubPhase === "impact" ? 0.38 : 0.18,
-                  ease: [0.22, 1, 0.36, 1],
-                }}
-              >
-                Everything your
-              </motion.span>
-              <motion.span
-                className="relative inline-block overflow-visible"
-                style={{ color: "var(--accent)" }}
-                animate={
-                  mobileClubPhase === "impact"
-                    ? {
-                        y: [0, -14, -7, -10, 0],
-                        scale: [1, 1.16, 1.07, 1.03, 1],
-                        rotate: [0, -4, 2, -1, 0],
-                        textShadow: [
-                          "0 0 0px rgba(var(--accent-rgb), 0)",
-                          "0 0 22px rgba(var(--accent-rgb), 0.35)",
-                          "0 0 10px rgba(var(--accent-rgb), 0.18)",
-                          "0 0 0px rgba(var(--accent-rgb), 0)"
-                        ],
-                      }
-                    : { y: 0, scale: 1, rotate: 0, textShadow: "0 0 0px rgba(var(--accent-rgb), 0)" }
-                }
-                transition={
-                  mobileClubPhase === "impact"
-                    ? { duration: 0.48, times: [0, 0.18, 0.42, 0.68, 1], ease: "easeOut" }
-                    : { duration: 0 }
-                }
-              >
                 <motion.span
-                  className="pointer-events-none absolute left-1/2 top-0 text-arena-accent"
-                  initial={false}
+                  className="inline-block"
                   animate={
                     mobileClubPhase === "impact"
                       ? {
-                          x: [-2, -1, 0, -1, 0],
-                          y: [-28, -12, 0, -4, -1],
-                          rotate: [-18, -8, 18, -6, 0],
-                          scale: [0.9, 0.98, 1.06, 1.02, 1],
-                          opacity: [0.15, 1, 1, 1, 1],
+                          x: [0, -5, 0],
+                          y: [0, 2, 0],
+                          rotate: [0, -1.5, 0],
+                          opacity: [1, 0.88, 1],
                         }
-                      : { x: 0, y: -1, rotate: 0, scale: 1, opacity: 1 }
+                      : { x: 0, y: 0, rotate: 0, opacity: 1 }
+                  }
+                  transition={{
+                    duration: mobileClubPhase === "impact" ? 0.38 : 0.18,
+                    ease: [0.22, 1, 0.36, 1],
+                  }}
+                >
+                  Everything your
+                </motion.span>
+                <motion.span
+                  className="relative inline-block overflow-visible"
+                  style={{ color: "var(--accent)" }}
+                  animate={
+                    mobileClubPhase === "impact"
+                      ? {
+                          y: [0, -14, -7, -10, 0],
+                          scale: [1, 1.16, 1.07, 1.03, 1],
+                          rotate: [0, -4, 2, -1, 0],
+                          textShadow: [
+                            "0 0 0px rgba(var(--accent-rgb), 0)",
+                            "0 0 22px rgba(var(--accent-rgb), 0.35)",
+                            "0 0 10px rgba(var(--accent-rgb), 0.18)",
+                            "0 0 0px rgba(var(--accent-rgb), 0)",
+                          ],
+                        }
+                      : {
+                          y: 0,
+                          scale: 1,
+                          rotate: 0,
+                          textShadow: "0 0 0px rgba(var(--accent-rgb), 0)",
+                        }
                   }
                   transition={
                     mobileClubPhase === "impact"
-                      ? { duration: 0.5, times: [0, 0.42, 0.56, 0.76, 1], ease: "easeOut" }
-                      : { duration: 0.18 }
+                      ? {
+                          duration: 0.48,
+                          times: [0, 0.18, 0.42, 0.68, 1],
+                          ease: "easeOut",
+                        }
+                      : { duration: 0 }
                   }
-                  style={{ translateX: "-50%", translateY: "-92%" }}
                 >
-                  <StrikeClubIcon className="h-12 w-12 drop-shadow-[0_0_14px_rgba(var(--accent-rgb),0.32)]" />
+                  <motion.span
+                    className="pointer-events-none absolute left-1/2 top-0 text-arena-accent"
+                    initial={false}
+                    animate={
+                      mobileClubPhase === "impact"
+                        ? {
+                            x: [-2, -1, 0, -1, 0],
+                            y: [-28, -12, 0, -4, -1],
+                            rotate: [-18, -8, 18, -6, 0],
+                            scale: [0.9, 0.98, 1.06, 1.02, 1],
+                            opacity: [0.15, 1, 1, 1, 1],
+                          }
+                        : { x: 0, y: -1, rotate: 0, scale: 1, opacity: 1 }
+                    }
+                    transition={
+                      mobileClubPhase === "impact"
+                        ? {
+                            duration: 0.5,
+                            times: [0, 0.42, 0.56, 0.76, 1],
+                            ease: "easeOut",
+                          }
+                        : { duration: 0.18 }
+                    }
+                    style={{ translateX: "-50%", translateY: "-92%" }}
+                  >
+                    <StrikeClubIcon className="h-12 w-12 drop-shadow-[0_0_14px_rgba(var(--accent-rgb),0.32)]" />
+                  </motion.span>
+                  <motion.span
+                    className="pointer-events-none absolute left-1/2 top-1/2 h-9 w-9 rounded-full border border-arena-accent/30"
+                    initial={false}
+                    animate={
+                      mobileClubPhase === "impact"
+                        ? { opacity: [0, 0.95, 0], scale: [0.5, 1.2, 1.7] }
+                        : { opacity: 0, scale: 0.5 }
+                    }
+                    transition={{ duration: 0.42, ease: "easeOut" }}
+                    style={{ x: "-50%", y: "-50%" }}
+                  />
+                  <motion.span
+                    className="pointer-events-none absolute left-1/2 top-1/2 h-0.5 w-8 rounded-full bg-arena-accent/70"
+                    initial={false}
+                    animate={
+                      mobileClubPhase === "impact"
+                        ? {
+                            opacity: [0, 1, 0],
+                            scaleX: [0.3, 1.1, 1.4],
+                            rotate: [0, -18, -28],
+                          }
+                        : { opacity: 0, scaleX: 0.3, rotate: -28 }
+                    }
+                    transition={{ duration: 0.34, ease: "easeOut" }}
+                    style={{ x: "-50%", y: "-50%" }}
+                  />
+                  <motion.span
+                    className="pointer-events-none absolute left-1/2 top-1/2 h-0.5 w-8 rounded-full bg-arena-accent/65"
+                    initial={false}
+                    animate={
+                      mobileClubPhase === "impact"
+                        ? {
+                            opacity: [0, 1, 0],
+                            scaleX: [0.3, 1.05, 1.3],
+                            rotate: [0, 16, 26],
+                          }
+                        : { opacity: 0, scaleX: 0.3, rotate: 26 }
+                    }
+                    transition={{
+                      duration: 0.34,
+                      delay: 0.03,
+                      ease: "easeOut",
+                    }}
+                    style={{ x: "-50%", y: "-50%" }}
+                  />
+                  <span className="relative inline-block">
+                    <span className="relative z-10 inline-block">club</span>
+                    <span
+                      className={`pointer-events-none absolute inset-0 transition-opacity duration-300 ${mobileClubCracked ? "opacity-100" : "opacity-0"}`}
+                      aria-hidden="true"
+                    >
+                      <span className="absolute left-[18%] top-[58%] h-[2px] w-[26%] -rotate-[26deg] rounded-full bg-arena-bg/65" />
+                      <span className="absolute left-[40%] top-[46%] h-[2px] w-[18%] rotate-[58deg] rounded-full bg-arena-bg/65" />
+                      <span className="absolute left-[52%] top-[60%] h-[2px] w-[24%] -rotate-[18deg] rounded-full bg-arena-bg/65" />
+                      <span className="absolute left-[31%] top-[52%] h-[1px] w-[13%] rotate-[24deg] rounded-full bg-white/30" />
+                      <span className="absolute left-[59%] top-[50%] h-[1px] w-[12%] -rotate-[42deg] rounded-full bg-white/25" />
+                    </span>
+                  </span>
                 </motion.span>
                 <motion.span
-                  className="pointer-events-none absolute left-1/2 top-1/2 h-9 w-9 rounded-full border border-arena-accent/30"
-                  initial={false}
+                  className="inline-block"
                   animate={
                     mobileClubPhase === "impact"
-                      ? { opacity: [0, 0.95, 0], scale: [0.5, 1.2, 1.7] }
-                      : { opacity: 0, scale: 0.5 }
+                      ? {
+                          x: [0, 6, 1, 0],
+                          y: [0, 1, -1, 0],
+                          letterSpacing: ["0em", "0.05em", "0.01em", "0em"],
+                        }
+                      : { x: 0, y: 0, letterSpacing: "0em" }
                   }
-                  transition={{ duration: 0.42, ease: "easeOut" }}
-                  style={{ x: "-50%", y: "-50%" }}
-                />
-                <motion.span
-                  className="pointer-events-none absolute left-1/2 top-1/2 h-0.5 w-8 rounded-full bg-arena-accent/70"
-                  initial={false}
-                  animate={
-                    mobileClubPhase === "impact"
-                      ? { opacity: [0, 1, 0], scaleX: [0.3, 1.1, 1.4], rotate: [0, -18, -28] }
-                      : { opacity: 0, scaleX: 0.3, rotate: -28 }
-                  }
-                  transition={{ duration: 0.34, ease: "easeOut" }}
-                  style={{ x: "-50%", y: "-50%" }}
-                />
-                <motion.span
-                  className="pointer-events-none absolute left-1/2 top-1/2 h-0.5 w-8 rounded-full bg-arena-accent/65"
-                  initial={false}
-                  animate={
-                    mobileClubPhase === "impact"
-                      ? { opacity: [0, 1, 0], scaleX: [0.3, 1.05, 1.3], rotate: [0, 16, 26] }
-                      : { opacity: 0, scaleX: 0.3, rotate: 26 }
-                  }
-                  transition={{ duration: 0.34, delay: 0.03, ease: "easeOut" }}
-                  style={{ x: "-50%", y: "-50%" }}
-                />
-                <span className="relative inline-block">
-                  <span className="relative z-10 inline-block">club</span>
-                  <span
-                    className={`pointer-events-none absolute inset-0 transition-opacity duration-300 ${mobileClubCracked ? "opacity-100" : "opacity-0"}`}
-                    aria-hidden="true"
-                  >
-                    <span className="absolute left-[18%] top-[58%] h-[2px] w-[26%] -rotate-[26deg] rounded-full bg-arena-bg/65" />
-                    <span className="absolute left-[40%] top-[46%] h-[2px] w-[18%] rotate-[58deg] rounded-full bg-arena-bg/65" />
-                    <span className="absolute left-[52%] top-[60%] h-[2px] w-[24%] -rotate-[18deg] rounded-full bg-arena-bg/65" />
-                    <span className="absolute left-[31%] top-[52%] h-[1px] w-[13%] rotate-[24deg] rounded-full bg-white/30" />
-                    <span className="absolute left-[59%] top-[50%] h-[1px] w-[12%] -rotate-[42deg] rounded-full bg-white/25" />
-                  </span>
-                </span>
-              </motion.span>
-              <motion.span
-                className="inline-block"
-                animate={
-                  mobileClubPhase === "impact"
-                    ? {
-                        x: [0, 6, 1, 0],
-                        y: [0, 1, -1, 0],
-                        letterSpacing: ["0em", "0.05em", "0.01em", "0em"],
-                      }
-                    : { x: 0, y: 0, letterSpacing: "0em" }
-                }
-                transition={{
-                  duration: mobileClubPhase === "impact" ? 0.42 : 0.18,
-                  ease: [0.22, 1, 0.36, 1],
-                }}
-              >
-                needs
-              </motion.span>
+                  transition={{
+                    duration: mobileClubPhase === "impact" ? 0.42 : 0.18,
+                    ease: [0.22, 1, 0.36, 1],
+                  }}
+                >
+                  needs
+                </motion.span>
               </span>
             </h2>
             <h2
@@ -3908,137 +4253,162 @@ export default function Landing() {
               className="hidden md:block font-display text-4xl md:text-5xl font-bold uppercase tracking-tight mb-4"
             >
               <span className="inline-flex flex-wrap items-baseline justify-center gap-x-3 gap-y-1">
-              <motion.span
-                className="inline-block"
-                animate={
-                  clubPhase === "impact"
-                    ? {
-                        x: [0, -7, 0],
-                        y: [0, 2, 0],
-                        rotate: [0, -1.5, 0],
-                        opacity: [1, 0.9, 1],
-                      }
-                    : { x: 0, y: 0, rotate: 0, opacity: 1 }
-                }
-                transition={{
-                  duration: clubPhase === "impact" ? 0.4 : 0.18,
-                  ease: [0.22, 1, 0.36, 1],
-                }}
-              >
-                Everything your
-              </motion.span>
-              <motion.span
-                className="relative inline-block overflow-visible"
-                style={{ color: "var(--accent)" }}
-                animate={
-                  clubPhase === "impact"
-                    ? {
-                        y: [0, -18, -9, -13, 0],
-                        scale: [1, 1.16, 1.08, 1.03, 1],
-                        rotate: [0, -4, 2.5, -1, 0],
-                        textShadow: [
-                          "0 0 0px rgba(var(--accent-rgb), 0)",
-                          "0 0 28px rgba(var(--accent-rgb), 0.38)",
-                          "0 0 14px rgba(var(--accent-rgb), 0.22)",
-                          "0 0 0px rgba(var(--accent-rgb), 0)"
-                        ],
-                      }
-                    : { y: 0, scale: 1, rotate: 0, textShadow: "0 0 0px rgba(var(--accent-rgb), 0)" }
-                }
-                transition={
-                  clubPhase === "impact"
-                    ? { duration: 0.52, times: [0, 0.18, 0.42, 0.68, 1], ease: "easeOut" }
-                    : { duration: 0 }
-                }
-              >
                 <motion.span
-                  className="pointer-events-none absolute left-1/2 top-0 text-arena-accent"
-                  initial={false}
+                  className="inline-block"
                   animate={
                     clubPhase === "impact"
                       ? {
-                          x: [-2, -1, 0, -1, 0],
-                          y: [-36, -16, 0, -5, -1],
-                          rotate: [-18, -8, 20, -7, 0],
-                          scale: [0.9, 0.98, 1.08, 1.03, 1],
-                          opacity: [0.15, 1, 1, 1, 1],
+                          x: [0, -7, 0],
+                          y: [0, 2, 0],
+                          rotate: [0, -1.5, 0],
+                          opacity: [1, 0.9, 1],
                         }
-                      : { x: 0, y: -1, rotate: 0, scale: 1, opacity: 1 }
+                      : { x: 0, y: 0, rotate: 0, opacity: 1 }
+                  }
+                  transition={{
+                    duration: clubPhase === "impact" ? 0.4 : 0.18,
+                    ease: [0.22, 1, 0.36, 1],
+                  }}
+                >
+                  Everything your
+                </motion.span>
+                <motion.span
+                  className="relative inline-block overflow-visible"
+                  style={{ color: "var(--accent)" }}
+                  animate={
+                    clubPhase === "impact"
+                      ? {
+                          y: [0, -18, -9, -13, 0],
+                          scale: [1, 1.16, 1.08, 1.03, 1],
+                          rotate: [0, -4, 2.5, -1, 0],
+                          textShadow: [
+                            "0 0 0px rgba(var(--accent-rgb), 0)",
+                            "0 0 28px rgba(var(--accent-rgb), 0.38)",
+                            "0 0 14px rgba(var(--accent-rgb), 0.22)",
+                            "0 0 0px rgba(var(--accent-rgb), 0)",
+                          ],
+                        }
+                      : {
+                          y: 0,
+                          scale: 1,
+                          rotate: 0,
+                          textShadow: "0 0 0px rgba(var(--accent-rgb), 0)",
+                        }
                   }
                   transition={
                     clubPhase === "impact"
-                      ? { duration: 0.54, times: [0, 0.42, 0.56, 0.76, 1], ease: "easeOut" }
-                      : { duration: 0.2 }
+                      ? {
+                          duration: 0.52,
+                          times: [0, 0.18, 0.42, 0.68, 1],
+                          ease: "easeOut",
+                        }
+                      : { duration: 0 }
                   }
-                  style={{ translateX: "-50%", translateY: "-98%" }}
                 >
-                  <StrikeClubIcon className="h-16 w-16 drop-shadow-[0_0_18px_rgba(var(--accent-rgb),0.34)]" />
+                  <motion.span
+                    className="pointer-events-none absolute left-1/2 top-0 text-arena-accent"
+                    initial={false}
+                    animate={
+                      clubPhase === "impact"
+                        ? {
+                            x: [-2, -1, 0, -1, 0],
+                            y: [-36, -16, 0, -5, -1],
+                            rotate: [-18, -8, 20, -7, 0],
+                            scale: [0.9, 0.98, 1.08, 1.03, 1],
+                            opacity: [0.15, 1, 1, 1, 1],
+                          }
+                        : { x: 0, y: -1, rotate: 0, scale: 1, opacity: 1 }
+                    }
+                    transition={
+                      clubPhase === "impact"
+                        ? {
+                            duration: 0.54,
+                            times: [0, 0.42, 0.56, 0.76, 1],
+                            ease: "easeOut",
+                          }
+                        : { duration: 0.2 }
+                    }
+                    style={{ translateX: "-50%", translateY: "-98%" }}
+                  >
+                    <StrikeClubIcon className="h-16 w-16 drop-shadow-[0_0_18px_rgba(var(--accent-rgb),0.34)]" />
+                  </motion.span>
+                  <motion.span
+                    className="pointer-events-none absolute left-1/2 top-1/2 h-11 w-11 rounded-full border border-arena-accent/30"
+                    initial={false}
+                    animate={
+                      clubPhase === "impact"
+                        ? { opacity: [0, 1, 0], scale: [0.45, 1.22, 1.8] }
+                        : { opacity: 0, scale: 0.45 }
+                    }
+                    transition={{ duration: 0.44, ease: "easeOut" }}
+                    style={{ x: "-50%", y: "-50%" }}
+                  />
+                  <motion.span
+                    className="pointer-events-none absolute left-1/2 top-1/2 h-0.5 w-10 rounded-full bg-arena-accent/75"
+                    initial={false}
+                    animate={
+                      clubPhase === "impact"
+                        ? {
+                            opacity: [0, 1, 0],
+                            scaleX: [0.3, 1.15, 1.45],
+                            rotate: [0, -16, -30],
+                          }
+                        : { opacity: 0, scaleX: 0.3, rotate: -30 }
+                    }
+                    transition={{ duration: 0.34, ease: "easeOut" }}
+                    style={{ x: "-50%", y: "-50%" }}
+                  />
+                  <motion.span
+                    className="pointer-events-none absolute left-1/2 top-1/2 h-0.5 w-10 rounded-full bg-arena-accent/70"
+                    initial={false}
+                    animate={
+                      clubPhase === "impact"
+                        ? {
+                            opacity: [0, 1, 0],
+                            scaleX: [0.3, 1.1, 1.35],
+                            rotate: [0, 14, 28],
+                          }
+                        : { opacity: 0, scaleX: 0.3, rotate: 28 }
+                    }
+                    transition={{
+                      duration: 0.34,
+                      delay: 0.03,
+                      ease: "easeOut",
+                    }}
+                    style={{ x: "-50%", y: "-50%" }}
+                  />
+                  <span className="relative inline-block">
+                    <span className="relative z-10 inline-block">club</span>
+                    <span
+                      className={`pointer-events-none absolute inset-0 transition-opacity duration-300 ${clubCracked ? "opacity-100" : "opacity-0"}`}
+                      aria-hidden="true"
+                    >
+                      <span className="absolute left-[16%] top-[58%] h-[2.5px] w-[28%] -rotate-[26deg] rounded-full bg-arena-bg/65" />
+                      <span className="absolute left-[41%] top-[44%] h-[2.5px] w-[18%] rotate-[60deg] rounded-full bg-arena-bg/65" />
+                      <span className="absolute left-[54%] top-[60%] h-[2.5px] w-[24%] -rotate-[18deg] rounded-full bg-arena-bg/65" />
+                      <span className="absolute left-[31%] top-[50%] h-[1.5px] w-[13%] rotate-[24deg] rounded-full bg-white/30" />
+                      <span className="absolute left-[60%] top-[48%] h-[1.5px] w-[12%] -rotate-[42deg] rounded-full bg-white/25" />
+                    </span>
+                  </span>
                 </motion.span>
                 <motion.span
-                  className="pointer-events-none absolute left-1/2 top-1/2 h-11 w-11 rounded-full border border-arena-accent/30"
-                  initial={false}
+                  className="inline-block"
                   animate={
                     clubPhase === "impact"
-                      ? { opacity: [0, 1, 0], scale: [0.45, 1.22, 1.8] }
-                      : { opacity: 0, scale: 0.45 }
+                      ? {
+                          x: [0, 8, 1, 0],
+                          y: [0, 1, -1, 0],
+                          letterSpacing: ["0em", "0.06em", "0.01em", "0em"],
+                        }
+                      : { x: 0, y: 0, letterSpacing: "0em" }
                   }
-                  transition={{ duration: 0.44, ease: "easeOut" }}
-                  style={{ x: "-50%", y: "-50%" }}
-                />
-                <motion.span
-                  className="pointer-events-none absolute left-1/2 top-1/2 h-0.5 w-10 rounded-full bg-arena-accent/75"
-                  initial={false}
-                  animate={
-                    clubPhase === "impact"
-                      ? { opacity: [0, 1, 0], scaleX: [0.3, 1.15, 1.45], rotate: [0, -16, -30] }
-                      : { opacity: 0, scaleX: 0.3, rotate: -30 }
-                  }
-                  transition={{ duration: 0.34, ease: "easeOut" }}
-                  style={{ x: "-50%", y: "-50%" }}
-                />
-                <motion.span
-                  className="pointer-events-none absolute left-1/2 top-1/2 h-0.5 w-10 rounded-full bg-arena-accent/70"
-                  initial={false}
-                  animate={
-                    clubPhase === "impact"
-                      ? { opacity: [0, 1, 0], scaleX: [0.3, 1.1, 1.35], rotate: [0, 14, 28] }
-                      : { opacity: 0, scaleX: 0.3, rotate: 28 }
-                  }
-                  transition={{ duration: 0.34, delay: 0.03, ease: "easeOut" }}
-                  style={{ x: "-50%", y: "-50%" }}
-                />
-                <span className="relative inline-block">
-                  <span className="relative z-10 inline-block">club</span>
-                  <span
-                    className={`pointer-events-none absolute inset-0 transition-opacity duration-300 ${clubCracked ? "opacity-100" : "opacity-0"}`}
-                    aria-hidden="true"
-                  >
-                    <span className="absolute left-[16%] top-[58%] h-[2.5px] w-[28%] -rotate-[26deg] rounded-full bg-arena-bg/65" />
-                    <span className="absolute left-[41%] top-[44%] h-[2.5px] w-[18%] rotate-[60deg] rounded-full bg-arena-bg/65" />
-                    <span className="absolute left-[54%] top-[60%] h-[2.5px] w-[24%] -rotate-[18deg] rounded-full bg-arena-bg/65" />
-                    <span className="absolute left-[31%] top-[50%] h-[1.5px] w-[13%] rotate-[24deg] rounded-full bg-white/30" />
-                    <span className="absolute left-[60%] top-[48%] h-[1.5px] w-[12%] -rotate-[42deg] rounded-full bg-white/25" />
-                  </span>
-                </span>
-              </motion.span>
-              <motion.span
-                className="inline-block"
-                animate={
-                  clubPhase === "impact"
-                    ? {
-                        x: [0, 8, 1, 0],
-                        y: [0, 1, -1, 0],
-                        letterSpacing: ["0em", "0.06em", "0.01em", "0em"],
-                      }
-                    : { x: 0, y: 0, letterSpacing: "0em" }
-                }
-                transition={{
-                  duration: clubPhase === "impact" ? 0.44 : 0.18,
-                  ease: [0.22, 1, 0.36, 1],
-                }}
-              >
-                needs
-              </motion.span>
+                  transition={{
+                    duration: clubPhase === "impact" ? 0.44 : 0.18,
+                    ease: [0.22, 1, 0.36, 1],
+                  }}
+                >
+                  needs
+                </motion.span>
               </span>
             </h2>
             <FadeUp>
@@ -4050,7 +4420,6 @@ export default function Landing() {
 
           {/* ── Feature Showcases ── */}
           <div className="space-y-28">
-
             {/* 1 · Tournament Management */}
             <div className="flex flex-col lg:flex-row items-center gap-12 lg:gap-20">
               <FadeUp className="flex-1 text-center lg:text-left">
@@ -4058,15 +4427,29 @@ export default function Landing() {
                   <Trophy size={12} /> Tournament Management
                 </div>
                 <h3 className="font-display text-3xl md:text-4xl font-bold uppercase tracking-tight text-arena-text mb-4">
-                  Brackets on<br />demand
+                  Brackets on
+                  <br />
+                  demand
                 </h3>
                 <p className="text-arena-text-muted text-lg leading-relaxed mb-6">
-                  Create and manage any bracket format in seconds. Single-elimination, double-elimination, round-robin, or swiss — all from the same dashboard.
+                  Create and manage any bracket format in seconds.
+                  Single-elimination, double-elimination, round-robin, or swiss
+                  — all from the same dashboard.
                 </p>
                 <ul className="space-y-3 text-left max-w-sm mx-auto lg:mx-0">
-                  {["4 bracket formats out of the box", "Live bracket tracking as matches complete", "Filter by E-Sports, Sports, Board, or Card"].map(item => (
-                    <li key={item} className="flex items-start gap-3 text-arena-text-muted text-sm">
-                      <CheckCircle2 size={16} className="text-arena-accent shrink-0 mt-0.5" />
+                  {[
+                    "4 bracket formats out of the box",
+                    "Live bracket tracking as matches complete",
+                    "Filter by E-Sports, Sports, Board, or Card",
+                  ].map((item) => (
+                    <li
+                      key={item}
+                      className="flex items-start gap-3 text-arena-text-muted text-sm"
+                    >
+                      <CheckCircle2
+                        size={16}
+                        className="text-arena-accent shrink-0 mt-0.5"
+                      />
                       {item}
                     </li>
                   ))}
@@ -4081,48 +4464,102 @@ export default function Landing() {
                 viewport={{ once: false, margin: "-80px" }}
                 transition={{ duration: 0.55, ease: "easeOut" }}
               >
-              <div className="rounded-2xl border border-arena-border overflow-hidden" style={{ background: "var(--bg-2)" }}>
-                <div className="flex items-center justify-between px-4 py-3 border-b border-arena-border" style={{ background: "var(--bg-3)" }}>
-                  <div className="flex items-center gap-2">
-                    <div className="w-1.5 h-1.5 rounded-full bg-arena-accent animate-pulse" />
-                    <span className="text-xs font-bold text-arena-text uppercase tracking-widest">Dashboard</span>
+                <div
+                  className="rounded-2xl border border-arena-border overflow-hidden"
+                  style={{ background: "var(--bg-2)" }}
+                >
+                  <div
+                    className="flex items-center justify-between px-4 py-3 border-b border-arena-border"
+                    style={{ background: "var(--bg-3)" }}
+                  >
+                    <div className="flex items-center gap-2">
+                      <div className="w-1.5 h-1.5 rounded-full bg-arena-accent animate-pulse" />
+                      <span className="text-xs font-bold text-arena-text uppercase tracking-widest">
+                        Dashboard
+                      </span>
+                    </div>
+                    <div className="flex gap-1">
+                      {["E-Sports", "Sports", "Board", "Card"].map((c) => (
+                        <span
+                          key={c}
+                          className="text-[10px] px-2 py-0.5 rounded-full border border-arena-border text-arena-text-muted"
+                          style={{ background: "var(--surface)" }}
+                        >
+                          {c}
+                        </span>
+                      ))}
+                    </div>
                   </div>
-                  <div className="flex gap-1">
-                    {["E-Sports","Sports","Board","Card"].map(c => (
-                      <span key={c} className="text-[10px] px-2 py-0.5 rounded-full border border-arena-border text-arena-text-muted" style={{ background: "var(--surface)" }}>{c}</span>
+                  <div className="grid grid-cols-3 gap-3 px-4 pt-4 pb-3">
+                    {[
+                      {
+                        label: "Tournaments",
+                        val: "3",
+                        color: "var(--accent)",
+                      },
+                      { label: "Live Matches", val: "2", color: "var(--red)" },
+                      { label: "Players", val: "16", color: "var(--blue)" },
+                    ].map((s) => (
+                      <div
+                        key={s.label}
+                        className="rounded-xl p-3 border border-arena-border text-center"
+                        style={{ background: "var(--surface)" }}
+                      >
+                        <div
+                          className="font-display text-2xl font-bold"
+                          style={{ color: s.color }}
+                        >
+                          {s.val}
+                        </div>
+                        <div className="text-[10px] text-arena-text-muted mt-0.5">
+                          {s.label}
+                        </div>
+                      </div>
                     ))}
                   </div>
-                </div>
-                <div className="grid grid-cols-3 gap-3 px-4 pt-4 pb-3">
-                  {[
-                    { label: "Tournaments", val: "3", color: "var(--accent)" },
-                    { label: "Live Matches", val: "2", color: "var(--red)" },
-                    { label: "Players",      val: "16", color: "var(--blue)" },
-                  ].map(s => (
-                    <div key={s.label} className="rounded-xl p-3 border border-arena-border text-center" style={{ background: "var(--surface)" }}>
-                      <div className="font-display text-2xl font-bold" style={{ color: s.color }}>{s.val}</div>
-                      <div className="text-[10px] text-arena-text-muted mt-0.5">{s.label}</div>
+                  <div
+                    className="mx-4 mb-4 rounded-xl border border-arena-border p-4 flex items-start justify-between gap-3"
+                    style={{ background: "var(--surface)" }}
+                  >
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2 mb-1">
+                        <span className="text-sm font-bold text-arena-text truncate">
+                          UCF Knights Gold vs USF Bulls Red
+                        </span>
+                        <span className="shrink-0 text-[10px] font-bold px-2 py-0.5 rounded-full bg-arena-accent/10 border border-arena-accent/20 text-arena-accent">
+                          Active
+                        </span>
+                      </div>
+                      <div className="text-[11px] text-arena-text-muted mb-3">
+                        valorant · single-elimination
+                      </div>
+                      <div
+                        className="w-full h-1.5 rounded-full overflow-hidden"
+                        style={{ background: "var(--border)" }}
+                      >
+                        <div
+                          className="h-full rounded-full bg-arena-accent"
+                          style={{ width: "62%" }}
+                        />
+                      </div>
+                      <div className="flex items-center justify-between mt-2">
+                        <span className="text-[10px] text-arena-text-muted flex items-center gap-1">
+                          <Users size={10} /> 8 / 16 confirmed
+                        </span>
+                        <span
+                          className="text-[10px] flex items-center gap-1"
+                          style={{ color: "var(--red)" }}
+                        >
+                          <Zap size={10} /> 2 live
+                        </span>
+                      </div>
                     </div>
-                  ))}
-                </div>
-                <div className="mx-4 mb-4 rounded-xl border border-arena-border p-4 flex items-start justify-between gap-3" style={{ background: "var(--surface)" }}>
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-2 mb-1">
-                      <span className="text-sm font-bold text-arena-text truncate">UCF Knights Gold vs USF Bulls Red</span>
-                      <span className="shrink-0 text-[10px] font-bold px-2 py-0.5 rounded-full bg-arena-accent/10 border border-arena-accent/20 text-arena-accent">Active</span>
-                    </div>
-                    <div className="text-[11px] text-arena-text-muted mb-3">valorant · single-elimination</div>
-                    <div className="w-full h-1.5 rounded-full overflow-hidden" style={{ background: "var(--border)" }}>
-                      <div className="h-full rounded-full bg-arena-accent" style={{ width: "62%" }} />
-                    </div>
-                    <div className="flex items-center justify-between mt-2">
-                      <span className="text-[10px] text-arena-text-muted flex items-center gap-1"><Users size={10} /> 8 / 16 confirmed</span>
-                      <span className="text-[10px] flex items-center gap-1" style={{ color: "var(--red)" }}><Zap size={10} /> 2 live</span>
-                    </div>
+                    <ChevronRight
+                      size={14}
+                      className="text-arena-text-muted shrink-0 mt-1"
+                    />
                   </div>
-                  <ChevronRight size={14} className="text-arena-text-muted shrink-0 mt-1" />
                 </div>
-              </div>
               </motion.div>
             </div>
 
@@ -4136,58 +4573,134 @@ export default function Landing() {
                 viewport={{ once: false, margin: "-80px" }}
                 transition={{ duration: 0.55, ease: "easeOut" }}
               >
-              <div className="rounded-2xl border border-arena-border overflow-hidden" style={{ background: "var(--bg-2)" }}>
-                <div className="flex items-center justify-between px-4 py-3 border-b border-arena-border" style={{ background: "var(--bg-3)" }}>
-                  <div className="flex items-center gap-2">
-                    <div className="w-1.5 h-1.5 rounded-full bg-red-400 animate-pulse" />
-                    <span className="text-xs font-bold text-arena-text uppercase tracking-widest">Live Control</span>
-                  </div>
-                  <span className="text-[10px] font-bold px-2 py-0.5 rounded-full text-red-400 border border-red-400/30" style={{ background: "rgba(255,71,87,0.08)" }}>2 LIVE</span>
-                </div>
-                <div className="p-4 space-y-3">
-                  {[
-                    { ref: "Match 3 · Round 2", t1: "UCF Knights Gold", t2: "USF Bulls Red", s1: 2, s2: 1 },
-                    { ref: "Match 4 · Round 2", t1: "FIU Panther Blue", t2: "FAU Owls Black", s1: 0, s2: 0 },
-                  ].map(m => (
-                    <div
-                      key={m.ref}
-                      className="rounded-xl border p-3"
-                      style={{ borderColor: "rgba(255,71,87,0.28)", background: "rgba(255,71,87,0.04)" }}
+                <div
+                  className="rounded-2xl border border-arena-border overflow-hidden"
+                  style={{ background: "var(--bg-2)" }}
+                >
+                  <div
+                    className="flex items-center justify-between px-4 py-3 border-b border-arena-border"
+                    style={{ background: "var(--bg-3)" }}
+                  >
+                    <div className="flex items-center gap-2">
+                      <div className="w-1.5 h-1.5 rounded-full bg-red-400 animate-pulse" />
+                      <span className="text-xs font-bold text-arena-text uppercase tracking-widest">
+                        Live Control
+                      </span>
+                    </div>
+                    <span
+                      className="text-[10px] font-bold px-2 py-0.5 rounded-full text-red-400 border border-red-400/30"
+                      style={{ background: "rgba(255,71,87,0.08)" }}
                     >
-                      {/* header */}
-                      <div className="flex items-center justify-between mb-2">
-                        <div className="flex items-center gap-2">
-                          <span className="text-[10px] font-bold uppercase tracking-wider text-arena-text-muted">{m.ref}</span>
-                          <span className="text-[10px] font-bold px-1.5 py-px rounded text-red-400" style={{ background: "rgba(255,71,87,0.12)" }}>LIVE</span>
-                        </div>
-                        <div className="flex gap-1">
-                          <span className="text-[10px] px-1.5 py-0.5 rounded border border-arena-border text-arena-text-muted" style={{ background: "var(--surface)" }}>No-show</span>
-                          <span className="text-[10px] px-1.5 py-0.5 rounded font-bold text-arena-bg" style={{ background: "var(--accent)" }}>Done</span>
-                        </div>
-                      </div>
-                      {/* scoreboard rows */}
-                      <div className="space-y-1">
-                        {[{ name: m.t1, score: m.s1 }, { name: m.t2, score: m.s2 }].map((row, ri) => (
-                          <div key={ri} className="flex items-center justify-between gap-2">
-                            <span className="truncate text-[11px] font-semibold text-arena-text">{row.name}</span>
-                            <span className="shrink-0 font-display text-sm font-bold text-arena-text tabular-nums">{row.score}</span>
+                      2 LIVE
+                    </span>
+                  </div>
+                  <div className="p-4 space-y-3">
+                    {[
+                      {
+                        ref: "Match 3 · Round 2",
+                        t1: "UCF Knights Gold",
+                        t2: "USF Bulls Red",
+                        s1: 2,
+                        s2: 1,
+                      },
+                      {
+                        ref: "Match 4 · Round 2",
+                        t1: "FIU Panther Blue",
+                        t2: "FAU Owls Black",
+                        s1: 0,
+                        s2: 0,
+                      },
+                    ].map((m) => (
+                      <div
+                        key={m.ref}
+                        className="rounded-xl border p-3"
+                        style={{
+                          borderColor: "rgba(255,71,87,0.28)",
+                          background: "rgba(255,71,87,0.04)",
+                        }}
+                      >
+                        {/* header */}
+                        <div className="flex items-center justify-between mb-2">
+                          <div className="flex items-center gap-2">
+                            <span className="text-[10px] font-bold uppercase tracking-wider text-arena-text-muted">
+                              {m.ref}
+                            </span>
+                            <span
+                              className="text-[10px] font-bold px-1.5 py-px rounded text-red-400"
+                              style={{ background: "rgba(255,71,87,0.12)" }}
+                            >
+                              LIVE
+                            </span>
                           </div>
-                        ))}
+                          <div className="flex gap-1">
+                            <span
+                              className="text-[10px] px-1.5 py-0.5 rounded border border-arena-border text-arena-text-muted"
+                              style={{ background: "var(--surface)" }}
+                            >
+                              No-show
+                            </span>
+                            <span
+                              className="text-[10px] px-1.5 py-0.5 rounded font-bold text-arena-bg"
+                              style={{ background: "var(--accent)" }}
+                            >
+                              Done
+                            </span>
+                          </div>
+                        </div>
+                        {/* scoreboard rows */}
+                        <div className="space-y-1">
+                          {[
+                            { name: m.t1, score: m.s1 },
+                            { name: m.t2, score: m.s2 },
+                          ].map((row, ri) => (
+                            <div
+                              key={ri}
+                              className="flex items-center justify-between gap-2"
+                            >
+                              <span className="truncate text-[11px] font-semibold text-arena-text">
+                                {row.name}
+                              </span>
+                              <span className="shrink-0 font-display text-sm font-bold text-arena-text tabular-nums">
+                                {row.score}
+                              </span>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    ))}
+                    <div
+                      className="rounded-xl border p-3"
+                      style={{
+                        borderColor: "rgba(var(--amber-rgb),0.28)",
+                        background: "rgba(var(--amber-rgb),0.04)",
+                      }}
+                    >
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2">
+                          <AlertTriangle
+                            size={12}
+                            style={{ color: "var(--amber)" }}
+                          />
+                          <span
+                            className="text-[10px] font-bold"
+                            style={{ color: "var(--amber)" }}
+                          >
+                            DELAYED · Match 2 · Round 1
+                          </span>
+                        </div>
+                        <span
+                          className="text-[10px] px-2 py-0.5 rounded border border-arena-border text-arena-text-muted"
+                          style={{ background: "var(--surface)" }}
+                        >
+                          Reschedule
+                        </span>
+                      </div>
+                      <div className="mt-1.5 text-xs text-arena-text-muted">
+                        Miami Hurricanes White vs Tampa Spartans Green
                       </div>
                     </div>
-                  ))}
-                  <div className="rounded-xl border p-3" style={{ borderColor: "rgba(var(--amber-rgb),0.28)", background: "rgba(var(--amber-rgb),0.04)" }}>
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-2">
-                        <AlertTriangle size={12} style={{ color: "var(--amber)" }} />
-                        <span className="text-[10px] font-bold" style={{ color: "var(--amber)" }}>DELAYED · Match 2 · Round 1</span>
-                      </div>
-                      <span className="text-[10px] px-2 py-0.5 rounded border border-arena-border text-arena-text-muted" style={{ background: "var(--surface)" }}>Reschedule</span>
-                    </div>
-                    <div className="mt-1.5 text-xs text-arena-text-muted">Miami Hurricanes White vs Tampa Spartans Green</div>
                   </div>
                 </div>
-              </div>
               </motion.div>
 
               <FadeUp className="flex-1 text-center lg:text-left">
@@ -4195,15 +4708,29 @@ export default function Landing() {
                   <Zap size={12} /> Live Match Control
                 </div>
                 <h3 className="font-display text-3xl md:text-4xl font-bold uppercase tracking-tight text-arena-text mb-4">
-                  Score. Flag.<br />Move on.
+                  Score. Flag.
+                  <br />
+                  Move on.
                 </h3>
                 <p className="text-arena-text-muted text-lg leading-relaxed mb-6">
-                  Everything you need on game day — live scoring, no-show flags, delay handling, and room reassignment — without leaving the page.
+                  Everything you need on game day — live scoring, no-show flags,
+                  delay handling, and room reassignment — without leaving the
+                  page.
                 </p>
                 <ul className="space-y-3 text-left max-w-sm mx-auto lg:mx-0">
-                  {["Real-time score entry per match", "One-click no-show and delay reporting", "Instant room reassignment when plans change"].map(item => (
-                    <li key={item} className="flex items-start gap-3 text-arena-text-muted text-sm">
-                      <CheckCircle2 size={16} className="text-arena-accent shrink-0 mt-0.5" />
+                  {[
+                    "Real-time score entry per match",
+                    "One-click no-show and delay reporting",
+                    "Instant room reassignment when plans change",
+                  ].map((item) => (
+                    <li
+                      key={item}
+                      className="flex items-start gap-3 text-arena-text-muted text-sm"
+                    >
+                      <CheckCircle2
+                        size={16}
+                        className="text-arena-accent shrink-0 mt-0.5"
+                      />
                       {item}
                     </li>
                   ))}
@@ -4218,15 +4745,29 @@ export default function Landing() {
                   <Calendar size={12} /> Scheduling & Rooms
                 </div>
                 <h3 className="font-display text-3xl md:text-4xl font-bold uppercase tracking-tight text-arena-text mb-4">
-                  No more<br />spreadsheets.
+                  No more
+                  <br />
+                  spreadsheets.
                 </h3>
                 <p className="text-arena-text-muted text-lg leading-relaxed mb-6">
-                  View the full day's schedule in a grid or list, assign rooms to matches, and catch booking conflicts before they cause problems.
+                  View the full day's schedule in a grid or list, assign rooms
+                  to matches, and catch booking conflicts before they cause
+                  problems.
                 </p>
                 <ul className="space-y-3 text-left max-w-sm mx-auto lg:mx-0">
-                  {["Grid and list views per time block", "Room assignment with conflict detection", "Delay alerts surfaced directly in the schedule"].map(item => (
-                    <li key={item} className="flex items-start gap-3 text-arena-text-muted text-sm">
-                      <CheckCircle2 size={16} className="text-arena-accent shrink-0 mt-0.5" />
+                  {[
+                    "Grid and list views per time block",
+                    "Room assignment with conflict detection",
+                    "Delay alerts surfaced directly in the schedule",
+                  ].map((item) => (
+                    <li
+                      key={item}
+                      className="flex items-start gap-3 text-arena-text-muted text-sm"
+                    >
+                      <CheckCircle2
+                        size={16}
+                        className="text-arena-accent shrink-0 mt-0.5"
+                      />
                       {item}
                     </li>
                   ))}
@@ -4241,50 +4782,113 @@ export default function Landing() {
                 viewport={{ once: false, margin: "-80px" }}
                 transition={{ duration: 0.55, ease: "easeOut" }}
               >
-              <div className="rounded-2xl border border-arena-border overflow-hidden" style={{ background: "var(--bg-2)" }}>
-                <div className="flex items-center justify-between px-4 py-3 border-b border-arena-border" style={{ background: "var(--bg-3)" }}>
-                  <span className="text-xs font-bold text-arena-text uppercase tracking-widest">Schedule</span>
-                  <div className="flex items-center gap-2">
-                    <span className="text-[10px] font-bold px-2 py-0.5 rounded-lg border border-arena-accent/30 text-arena-accent" style={{ background: "var(--accent-dim)" }}>Today</span>
-                    <span className="text-[10px] text-arena-text-muted">Mar 22</span>
-                  </div>
-                </div>
-                <div className="p-4">
-                  <div className="rounded-xl border border-arena-border overflow-hidden" style={{ background: "var(--surface)" }}>
-                    <div className="flex items-center gap-2 px-3 py-2 border-b border-arena-border" style={{ background: "var(--bg-3)" }}>
-                      <Clock size={10} className="text-arena-text-muted" />
-                      <span className="text-[10px] font-bold text-arena-text uppercase tracking-wider">Morning · 9 AM – 12 PM</span>
+                <div
+                  className="rounded-2xl border border-arena-border overflow-hidden"
+                  style={{ background: "var(--bg-2)" }}
+                >
+                  <div
+                    className="flex items-center justify-between px-4 py-3 border-b border-arena-border"
+                    style={{ background: "var(--bg-3)" }}
+                  >
+                    <span className="text-xs font-bold text-arena-text uppercase tracking-widest">
+                      Schedule
+                    </span>
+                    <div className="flex items-center gap-2">
+                      <span
+                        className="text-[10px] font-bold px-2 py-0.5 rounded-lg border border-arena-accent/30 text-arena-accent"
+                        style={{ background: "var(--accent-dim)" }}
+                      >
+                        Today
+                      </span>
+                      <span className="text-[10px] text-arena-text-muted">
+                        Mar 22
+                      </span>
                     </div>
-                    {[
-                      { ref: "M1", teams: "UCF Knights Gold vs USF Bulls Red", room: "Gaming Lab A", status: "completed" },
-                      { ref: "M2", teams: "FIU Panther Blue vs FAU Owls Black", room: "Room 204",      status: "live"      },
-                      { ref: "M3", teams: "Miami Hurricanes White vs Tampa Spartans Green", room: "Rec Center", status: "scheduled" },
-                    ].map((m, i) => (
-                      <div key={m.ref} className={`flex items-center gap-3 px-3 py-2.5 ${i < 2 ? "border-b border-arena-border" : ""}`}>
-                        <div className={`w-1.5 h-1.5 rounded-full shrink-0 ${m.status === "live" ? "bg-red-400 animate-pulse" : m.status === "completed" ? "bg-arena-text-muted" : "bg-blue-400"}`} />
-                        <div className="flex-1 min-w-0">
-                          <div className="text-[11px] font-semibold text-arena-text truncate">{m.teams}</div>
-                          <div className="flex items-center gap-1 mt-0.5">
-                            <MapPin size={9} className="text-arena-text-muted" />
-                            <span className="text-[10px] text-arena-text-muted">{m.room}</span>
-                          </div>
-                        </div>
-                        <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full border ${
-                          m.status === "live"      ? "text-red-400 border-red-400/30"  :
-                          m.status === "completed" ? "text-arena-text-muted border-arena-border" :
-                                                     "text-blue-400 border-blue-400/30"
-                        }`} style={{
-                          background: m.status === "live"      ? "rgba(255,71,87,0.08)"  :
-                                      m.status === "completed" ? "var(--bg-3)"            :
-                                                                 "rgba(79,172,254,0.08)"
-                        }}>
-                          {m.status === "live" ? "Live" : m.status === "completed" ? "Done" : "Schedule"}
+                  </div>
+                  <div className="p-4">
+                    <div
+                      className="rounded-xl border border-arena-border overflow-hidden"
+                      style={{ background: "var(--surface)" }}
+                    >
+                      <div
+                        className="flex items-center gap-2 px-3 py-2 border-b border-arena-border"
+                        style={{ background: "var(--bg-3)" }}
+                      >
+                        <Clock size={10} className="text-arena-text-muted" />
+                        <span className="text-[10px] font-bold text-arena-text uppercase tracking-wider">
+                          Morning · 9 AM – 12 PM
                         </span>
                       </div>
-                    ))}
+                      {[
+                        {
+                          ref: "M1",
+                          teams: "UCF Knights Gold vs USF Bulls Red",
+                          room: "Gaming Lab A",
+                          status: "completed",
+                        },
+                        {
+                          ref: "M2",
+                          teams: "FIU Panther Blue vs FAU Owls Black",
+                          room: "Room 204",
+                          status: "live",
+                        },
+                        {
+                          ref: "M3",
+                          teams:
+                            "Miami Hurricanes White vs Tampa Spartans Green",
+                          room: "Rec Center",
+                          status: "scheduled",
+                        },
+                      ].map((m, i) => (
+                        <div
+                          key={m.ref}
+                          className={`flex items-center gap-3 px-3 py-2.5 ${i < 2 ? "border-b border-arena-border" : ""}`}
+                        >
+                          <div
+                            className={`w-1.5 h-1.5 rounded-full shrink-0 ${m.status === "live" ? "bg-red-400 animate-pulse" : m.status === "completed" ? "bg-arena-text-muted" : "bg-blue-400"}`}
+                          />
+                          <div className="flex-1 min-w-0">
+                            <div className="text-[11px] font-semibold text-arena-text truncate">
+                              {m.teams}
+                            </div>
+                            <div className="flex items-center gap-1 mt-0.5">
+                              <MapPin
+                                size={9}
+                                className="text-arena-text-muted"
+                              />
+                              <span className="text-[10px] text-arena-text-muted">
+                                {m.room}
+                              </span>
+                            </div>
+                          </div>
+                          <span
+                            className={`text-[10px] font-bold px-2 py-0.5 rounded-full border ${
+                              m.status === "live"
+                                ? "text-red-400 border-red-400/30"
+                                : m.status === "completed"
+                                  ? "text-arena-text-muted border-arena-border"
+                                  : "text-blue-400 border-blue-400/30"
+                            }`}
+                            style={{
+                              background:
+                                m.status === "live"
+                                  ? "rgba(255,71,87,0.08)"
+                                  : m.status === "completed"
+                                    ? "var(--bg-3)"
+                                    : "rgba(79,172,254,0.08)",
+                            }}
+                          >
+                            {m.status === "live"
+                              ? "Live"
+                              : m.status === "completed"
+                                ? "Done"
+                                : "Schedule"}
+                          </span>
+                        </div>
+                      ))}
+                    </div>
                   </div>
                 </div>
-              </div>
               </motion.div>
             </div>
 
@@ -4298,59 +4902,136 @@ export default function Landing() {
                 viewport={{ once: false, margin: "-80px" }}
                 transition={{ duration: 0.55, ease: "easeOut" }}
               >
-              <div className="grid grid-cols-2 gap-4">
-                <div className="rounded-2xl border border-arena-border overflow-hidden" style={{ background: "var(--bg-2)" }}>
-                  <div className="flex items-center gap-2 px-3 py-3 border-b border-arena-border" style={{ background: "var(--bg-3)" }}>
-                    <Users size={11} className="text-arena-text-muted" />
-                    <span className="text-xs font-bold text-arena-text uppercase tracking-widest">Participants</span>
+                <div className="grid grid-cols-2 gap-4">
+                  <div
+                    className="rounded-2xl border border-arena-border overflow-hidden"
+                    style={{ background: "var(--bg-2)" }}
+                  >
+                    <div
+                      className="flex items-center gap-2 px-3 py-3 border-b border-arena-border"
+                      style={{ background: "var(--bg-3)" }}
+                    >
+                      <Users size={11} className="text-arena-text-muted" />
+                      <span className="text-xs font-bold text-arena-text uppercase tracking-widest">
+                        Participants
+                      </span>
+                    </div>
+                    <div className="p-3 space-y-2">
+                      {[
+                        { name: "UCF Knights Gold", status: "confirmed" },
+                        { name: "USF Bulls Red", status: "confirmed" },
+                        { name: "FIU Panther Blue", status: "pending" },
+                        { name: "FAU Owls Black", status: "declined" },
+                      ].map((p, i) => (
+                        <div
+                          key={i}
+                          className="flex items-center justify-between px-2.5 py-1.5 rounded-lg border border-arena-border"
+                          style={{ background: "var(--surface)" }}
+                        >
+                          <span className="text-xs font-semibold text-arena-text truncate">
+                            {p.name}
+                          </span>
+                          <span
+                            className={`text-[10px] font-bold px-1.5 py-0.5 rounded border ${
+                              p.status === "confirmed"
+                                ? "text-arena-accent border-arena-accent/30"
+                                : p.status === "pending"
+                                  ? "text-arena-text-muted border-arena-border"
+                                  : "text-red-400 border-red-400/20"
+                            }`}
+                            style={{
+                              background:
+                                p.status === "confirmed"
+                                  ? "var(--accent-dim)"
+                                  : p.status === "pending"
+                                    ? "var(--bg-3)"
+                                    : "rgba(255,71,87,0.06)",
+                            }}
+                          >
+                            {p.status === "confirmed"
+                              ? "✓"
+                              : p.status === "pending"
+                                ? "–"
+                                : "✗"}
+                          </span>
+                        </div>
+                      ))}
+                    </div>
                   </div>
-                  <div className="p-3 space-y-2">
-                    {[
-                      { name: "UCF Knights Gold", status: "confirmed" },
-                      { name: "USF Bulls Red", status: "confirmed" },
-                      { name: "FIU Panther Blue", status: "pending"   },
-                      { name: "FAU Owls Black", status: "declined"  },
-                    ].map((p, i) => (
-                      <div key={i} className="flex items-center justify-between px-2.5 py-1.5 rounded-lg border border-arena-border" style={{ background: "var(--surface)" }}>
-                        <span className="text-xs font-semibold text-arena-text truncate">{p.name}</span>
-                        <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded border ${
-                          p.status === "confirmed" ? "text-arena-accent border-arena-accent/30" :
-                          p.status === "pending"   ? "text-arena-text-muted border-arena-border" :
-                                                     "text-red-400 border-red-400/20"
-                        }`} style={{ background: p.status === "confirmed" ? "var(--accent-dim)" : p.status === "pending" ? "var(--bg-3)" : "rgba(255,71,87,0.06)" }}>
-                          {p.status === "confirmed" ? "✓" : p.status === "pending" ? "–" : "✗"}
+
+                  <div
+                    className="rounded-2xl border border-arena-border overflow-hidden"
+                    style={{ background: "var(--bg-2)" }}
+                  >
+                    <div
+                      className="flex items-center justify-between px-3 py-3 border-b border-arena-border"
+                      style={{ background: "var(--bg-3)" }}
+                    >
+                      <div className="flex items-center gap-1.5">
+                        <Bell size={11} className="text-arena-text-muted" />
+                        <span className="text-xs font-bold text-arena-text uppercase tracking-widest">
+                          Alerts
                         </span>
                       </div>
-                    ))}
-                  </div>
-                </div>
-
-                <div className="rounded-2xl border border-arena-border overflow-hidden" style={{ background: "var(--bg-2)" }}>
-                  <div className="flex items-center justify-between px-3 py-3 border-b border-arena-border" style={{ background: "var(--bg-3)" }}>
-                    <div className="flex items-center gap-1.5">
-                      <Bell size={11} className="text-arena-text-muted" />
-                      <span className="text-xs font-bold text-arena-text uppercase tracking-widest">Alerts</span>
+                      <span
+                        className="text-[10px] font-bold px-1.5 py-0.5 rounded-full text-arena-bg"
+                        style={{ background: "var(--accent)" }}
+                      >
+                        3
+                      </span>
                     </div>
-                    <span className="text-[10px] font-bold px-1.5 py-0.5 rounded-full text-arena-bg" style={{ background: "var(--accent)" }}>3</span>
-                  </div>
-                  <div className="p-3 space-y-1.5">
-                    {[
-                      { Icon: Zap,           color: "var(--red)",    msg: "Match 3 is now live", unread: true  },
-                      { Icon: AlertTriangle, color: "var(--amber)",  msg: "Match 2 delayed",       unread: true  },
-                      { Icon: CheckCircle2,  color: "var(--accent)", msg: "UCF Knights Gold checked in", unread: false },
-                      { Icon: BarChart2,     color: "var(--blue)",   msg: "Schedule generated",   unread: false },
-                    ].map((n, i) => (
-                      <div key={i} className="flex items-start gap-2 px-2 py-1.5 rounded-lg" style={{
-                        background: n.unread ? "var(--surface)" : "transparent",
-                        borderLeft: n.unread ? "2px solid var(--accent)" : "2px solid transparent",
-                      }}>
-                        <n.Icon size={11} style={{ color: n.color }} className="shrink-0 mt-0.5" />
-                        <span className="text-[10px] text-arena-text leading-snug">{n.msg}</span>
-                      </div>
-                    ))}
+                    <div className="p-3 space-y-1.5">
+                      {[
+                        {
+                          Icon: Zap,
+                          color: "var(--red)",
+                          msg: "Match 3 is now live",
+                          unread: true,
+                        },
+                        {
+                          Icon: AlertTriangle,
+                          color: "var(--amber)",
+                          msg: "Match 2 delayed",
+                          unread: true,
+                        },
+                        {
+                          Icon: CheckCircle2,
+                          color: "var(--accent)",
+                          msg: "UCF Knights Gold checked in",
+                          unread: false,
+                        },
+                        {
+                          Icon: BarChart2,
+                          color: "var(--blue)",
+                          msg: "Schedule generated",
+                          unread: false,
+                        },
+                      ].map((n, i) => (
+                        <div
+                          key={i}
+                          className="flex items-start gap-2 px-2 py-1.5 rounded-lg"
+                          style={{
+                            background: n.unread
+                              ? "var(--surface)"
+                              : "transparent",
+                            borderLeft: n.unread
+                              ? "2px solid var(--accent)"
+                              : "2px solid transparent",
+                          }}
+                        >
+                          <n.Icon
+                            size={11}
+                            style={{ color: n.color }}
+                            className="shrink-0 mt-0.5"
+                          />
+                          <span className="text-[10px] text-arena-text leading-snug">
+                            {n.msg}
+                          </span>
+                        </div>
+                      ))}
+                    </div>
                   </div>
                 </div>
-              </div>
               </motion.div>
 
               <FadeUp className="flex-1 text-center lg:text-left">
@@ -4358,15 +5039,29 @@ export default function Landing() {
                   <Users size={12} /> Players & Alerts
                 </div>
                 <h3 className="font-display text-3xl md:text-4xl font-bold uppercase tracking-tight text-arena-text mb-4">
-                  Keep everyone<br />in the loop.
+                  Keep everyone
+                  <br />
+                  in the loop.
                 </h3>
                 <p className="text-arena-text-muted text-lg leading-relaxed mb-6">
-                  Manage registrations, track check-ins, and get instant sound alerts when something needs your attention — all from one place.
+                  Manage registrations, track check-ins, and get instant sound
+                  alerts when something needs your attention — all from one
+                  place.
                 </p>
                 <ul className="space-y-3 text-left max-w-sm mx-auto lg:mx-0">
-                  {["Confirmed / pending / declined tracking", "Notifications alerts", "Time-grouped feed with unread markers"].map(item => (
-                    <li key={item} className="flex items-start gap-3 text-arena-text-muted text-sm">
-                      <CheckCircle2 size={16} className="text-arena-accent shrink-0 mt-0.5" />
+                  {[
+                    "Confirmed / pending / declined tracking",
+                    "Notifications alerts",
+                    "Time-grouped feed with unread markers",
+                  ].map((item) => (
+                    <li
+                      key={item}
+                      className="flex items-start gap-3 text-arena-text-muted text-sm"
+                    >
+                      <CheckCircle2
+                        size={16}
+                        className="text-arena-accent shrink-0 mt-0.5"
+                      />
                       {item}
                     </li>
                   ))}
@@ -4381,15 +5076,29 @@ export default function Landing() {
                   <ArrowUpRight size={12} /> Share Event
                 </div>
                 <h3 className="font-display text-3xl md:text-4xl font-bold uppercase tracking-tight text-arena-text mb-4">
-                  Send the bracket.<br />Fast.
+                  Send the bracket.
+                  <br />
+                  Fast.
                 </h3>
                 <p className="text-arena-text-muted text-lg leading-relaxed mb-6">
-                  Share a clean event link, QR code, or embed card so players and clubs can jump straight into the tournament page without asking for updates.
+                  Share a clean event link, QR code, or embed card so players
+                  and clubs can jump straight into the tournament page without
+                  asking for updates.
                 </p>
                 <ul className="space-y-3 text-left max-w-sm mx-auto lg:mx-0">
-                  {["Copy a direct tournament link", "Generate a QR code for check-in tables", "Embed a compact card on club pages"].map(item => (
-                    <li key={item} className="flex items-start gap-3 text-arena-text-muted text-sm">
-                      <CheckCircle2 size={16} className="text-arena-accent shrink-0 mt-0.5" />
+                  {[
+                    "Copy a direct tournament link",
+                    "Generate a QR code for check-in tables",
+                    "Embed a compact card on club pages",
+                  ].map((item) => (
+                    <li
+                      key={item}
+                      className="flex items-start gap-3 text-arena-text-muted text-sm"
+                    >
+                      <CheckCircle2
+                        size={16}
+                        className="text-arena-accent shrink-0 mt-0.5"
+                      />
                       {item}
                     </li>
                   ))}
@@ -4403,90 +5112,132 @@ export default function Landing() {
                 viewport={{ once: false, margin: "-80px" }}
                 transition={{ duration: 0.55, ease: "easeOut" }}
               >
-              <div className="w-full max-w-[280px] sm:max-w-[320px] lg:max-w-[340px] mx-auto rounded-[20px] border border-arena-border overflow-hidden shadow-[0_32px_80px_rgba(0,0,0,0.35)]" style={{ background: "var(--surface)" }}>
-                <div className="flex items-center gap-2 px-4 py-3 border-b border-arena-border">
-                  <div className="w-8 h-8 rounded-xl flex items-center justify-center text-arena-accent border border-arena-accent/30 shrink-0" style={{ background: "var(--accent-dim)" }}>
-                    <Zap size={13} />
-                  </div>
-                  <div className="flex-1 flex flex-col items-center min-w-0">
-                    <p className="text-[10px] font-bold uppercase tracking-[0.14em] text-arena-accent mb-1">Share Event</p>
-                    <p className="text-[11px] font-bold text-arena-text leading-tight text-center w-full truncate">UCF Knights Gold</p>
-                    <p className="text-[9px] font-semibold uppercase tracking-widest text-arena-text-muted my-0.5">vs</p>
-                    <p className="text-[11px] font-bold text-arena-text leading-tight text-center w-full truncate">USF Bulls Red</p>
-                  </div>
-                  <div className="w-7 h-7 rounded-lg border border-arena-border flex items-center justify-center text-arena-text-muted shrink-0" style={{ background: "var(--bg-3)" }}>
-                    <ArrowUpRight size={12} />
-                  </div>
-                </div>
-
-                <div className="flex gap-1 p-3 border-b border-arena-border" style={{ background: "var(--bg-2)" }}>
-                  {[
-                    { label: "QR Code", icon: QrCode, active: true },
-                    { label: "Link", icon: Link2, active: false },
-                    { label: "Widget", icon: Code2, active: false },
-                  ].map(tab => (
+                <div
+                  className="w-full max-w-[280px] sm:max-w-[320px] lg:max-w-[340px] mx-auto rounded-[20px] border border-arena-border overflow-hidden shadow-[0_32px_80px_rgba(0,0,0,0.35)]"
+                  style={{ background: "var(--surface)" }}
+                >
+                  <div className="flex items-center gap-2 px-4 py-3 border-b border-arena-border">
                     <div
-                      key={tab.label}
-                      className={`flex-1 inline-flex items-center justify-center gap-1.5 rounded-lg px-3 py-2 text-[11px] font-bold ${
-                        tab.active ? "text-arena-bg" : "text-arena-text-muted"
-                      }`}
-                      style={{ background: tab.active ? "var(--accent)" : "transparent" }}
+                      className="w-8 h-8 rounded-xl flex items-center justify-center text-arena-accent border border-arena-accent/30 shrink-0"
+                      style={{ background: "var(--accent-dim)" }}
                     >
-                      <tab.icon size={12} />
-                      {tab.label}
+                      <Zap size={13} />
                     </div>
-                  ))}
-                </div>
-
-                <div className="p-4">
-                  <div className="relative mx-auto mb-4 h-[140px] w-[140px] rounded-2xl border border-arena-border flex items-center justify-center" style={{ background: "var(--bg-2)" }}>
-                    <div className="absolute left-[-4px] top-[-4px] h-5 w-5 rounded-tl-md border-l-[2.5px] border-t-[2.5px] border-arena-accent" />
-                    <div className="absolute right-[-4px] top-[-4px] h-5 w-5 rounded-tr-md border-r-[2.5px] border-t-[2.5px] border-arena-accent" />
-                    <div className="absolute left-[-4px] bottom-[-4px] h-5 w-5 rounded-bl-md border-b-[2.5px] border-l-[2.5px] border-arena-accent" />
-                    <div className="absolute right-[-4px] bottom-[-4px] h-5 w-5 rounded-br-md border-b-[2.5px] border-r-[2.5px] border-arena-accent" />
-                    <div className="grid grid-cols-5 gap-[3px]">
-                      {Array.from({ length: 25 }).map((_, i) => (
-                        <span
-                          key={i}
-                          className="h-4 w-4 rounded-[3px]"
-                          style={{
-                            background:
-                              [0, 1, 4, 5, 6, 8, 10, 12, 14, 16, 18, 19, 20, 22, 24].includes(i)
-                                ? "var(--text)"
-                                : "rgba(127,127,127,0.15)",
-                          }}
-                        />
-                      ))}
+                    <div className="flex-1 flex flex-col items-center min-w-0">
+                      <p className="text-[10px] font-bold uppercase tracking-[0.14em] text-arena-accent mb-1">
+                        Share Event
+                      </p>
+                      <p className="text-[11px] font-bold text-arena-text leading-tight text-center w-full truncate">
+                        UCF Knights Gold
+                      </p>
+                      <p className="text-[9px] font-semibold uppercase tracking-widest text-arena-text-muted my-0.5">
+                        vs
+                      </p>
+                      <p className="text-[11px] font-bold text-arena-text leading-tight text-center w-full truncate">
+                        USF Bulls Red
+                      </p>
+                    </div>
+                    <div
+                      className="w-7 h-7 rounded-lg border border-arena-border flex items-center justify-center text-arena-text-muted shrink-0"
+                      style={{ background: "var(--bg-3)" }}
+                    >
+                      <ArrowUpRight size={12} />
                     </div>
                   </div>
 
-                  <p className="text-xs text-arena-text-muted text-center mb-4">Scan to open the live event page</p>
-
-                  <div className="rounded-xl border border-arena-border px-3 py-2.5 flex items-center gap-3 mb-4" style={{ background: "var(--bg-2)" }}>
-                    <Link2 size={13} className="text-arena-text-muted shrink-0" />
-                    <span className="text-[11px] text-arena-text truncate">arenaops.gg/tournaments/alpha-vs-beta</span>
-                    <span className="ml-auto shrink-0 rounded-lg px-2.5 py-1 text-[10px] font-bold text-arena-accent border border-arena-accent/30" style={{ background: "var(--accent-dim)" }}>
-                      Copy
-                    </span>
-                  </div>
-
-                  <div className="grid grid-cols-3 gap-2">
-                    {["Email", "Discord", "Copy Link"].map(action => (
+                  <div
+                    className="flex gap-1 p-3 border-b border-arena-border"
+                    style={{ background: "var(--bg-2)" }}
+                  >
+                    {[
+                      { label: "QR Code", icon: QrCode, active: true },
+                      { label: "Link", icon: Link2, active: false },
+                      { label: "Widget", icon: Code2, active: false },
+                    ].map((tab) => (
                       <div
-                        key={action}
-                        className="rounded-lg border border-arena-border px-3 py-2 text-center text-[11px] font-semibold text-arena-text-muted"
-                        style={{ background: "var(--bg-2)" }}
+                        key={tab.label}
+                        className={`flex-1 inline-flex items-center justify-center gap-1.5 rounded-lg px-3 py-2 text-[11px] font-bold ${
+                          tab.active ? "text-arena-bg" : "text-arena-text-muted"
+                        }`}
+                        style={{
+                          background: tab.active
+                            ? "var(--accent)"
+                            : "transparent",
+                        }}
                       >
-                        {action}
+                        <tab.icon size={12} />
+                        {tab.label}
                       </div>
                     ))}
                   </div>
+
+                  <div className="p-4">
+                    <div
+                      className="relative mx-auto mb-4 h-[140px] w-[140px] rounded-2xl border border-arena-border flex items-center justify-center"
+                      style={{ background: "var(--bg-2)" }}
+                    >
+                      <div className="absolute left-[-4px] top-[-4px] h-5 w-5 rounded-tl-md border-l-[2.5px] border-t-[2.5px] border-arena-accent" />
+                      <div className="absolute right-[-4px] top-[-4px] h-5 w-5 rounded-tr-md border-r-[2.5px] border-t-[2.5px] border-arena-accent" />
+                      <div className="absolute left-[-4px] bottom-[-4px] h-5 w-5 rounded-bl-md border-b-[2.5px] border-l-[2.5px] border-arena-accent" />
+                      <div className="absolute right-[-4px] bottom-[-4px] h-5 w-5 rounded-br-md border-b-[2.5px] border-r-[2.5px] border-arena-accent" />
+                      <div className="grid grid-cols-5 gap-[3px]">
+                        {Array.from({ length: 25 }).map((_, i) => (
+                          <span
+                            key={i}
+                            className="h-4 w-4 rounded-[3px]"
+                            style={{
+                              background: [
+                                0, 1, 4, 5, 6, 8, 10, 12, 14, 16, 18, 19, 20,
+                                22, 24,
+                              ].includes(i)
+                                ? "var(--text)"
+                                : "rgba(127,127,127,0.15)",
+                            }}
+                          />
+                        ))}
+                      </div>
+                    </div>
+
+                    <p className="text-xs text-arena-text-muted text-center mb-4">
+                      Scan to open the live event page
+                    </p>
+
+                    <div
+                      className="rounded-xl border border-arena-border px-3 py-2.5 flex items-center gap-3 mb-4"
+                      style={{ background: "var(--bg-2)" }}
+                    >
+                      <Link2
+                        size={13}
+                        className="text-arena-text-muted shrink-0"
+                      />
+                      <span className="text-[11px] text-arena-text truncate">
+                        arenaops.gg/tournaments/alpha-vs-beta
+                      </span>
+                      <span
+                        className="ml-auto shrink-0 rounded-lg px-2.5 py-1 text-[10px] font-bold text-arena-accent border border-arena-accent/30"
+                        style={{ background: "var(--accent-dim)" }}
+                      >
+                        Copy
+                      </span>
+                    </div>
+
+                    <div className="grid grid-cols-3 gap-2">
+                      {["Email", "Discord", "Copy Link"].map((action) => (
+                        <div
+                          key={action}
+                          className="rounded-lg border border-arena-border px-3 py-2 text-center text-[11px] font-semibold text-arena-text-muted"
+                          style={{ background: "var(--bg-2)" }}
+                        >
+                          {action}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
                 </div>
-              </div>
               </motion.div>
             </div>
-
-          </div>{/* end feature showcases */}
+          </div>
+          {/* end feature showcases */}
         </div>
       </section>
 
@@ -4511,61 +5262,97 @@ export default function Landing() {
             ))}
           </div>
           <FadeUp>
-          <div className="relative z-10">
-            <div className="relative inline-block">
-            <div className="pointer-events-none absolute inset-0">
-              <span className="absolute left-[-3.75rem] top-[30%] inline-flex -translate-x-3 -translate-y-1/2 opacity-0 transition-all duration-300 group-hover:translate-x-0 group-hover:opacity-100 sm:left-[-8rem]">
-                <svg viewBox="0 0 52 20" className="h-4 w-12 text-arena-accent/80 sm:h-5 sm:w-14" fill="none" aria-hidden="true">
-                  <path d="M2 10h38" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" />
-                  <path d="m34 4 8 6-8 6" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" />
-                </svg>
-              </span>
-              <span className="absolute right-[-3.75rem] top-[30%] inline-flex translate-x-3 -translate-y-1/2 opacity-0 transition-all duration-300 group-hover:translate-x-0 group-hover:opacity-100 sm:right-[-8rem]">
-                <svg viewBox="0 0 52 20" className="h-4 w-12 text-arena-accent/80 sm:h-5 sm:w-14" fill="none" aria-hidden="true">
-                  <path d="M50 10H12" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" />
-                  <path d="m18 4-8 6 8 6" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" />
-                </svg>
-              </span>
-            </div>
-            <h2
-              ref={ctaLevelRef}
-              className="font-display text-[2.15rem] sm:text-4xl md:text-5xl font-bold uppercase tracking-tight mb-4 flex flex-wrap items-end justify-center gap-x-2 sm:gap-x-3 gap-y-2 text-center leading-[0.95]"
-            >
-              <span>Ready to</span>
-              <motion.span
-                className="relative inline-flex items-end justify-center text-arena-accent leading-none cursor-pointer"
-                initial={{
-                  y: 0,
-                  scale: 1,
-                  textShadow: "0 0 0px rgba(var(--accent-rgb), 0)",
-                }}
-                animate={ctaLevelControls}
-                onClick={() => navigate("/register")}
-                role="link"
-                tabIndex={0}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter" || e.key === " ") {
-                    e.preventDefault();
-                    navigate("/register");
-                  }
-                }}
-              >
-                <span>level</span>
-                <motion.span
-                  className="absolute left-1/2 -top-8 sm:-top-10 inline-flex -translate-x-1/2"
-                  initial={{ y: 2, rotate: 0, opacity: 0.9 }}
-                  animate={ctaLevelArrowControls}
+            <div className="relative z-10">
+              <div className="relative inline-block">
+                <div className="pointer-events-none absolute inset-0">
+                  <span className="absolute left-[-3.75rem] top-[30%] inline-flex -translate-x-3 -translate-y-1/2 opacity-0 transition-all duration-300 group-hover:translate-x-0 group-hover:opacity-100 sm:left-[-8rem]">
+                    <svg
+                      viewBox="0 0 52 20"
+                      className="h-4 w-12 text-arena-accent/80 sm:h-5 sm:w-14"
+                      fill="none"
+                      aria-hidden="true"
+                    >
+                      <path
+                        d="M2 10h38"
+                        stroke="currentColor"
+                        strokeWidth="2.4"
+                        strokeLinecap="round"
+                      />
+                      <path
+                        d="m34 4 8 6-8 6"
+                        stroke="currentColor"
+                        strokeWidth="2.4"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      />
+                    </svg>
+                  </span>
+                  <span className="absolute right-[-3.75rem] top-[30%] inline-flex translate-x-3 -translate-y-1/2 opacity-0 transition-all duration-300 group-hover:translate-x-0 group-hover:opacity-100 sm:right-[-8rem]">
+                    <svg
+                      viewBox="0 0 52 20"
+                      className="h-4 w-12 text-arena-accent/80 sm:h-5 sm:w-14"
+                      fill="none"
+                      aria-hidden="true"
+                    >
+                      <path
+                        d="M50 10H12"
+                        stroke="currentColor"
+                        strokeWidth="2.4"
+                        strokeLinecap="round"
+                      />
+                      <path
+                        d="m18 4-8 6 8 6"
+                        stroke="currentColor"
+                        strokeWidth="2.4"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      />
+                    </svg>
+                  </span>
+                </div>
+                <h2
+                  ref={ctaLevelRef}
+                  className="font-display text-[2.15rem] sm:text-4xl md:text-5xl font-bold uppercase tracking-tight mb-4 flex flex-wrap items-end justify-center gap-x-2 sm:gap-x-3 gap-y-2 text-center leading-[0.95]"
                 >
-                  <ArrowUp size={18} strokeWidth={2.4} className="sm:h-5 sm:w-5" />
-                </motion.span>
-              </motion.span>
-              <span>up your events?</span>
-            </h2>
+                  <span>Ready to</span>
+                  <motion.span
+                    className="relative inline-flex items-end justify-center text-arena-accent leading-none cursor-pointer"
+                    initial={{
+                      y: 0,
+                      scale: 1,
+                      textShadow: "0 0 0px rgba(var(--accent-rgb), 0)",
+                    }}
+                    animate={ctaLevelControls}
+                    onClick={() => navigate("/register")}
+                    role="link"
+                    tabIndex={0}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter" || e.key === " ") {
+                        e.preventDefault();
+                        navigate("/register");
+                      }
+                    }}
+                  >
+                    <span>level</span>
+                    <motion.span
+                      className="absolute left-1/2 -top-8 sm:-top-10 inline-flex -translate-x-1/2"
+                      initial={{ y: 2, rotate: 0, opacity: 0.9 }}
+                      animate={ctaLevelArrowControls}
+                    >
+                      <ArrowUp
+                        size={18}
+                        strokeWidth={2.4}
+                        className="sm:h-5 sm:w-5"
+                      />
+                    </motion.span>
+                  </motion.span>
+                  <span>up your events?</span>
+                </h2>
+              </div>
+              <p className="text-arena-text-muted text-lg mb-8 max-w-xl mx-auto">
+                Join hundreds of clubs & organisations already using ArenaOPS.
+              </p>
             </div>
-            <p className="text-arena-text-muted text-lg mb-8 max-w-xl mx-auto">
-              Join hundreds of clubs & organisations already using ArenaOPS.
-            </p>
-          </div>
           </FadeUp>
         </Parallax>
       </section>

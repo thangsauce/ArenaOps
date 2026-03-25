@@ -118,9 +118,7 @@ export default function Schedule() {
     if (e.key !== "ArrowLeft" && e.key !== "ArrowRight") return;
     e.preventDefault();
     const nextIndex =
-      e.key === "ArrowRight"
-        ? (index + 1) % 2
-        : (index - 1 + 2) % 2;
+      e.key === "ArrowRight" ? (index + 1) % 2 : (index - 1 + 2) % 2;
     setView(nextIndex === 0 ? "grid" : "list");
     viewToggleRefs.current[nextIndex]?.focus();
   };
@@ -132,9 +130,7 @@ export default function Schedule() {
     if (e.key !== "ArrowLeft" && e.key !== "ArrowRight") return;
     e.preventDefault();
     const nextIndex =
-      e.key === "ArrowRight"
-        ? (index + 1) % 2
-        : (index - 1 + 2) % 2;
+      e.key === "ArrowRight" ? (index + 1) % 2 : (index - 1 + 2) % 2;
     dateNavRefs.current[nextIndex]?.focus();
   };
 
@@ -210,7 +206,11 @@ export default function Schedule() {
         <div className={styles.alertBar}>
           {liveMatches.length > 0 && (
             <div className={styles.alert} data-type="live">
-              <Radio size={14} className="animate-pulse" style={{ animationDuration: "2.2s" }} />
+              <Radio
+                size={14}
+                className="animate-pulse"
+                style={{ animationDuration: "2.2s" }}
+              />
               <strong>{liveMatches.length} live now</strong>
               {liveMatches.map((m) => (
                 <span key={m.id} className={styles.alertChip}>
@@ -672,7 +672,7 @@ export default function Schedule() {
                   }
                 }}
               />
-              <div className="absolute right-[88px] inset-y-0.5 flex flex-col justify-between py-[2px] opacity-0 group-hover:opacity-100 transition-opacity">
+              <div className="absolute right-22 inset-y-0.5 flex flex-col justify-between py-0.5 opacity-0 group-hover:opacity-100 transition-opacity">
                 <button
                   className="text-arena-text-muted hover:text-arena-text transition-colors p-0.5 rounded hover:bg-arena-surface"
                   onClick={(e) => {

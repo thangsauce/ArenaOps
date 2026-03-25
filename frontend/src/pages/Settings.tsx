@@ -97,7 +97,7 @@ function Dropdown<T extends string>({
       ref={ref}
     >
       <button
-        className={`w-full flex items-center justify-between px-3 py-2 bg-arena-surface-hover border ${open ? "border-arena-accent/50 bg-arena-accent/[0.04] shadow-[0_0_18px_rgba(var(--accent-rgb),0.14)]" : "border-arena-border"} hover:bg-arena-border rounded-xl transition-all text-left`}
+        className={`w-full flex items-center justify-between px-3 py-2 bg-arena-surface-hover border ${open ? "border-arena-accent/50 bg-arena-accent/4 shadow-[0_0_18px_rgba(var(--accent-rgb),0.14)]" : "border-arena-border"} hover:bg-arena-border rounded-xl transition-all text-left`}
         onClick={() => {
           if (!open) setFocusedIndex(Math.max(0, options.findIndex(o => o.value === value)));
           setOpen((o) => !o);
@@ -223,7 +223,7 @@ function Section({
       <button
         className={`w-full flex items-center justify-between p-4 data-[density=compact]:p-3 tracking-wide text-left transition-all duration-200 ${
           open
-            ? "bg-arena-accent/[0.08] border-b border-arena-accent/15 rounded-t-2xl"
+            ? "bg-arena-accent/8 border-b border-arena-accent/15 rounded-t-2xl"
             : "rounded-2xl"
         }`}
         onClick={() => setOpen((o) => !o)}
