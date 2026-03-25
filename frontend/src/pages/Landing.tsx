@@ -5322,7 +5322,7 @@ export default function Landing() {
                       />
                     </svg>
                   </span>
-                  <span className="absolute right-15 top-[30%] inline-flex translate-x-3 -translate-y-1/2 opacity-0 transition-all duration-300 group-hover:translate-x-0 group-hover:opacity-100 sm:right-[-8rem]">
+                  <span className="absolute right-15 top-[30%] inline-flex translate-x-3 -translate-y-1/2 opacity-0 transition-all duration-300 group-hover:translate-x-0 group-hover:opacity-100 sm:right-32">
                     <svg
                       viewBox="0 0 52 20"
                       className="h-4 w-12 text-arena-accent/80 sm:h-5 sm:w-14"
