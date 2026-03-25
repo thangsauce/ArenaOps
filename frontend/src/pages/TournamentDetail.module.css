@@ -1,0 +1,923 @@
+.page {
+  padding: 28px 40px;
+  width: 100%;
+  animation: fadeIn 0.3s ease;
+}
+
+
+.notFound { padding: 60px; text-align: center; color: var(--text-2); }
+
+.topBar { margin-bottom: 20px; }
+
+.back {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.82rem;
+  color: var(--text-2);
+  transition: color 0.15s;
+}
+.back:hover { color: var(--text); }
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 20px;
+  padding-bottom: 24px;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 28px;
+}
+
+.title {
+  font-family: var(--font-display);
+  font-size: 2.4rem;
+  letter-spacing: 0.02em;
+  color: var(--text);
+  line-height: 1;
+}
+
+.sub {
+  margin-top: 6px;
+  font-size: 0.85rem;
+  color: var(--text-2);
+  text-transform: capitalize;
+}
+
+.headerRight {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 10px;
+}
+
+.headerMeta {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 6px;
+}
+
+.headerActions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.shareBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  padding: 8px 16px;
+  border-radius: var(--radius-sm);
+  background: var(--accent-dim);
+  border: 1px solid var(--accent);
+  color: var(--accent);
+  transition: background 0.15s, transform 0.15s;
+  cursor: pointer;
+}
+.shareBtn:hover { background: var(--accent); color: var(--accent-fg); transform: translateY(-1px); }
+
+.metaItem {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.8rem;
+  color: var(--text-2);
+}
+
+.content { display: flex; flex-direction: column; gap: 36px; }
+
+.sectionTitle {
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-3);
+  margin-bottom: 14px;
+}
+
+/* ── Bracket header & view switcher ── */
+.bracketHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+.bracketHeader .sectionTitle { margin-bottom: 0; }
+
+.viewSwitcher {
+  display: flex;
+  background: var(--surface);
+  border: 1px solid var(--border-2);
+  border-radius: var(--radius-sm);
+  padding: 3px;
+  gap: 2px;
+}
+
+.viewBtn {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--text-3);
+  padding: 5px 10px;
+  border-radius: calc(var(--radius-sm) - 2px);
+  transition: background 0.15s, color 0.15s;
+}
+.viewBtn:hover { color: var(--text); background: var(--bg-3); }
+.viewBtnActive { background: var(--accent) !important; color: var(--accent-fg) !important; }
+
+/* ── Flow View ── */
+.bracket {
+  display: flex;
+  gap: 20px;
+  overflow-x: auto;
+  padding-bottom: 8px;
+}
+
+.round { min-width: 200px; }
+.championColumn {
+  min-width: 220px;
+  display: flex;
+  flex-direction: column;
+}
+
+.roundLabel {
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-3);
+  margin-bottom: 10px;
+}
+
+.roundMatches { display: flex; flex-direction: column; gap: 10px; }
+.championCard {
+  background: linear-gradient(180deg, color-mix(in srgb, var(--accent) 12%, var(--surface)), var(--surface));
+  border: 1px solid rgba(var(--accent-rgb), 0.28);
+  border-radius: var(--radius);
+  padding: 14px 16px;
+  box-shadow: 0 0 0 1px rgba(var(--accent-rgb), 0.06), 0 10px 24px rgba(var(--accent-rgb), 0.08);
+}
+.championEyebrow {
+  display: inline-flex;
+  font-size: 0.66rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 10px;
+}
+.championBody {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.championInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+.championTitle {
+  font-size: 0.72rem;
+  color: var(--text-3);
+}
+.championName {
+  font-size: 0.92rem;
+  font-weight: 700;
+  color: var(--text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.matchCard {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 12px 14px;
+  transition: border-color 0.15s;
+}
+
+.matchCardCompact {
+  padding: 9px 10px;
+}
+
+.matchCardCompact .matchHeader {
+  margin-bottom: 6px;
+}
+
+.matchCardCompact .matchups {
+  gap: 2px;
+}
+
+.matchCardCompact .matchup {
+  padding: 3px 5px;
+}
+
+.matchCardCompact .participantName {
+  font-size: 0.74rem;
+}
+
+.matchCardCompact .score {
+  font-size: 0.9rem;
+}
+
+.matchLive {
+  border-color: rgba(255,71,87,0.4);
+  background: rgba(255,71,87,0.04);
+}
+
+.matchHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.matchNum {
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  color: var(--text-3);
+}
+
+.matchStatus {
+  font-size: 0.68rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  border: 1px solid transparent;
+  border-radius: 999px;
+  padding: 3px 8px;
+}
+
+.liveDot {
+  width: 5px;
+  height: 5px;
+  background: var(--red);
+  border-radius: 50%;
+  animation: pulse 1.5s infinite;
+}
+
+
+.matchups { display: flex; flex-direction: column; gap: 4px; }
+
+.vs {
+  font-size: 0.6rem;
+  font-weight: 700;
+  color: var(--text-3);
+  text-align: center;
+  letter-spacing: 0.1em;
+}
+
+.matchup {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+  padding: 4px 6px;
+  border-radius: 4px;
+  transition: background 0.1s;
+}
+
+.winner {
+  background: var(--accent-dim);
+}
+
+.winner .participantName { color: var(--accent); font-weight: 600; }
+
+.participantName {
+  font-size: 0.8rem;
+  color: var(--text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  flex: 1;
+  min-width: 0;
+}
+.participantNameButton {
+  display: block;
+  width: 100%;
+  font: inherit;
+  line-height: inherit;
+  font-size: 0.8rem;
+  color: var(--text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  flex: 1;
+  min-width: 0;
+  text-align: left;
+  background: transparent;
+  border: none;
+  padding: 0;
+  margin: 0;
+  cursor: pointer;
+  appearance: none;
+}
+.participantNameButton:hover,
+.participantNameButton:focus-visible {}
+
+.score {
+  font-family: var(--font-display);
+  font-size: 1rem;
+  color: var(--text);
+  min-width: 24px;
+  text-align: center;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+.inlineScoreControl {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  margin-left: auto;
+  justify-content: flex-end;
+  min-width: 68px;
+  align-self: center;
+}
+.inlineScoreBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  border-radius: 999px;
+  border: 1px solid var(--border-2);
+  background: var(--surface);
+  color: var(--text-2);
+  font-size: 0.85rem;
+  font-weight: 700;
+  line-height: 1;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+.inlineScoreBtn:hover {
+  border-color: var(--accent);
+  color: var(--text);
+}
+.matchCardActions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 10px;
+}
+.matchActionBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 6px 10px;
+  border-radius: var(--radius-sm);
+  border: 1px solid rgba(var(--accent-rgb), 0.24);
+  background: var(--accent-dim);
+  color: var(--accent);
+  font-size: 0.72rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+.matchActionBtn:hover {
+  background: color-mix(in srgb, var(--accent-dim) 55%, var(--surface));
+}
+.matchActionBtnPrimary {
+  color: var(--red);
+  border-color: rgba(255, 71, 87, 0.28);
+  background: rgba(255, 71, 87, 0.08);
+}
+.matchActionBtnPrimary:hover {
+  background: rgba(255, 71, 87, 0.14);
+}
+
+/* ── Tree View ── */
+.treeBracketScroll {
+  overflow-x: auto;
+  padding: 4px 0 16px;
+}
+
+.treeBracket {
+  display: flex;
+  gap: 44px; /* must match COL_GAP constant */
+  align-items: flex-start;
+  min-width: max-content;
+  padding: 0 2px;
+}
+
+.treeRound {
+  min-width: 206px;
+  position: relative;
+  overflow: visible;
+}
+.treeChampionColumn {
+  min-width: 220px;
+  display: flex;
+  flex-direction: column;
+}
+.treeChampionSlot {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  position: relative;
+}
+.treeChampionConnector {
+  position: absolute;
+  left: -44px;
+  top: 50%;
+  width: 44px;
+  height: 2px;
+  background: color-mix(in srgb, var(--accent) 26%, var(--text) 74%);
+  box-shadow: 0 0 6px color-mix(in srgb, var(--accent) 12%, transparent);
+  transform: translateY(-50%);
+}
+.treeChampionCardWrap {
+  width: 100%;
+  position: relative;
+  z-index: 1;
+}
+
+.treeRoundBody {
+  display: grid;
+  position: relative;
+}
+
+.treeMatchSlot {
+  display: flex;
+  align-items: center;
+  position: relative;
+}
+
+.treeMatchCardWrap {
+  width: 100%;
+  position: relative;
+  z-index: 1;
+}
+
+.matchCardCompact .matchCardActions {
+  margin-top: 6px;
+}
+
+.matchCardCompact .matchActionBtn {
+  padding: 5px 8px;
+  font-size: 0.68rem;
+}
+
+.treeConnectorLeft,
+.treeConnectorExit,
+.treeConnectorVertical {
+  position: absolute;
+  background: color-mix(in srgb, var(--accent) 26%, var(--text) 74%);
+  box-shadow: 0 0 6px color-mix(in srgb, var(--accent) 12%, transparent);
+  pointer-events: none;
+}
+
+.treeConnectorLeft,
+.treeConnectorExit {
+  top: 50%;
+  height: 2px;
+}
+
+.treeConnectorRight {
+  position: absolute;
+  top: 0;
+  height: 100%;
+  pointer-events: none;
+}
+
+.treeConnectorVertical {
+  width: 2px;
+}
+
+/* ── List View ── */
+.listView { display: flex; flex-direction: column; gap: 20px; }
+
+.listRoundLabel {
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-3);
+  margin-bottom: 8px;
+  padding-bottom: 6px;
+  border-bottom: 1px solid var(--border);
+}
+
+.listMatches { display: flex; flex-direction: column; gap: 6px; }
+
+.listMatchRow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 10px 14px;
+  transition: border-color 0.15s;
+}
+.listMatchLive { border-color: rgba(255, 71, 87, 0.4); background: rgba(255, 71, 87, 0.03); }
+
+.listMatchNum {
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  color: var(--text-3);
+  min-width: 26px;
+}
+
+.listParticipant {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  flex: 1;
+  padding: 3px 6px;
+  border-radius: 6px;
+  transition: background 0.1s;
+}
+.listParticipantTop {}
+.listParticipantBottom {}
+.listParticipant .inlineScoreControl {
+  min-height: 24px;
+}
+.listWinner { background: var(--accent-dim); }
+.listWinner .listName { color: var(--accent); font-weight: 600; }
+
+.listName {
+  font-size: 0.82rem;
+  color: var(--text);
+  flex: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.listNameButton {
+  display: block;
+  width: 100%;
+  font: inherit;
+  line-height: inherit;
+  font-size: 0.82rem;
+  color: var(--text);
+  flex: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  text-align: left;
+  background: transparent;
+  border: none;
+  padding: 0;
+  margin: 0;
+  cursor: pointer;
+  appearance: none;
+}
+.listNameButton:hover,
+.listNameButton:focus-visible {}
+
+.listScore {
+  font-family: var(--font-display);
+  font-size: 1rem;
+  color: var(--text);
+  min-width: 24px;
+  text-align: center;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.listVs {
+  font-size: 0.6rem;
+  font-weight: 700;
+  color: var(--text-3);
+  letter-spacing: 0.1em;
+  flex-shrink: 0;
+}
+
+.listStatus {
+  font-size: 0.68rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex-shrink: 0;
+  min-width: 58px;
+  justify-content: center;
+  border: 1px solid transparent;
+  border-radius: 999px;
+  padding: 4px 8px;
+}
+.listRowActions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  flex-shrink: 0;
+}
+
+/* ── Participants ── */
+.participantList { display: flex; flex-direction: column; gap: 6px; }
+.teamCard {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+}
+.teamHeader {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 14px;
+  text-align: left;
+}
+.teamIdentity {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+.teamInfo {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+.teamName {
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.teamMeta {
+  font-size: 0.72rem;
+  color: var(--text-3);
+}
+.teamHeaderRight {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+}
+.teamChevron {
+  color: var(--text-3);
+  transition: transform 0.2s ease, color 0.15s ease;
+}
+.teamChevronOpen {
+  transform: rotate(180deg);
+  color: var(--text);
+}
+.teamMembers {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 0 10px 10px;
+  border-top: 1px solid var(--border);
+  background: color-mix(in srgb, var(--surface) 88%, var(--bg-3));
+}
+
+.logoHint {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.72rem;
+  color: var(--text-3);
+}
+
+.participantRow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 9px 14px;
+}
+.teamMembers .participantRow {
+  background: var(--bg-3);
+}
+
+/* Avatar upload button */
+.avatarBtn {
+  position: relative;
+  cursor: pointer;
+  border-radius: 50%;
+  flex-shrink: 0;
+  display: flex;
+}
+.avatarOverlay {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.55);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  opacity: 0;
+  transition: opacity 0.15s;
+}
+.avatarBtn:hover .avatarOverlay { opacity: 1; }
+
+.seed {
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: var(--text-3);
+  min-width: 24px;
+  font-family: var(--font-display);
+}
+
+.participantInfo {
+  flex: 1;
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  min-width: 0;
+}
+.participantName2 {
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: var(--text);
+  line-height: 1.15;
+  white-space: nowrap;
+}
+.participantEmail {
+  font-size: 0.72rem;
+  color: var(--text-3);
+  line-height: 1.2;
+  white-space: nowrap;
+}
+
+.availBadge {
+  font-size: 0.7rem;
+  color: var(--text-3);
+  background: var(--bg-3);
+  padding: 2px 8px;
+  border-radius: 20px;
+}
+
+.empty {
+  font-size: 0.85rem;
+  color: var(--text-3);
+  background: var(--surface);
+  border: 1px dashed var(--border-2);
+  border-radius: var(--radius);
+  padding: 20px;
+  text-align: center;
+}
+
+/* Locations */
+.locationGrid { display: flex; flex-direction: column; gap: 8px; }
+
+.locationCard {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 10px 14px;
+  color: var(--text-2);
+}
+
+.unavailable { opacity: 0.5; }
+
+.locName { font-size: 0.85rem; font-weight: 500; color: var(--text); }
+.locBuilding { font-size: 0.72rem; color: var(--text-3); }
+.locStatus { margin-left: auto; font-size: 0.72rem; font-weight: 600; }
+
+@media (max-width: 768px) {
+  .page {
+    padding: 20px 16px;
+  }
+
+  .header {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 14px;
+    padding-bottom: 18px;
+    margin-bottom: 22px;
+  }
+
+  .headerRight,
+  .headerMeta {
+    align-items: flex-start;
+  }
+
+  .headerActions {
+    width: 100%;
+  }
+
+  .headerActions .shareBtn:last-child {
+    margin-left: auto;
+  }
+
+  .bracketHeader {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .viewSwitcher {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .viewBtn {
+    flex: 1;
+    justify-content: center;
+    padding: 8px 10px;
+  }
+
+  .listView {
+    gap: 16px;
+  }
+
+  .listRoundLabel {
+    margin-bottom: 10px;
+  }
+
+  .listMatches {
+    gap: 10px;
+  }
+
+  .listMatchRow {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    grid-template-areas:
+      "match status"
+      "p1 p1"
+      "vs vs"
+      "p2 p2";
+    align-items: stretch;
+    gap: 10px;
+    padding: 12px;
+  }
+
+  .listMatchNum {
+    grid-area: match;
+    min-width: 0;
+  }
+
+  .listStatus {
+    grid-area: status;
+    justify-self: end;
+    min-width: 0;
+  }
+
+  .listRowActions {
+    grid-column: 1 / -1;
+    justify-content: stretch;
+  }
+
+  .matchActionBtn {
+    width: 100%;
+  }
+
+  .listParticipant {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    align-items: center;
+    width: 100%;
+    box-sizing: border-box;
+    padding: 8px 10px;
+  }
+
+  .listParticipant .inlineScoreControl,
+  .listParticipant .listScore {
+    justify-self: end;
+    margin-left: 0;
+    flex-shrink: 0;
+  }
+
+  .listParticipant .inlineScoreControl {
+    width: 68px;
+    min-width: 68px;
+    justify-content: center;
+  }
+
+  .listName,
+  .listNameButton {
+    min-width: 0;
+  }
+
+  .listParticipantTop {
+    grid-area: p1;
+  }
+
+  .listParticipantBottom {
+    grid-area: p2;
+  }
+
+  .listVs {
+    grid-area: vs;
+    justify-self: center;
+  }
+
+  .listName {
+    font-size: 0.78rem;
+  }
+}

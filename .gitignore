@@ -1,0 +1,19 @@
+# Workspace-level dependencies/build output
+/node_modules/
+/dist/
+/.vite/
+
+# Backend local files
+/backend/node_modules/
+/backend/.env
+/backend/.env.local
+/backend/.env.*.local
+
+# Logs
+*.log
+npm-debug.log*
+
+# OS/editor
+.DS_Store
+.vscode/
+.superpowers/
