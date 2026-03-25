@@ -48,7 +48,11 @@ function Parallax({
   offset?: number;
   className?: string;
 } & React.HTMLAttributes<HTMLDivElement>) {
-  return <div className={className} {...props}>{children}</div>;
+  return (
+    <div className={className} {...props}>
+      {children}
+    </div>
+  );
 }
 import valorantLogo from "../assets/game-logos/valorant-icon.png";
 import leagueOfLegendsLogo from "../assets/game-logos/league-of-legends-icon.png";
@@ -592,13 +596,7 @@ function renderGameWatermark(game: Game) {
             strokeLinecap="round"
             opacity="0.34"
           />
-          <circle
-            cx="72"
-            cy="34"
-            r="3"
-            fill="currentColor"
-            opacity="0.34"
-          />
+          <circle cx="72" cy="34" r="3" fill="currentColor" opacity="0.34" />
           <circle cx="88" cy="34" r="3" fill="currentColor" opacity="0.34" />
         </>
       ),
@@ -1215,7 +1213,10 @@ function getBrowseCardWatermarkVariants(game: Game): Variants {
   let seed = 0;
   for (const char of game.name) seed += char.charCodeAt(0);
 
-  const categoryTuning: Record<Game["category"], { x: number; y: number; rotate: number; duration: number }> = {
+  const categoryTuning: Record<
+    Game["category"],
+    { x: number; y: number; rotate: number; duration: number }
+  > = {
     "E-Sports": { x: 13, y: 10, rotate: 13, duration: 4.8 },
     Sports: { x: 15, y: 8, rotate: 10, duration: 5.2 },
     Board: { x: 9, y: 7, rotate: 8, duration: 6.2 },
@@ -1233,18 +1234,23 @@ function getBrowseCardWatermarkVariants(game: Game): Variants {
   const yTrail = 2 + ((seed >> 3) % 5);
   const rotateLead = tuning.rotate + ((seed >> 4) % 6);
   const rotateTrail = 3 + ((seed >> 5) % 6);
-  const scalePeak = 1.1 + ((seed % 9) * 0.012);
-  const scaleMid = 0.97 + (((seed >> 2) % 6) * 0.01);
-  const scaleFloor = 0.92 + (((seed >> 3) % 4) * 0.01);
-  const opacityPeak = 0.92 + (((seed >> 1) % 4) * 0.02);
-  const opacityMid = 0.76 + (((seed >> 2) % 5) * 0.02);
-  const opacityFloor = 0.66 + (((seed >> 4) % 5) * 0.02);
-  const duration = tuning.duration + ((seed % 7) * 0.22);
-  const hoverDuration = 0.8 + ((seed % 4) * 0.07);
+  const scalePeak = 1.1 + (seed % 9) * 0.012;
+  const scaleMid = 0.97 + ((seed >> 2) % 6) * 0.01;
+  const scaleFloor = 0.92 + ((seed >> 3) % 4) * 0.01;
+  const opacityPeak = 0.92 + ((seed >> 1) % 4) * 0.02;
+  const opacityMid = 0.76 + ((seed >> 2) % 5) * 0.02;
+  const opacityFloor = 0.66 + ((seed >> 4) % 5) * 0.02;
+  const duration = tuning.duration + (seed % 7) * 0.22;
+  const hoverDuration = 0.8 + (seed % 4) * 0.07;
   const patterns = [
     {
       idle: {
-        rotate: [0, rotateLead * directionRotate, -rotateTrail * directionRotate, 0],
+        rotate: [
+          0,
+          rotateLead * directionRotate,
+          -rotateTrail * directionRotate,
+          0,
+        ],
         scale: [scaleFloor, scalePeak, scaleMid, scaleFloor],
         x: [0, xLead * directionX, -xTrail * directionX, 0],
         y: [0, -yLead * directionY, yTrail * directionY, 0],
@@ -1258,13 +1264,22 @@ function getBrowseCardWatermarkVariants(game: Game): Variants {
     },
     {
       idle: {
-        rotate: [-rotateTrail * directionRotate, -2 * directionRotate, rotateLead * directionRotate, -rotateTrail * directionRotate],
+        rotate: [
+          -rotateTrail * directionRotate,
+          -2 * directionRotate,
+          rotateLead * directionRotate,
+          -rotateTrail * directionRotate,
+        ],
         scale: [scaleMid, scaleFloor, scalePeak, scaleMid],
         x: [0, -(xTrail + 2) * directionX, xLead * directionX, 0],
         y: [0, yTrail * directionY, -(yLead + 2) * directionY, 0],
       },
       hover: {
-        rotate: [-rotateTrail * directionRotate, (rotateLead + 5) * directionRotate, 3 * directionRotate],
+        rotate: [
+          -rotateTrail * directionRotate,
+          (rotateLead + 5) * directionRotate,
+          3 * directionRotate,
+        ],
         scale: [scaleFloor, Math.min(scalePeak + 0.1, 1.25), scalePeak],
         x: [0, -(xTrail + 5) * directionX, 4 * directionX],
         y: [0, (yTrail + 3) * directionY, -3 * directionY],
@@ -1272,13 +1287,23 @@ function getBrowseCardWatermarkVariants(game: Game): Variants {
     },
     {
       idle: {
-        rotate: [3 * directionRotate, 0, -rotateTrail * directionRotate, rotateLead * directionRotate, 3 * directionRotate],
+        rotate: [
+          3 * directionRotate,
+          0,
+          -rotateTrail * directionRotate,
+          rotateLead * directionRotate,
+          3 * directionRotate,
+        ],
         scale: [scaleFloor, scaleMid, scalePeak, scaleMid, scaleFloor],
         x: [0, xTrail * directionX, 0, -xLead * directionX, 0],
         y: [0, -3 * directionY, -yLead * directionY, 2 * directionY, 0],
       },
       hover: {
-        rotate: [0, -(rotateTrail + 2) * directionRotate, (rotateLead + 5) * directionRotate],
+        rotate: [
+          0,
+          -(rotateTrail + 2) * directionRotate,
+          (rotateLead + 5) * directionRotate,
+        ],
         scale: [scaleMid, Math.min(scalePeak + 0.09, 1.23), scalePeak],
         x: [0, (xTrail + 4) * directionX, -(xLead - 2) * directionX],
         y: [0, -(yLead + 2) * directionY, 1 * directionY],
@@ -1286,7 +1311,13 @@ function getBrowseCardWatermarkVariants(game: Game): Variants {
     },
     {
       idle: {
-        rotate: [-2 * directionRotate, rotateLead * directionRotate, 1 * directionRotate, -(rotateTrail + 1) * directionRotate, -2 * directionRotate],
+        rotate: [
+          -2 * directionRotate,
+          rotateLead * directionRotate,
+          1 * directionRotate,
+          -(rotateTrail + 1) * directionRotate,
+          -2 * directionRotate,
+        ],
         scale: [scaleFloor, scalePeak, scaleFloor + 0.02, scaleMid, scaleFloor],
         x: [0, 0, xLead * directionX, -xTrail * directionX, 0],
         y: [0, -(yLead + 2) * directionY, 0, yTrail * directionY, 0],
@@ -2734,7 +2765,7 @@ function FormatPreview({ format }: { format: string }) {
             </div>
           </motion.div>
           <motion.div
-            className="h-[2px] w-6 origin-left rounded-full bg-arena-accent/40"
+            className="h-0.5 w-6 origin-left rounded-full bg-arena-accent/40"
             initial={{ scaleX: 0, opacity: 0 }}
             animate={{ scaleX: 1, opacity: 1 }}
             transition={{ duration: 0.85, delay: 1.85, ease }}
@@ -3598,34 +3629,37 @@ export default function Landing() {
   const ctaLevelArrowControls = useAnimationControls();
   const [ctaLevelHovered, setCtaLevelHovered] = useState(false);
 
-  const playCtaLevelAnimation = (repeat = 0) => {
-    void ctaLevelControls.start({
-      y: [0, -10, 0],
-      scale: [1, 1.06, 1],
-      textShadow: [
-        "0 0 0px rgba(var(--accent-rgb), 0)",
-        "0 0 18px rgba(var(--accent-rgb), 0.35)",
-        "0 0 0px rgba(var(--accent-rgb), 0)",
-      ],
-      transition: {
-        duration: 0.75,
-        ease: "easeOut",
-        repeat,
-        repeatDelay: 0.12,
-      },
-    });
-    void ctaLevelArrowControls.start({
-      y: [2, -8, 2],
-      rotate: [0, 0, 0],
-      opacity: [0.85, 1, 0.9],
-      transition: {
-        duration: 0.75,
-        ease: "easeOut",
-        repeat,
-        repeatDelay: 0.12,
-      },
-    });
-  };
+  const playCtaLevelAnimation = React.useCallback(
+    (repeat = 0) => {
+      void ctaLevelControls.start({
+        y: [0, -10, 0],
+        scale: [1, 1.06, 1],
+        textShadow: [
+          "0 0 0px rgba(var(--accent-rgb), 0)",
+          "0 0 18px rgba(var(--accent-rgb), 0.35)",
+          "0 0 0px rgba(var(--accent-rgb), 0)",
+        ],
+        transition: {
+          duration: 0.75,
+          ease: "easeOut",
+          repeat,
+          repeatDelay: 0.12,
+        },
+      });
+      void ctaLevelArrowControls.start({
+        y: [2, -8, 2],
+        rotate: [0, 0, 0],
+        opacity: [0.85, 1, 0.9],
+        transition: {
+          duration: 0.75,
+          ease: "easeOut",
+          repeat,
+          repeatDelay: 0.12,
+        },
+      });
+    },
+    [ctaLevelControls, ctaLevelArrowControls],
+  );
 
   useEffect(() => {
     if (ctaLevelHovered) {
@@ -3653,6 +3687,7 @@ export default function Landing() {
     ctaLevelInView,
     ctaLevelControls,
     ctaLevelArrowControls,
+    playCtaLevelAnimation,
   ]);
 
   const filteredGames = games.filter((g) => g.category === activeCategory);
@@ -3910,7 +3945,7 @@ export default function Landing() {
                 </p>
               </div>
               <div
-                className="rounded-[24px] border p-4"
+                className="rounded-3xl border p-4"
                 style={{
                   background:
                     "linear-gradient(135deg, color-mix(in srgb, var(--accent) 10%, transparent), color-mix(in srgb, var(--surface) 88%, transparent))",
@@ -4220,11 +4255,11 @@ export default function Landing() {
                       className={`pointer-events-none absolute inset-0 transition-opacity duration-300 ${mobileClubCracked ? "opacity-100" : "opacity-0"}`}
                       aria-hidden="true"
                     >
-                      <span className="absolute left-[18%] top-[58%] h-[2px] w-[26%] -rotate-[26deg] rounded-full bg-arena-bg/65" />
-                      <span className="absolute left-[40%] top-[46%] h-[2px] w-[18%] rotate-[58deg] rounded-full bg-arena-bg/65" />
-                      <span className="absolute left-[52%] top-[60%] h-[2px] w-[24%] -rotate-[18deg] rounded-full bg-arena-bg/65" />
-                      <span className="absolute left-[31%] top-[52%] h-[1px] w-[13%] rotate-[24deg] rounded-full bg-white/30" />
-                      <span className="absolute left-[59%] top-[50%] h-[1px] w-[12%] -rotate-[42deg] rounded-full bg-white/25" />
+                      <span className="absolute left-[18%] top-[58%] h-0.5 w-[26%] -rotate-26 rounded-full bg-arena-bg/65" />
+                      <span className="absolute left-[40%] top-[46%] h-0.5 w-[18%] rotate-[58 rounded-full bg-arena-bg/65" />
+                      <span className="absolute left-[52%] top-[60%] h-0.5 w-[24%] -rotate-18 rounded-full bg-arena-bg/65" />
+                      <span className="absolute left-[31%] top-[52%] h-px w-[13%] rotate-24 rounded-full bg-white/30" />
+                      <span className="absolute left-[59%] top-[50%] h-px w-[12%] -rotate-42 rounded-full bg-white/25" />
                     </span>
                   </span>
                 </motion.span>
@@ -4383,11 +4418,11 @@ export default function Landing() {
                       className={`pointer-events-none absolute inset-0 transition-opacity duration-300 ${clubCracked ? "opacity-100" : "opacity-0"}`}
                       aria-hidden="true"
                     >
-                      <span className="absolute left-[16%] top-[58%] h-[2.5px] w-[28%] -rotate-[26deg] rounded-full bg-arena-bg/65" />
-                      <span className="absolute left-[41%] top-[44%] h-[2.5px] w-[18%] rotate-[60deg] rounded-full bg-arena-bg/65" />
-                      <span className="absolute left-[54%] top-[60%] h-[2.5px] w-[24%] -rotate-[18deg] rounded-full bg-arena-bg/65" />
-                      <span className="absolute left-[31%] top-[50%] h-[1.5px] w-[13%] rotate-[24deg] rounded-full bg-white/30" />
-                      <span className="absolute left-[60%] top-[48%] h-[1.5px] w-[12%] -rotate-[42deg] rounded-full bg-white/25" />
+                      <span className="absolute left-[16%] top-[58%] h-[2.5px] w-[28%] -rotate-26 rounded-full bg-arena-bg/65" />
+                      <span className="absolute left-[41%] top-[44%] h-[2.5px] w-[18%] rotate-60 rounded-full bg-arena-bg/65" />
+                      <span className="absolute left-[54%] top-[60%] h-[2.5px] w-[24%] -rotate-18 rounded-full bg-arena-bg/65" />
+                      <span className="absolute left-[31%] top-[50%] h-[1.5px] w-[13%] rotate-24 rounded-full bg-white/30" />
+                      <span className="absolute left-[60%] top-[48%] h-[1.5px] w-[12%] -rotate-42 rounded-full bg-white/25" />
                     </span>
                   </span>
                 </motion.span>
@@ -5113,7 +5148,7 @@ export default function Landing() {
                 transition={{ duration: 0.55, ease: "easeOut" }}
               >
                 <div
-                  className="w-full max-w-[280px] sm:max-w-[320px] lg:max-w-[340px] mx-auto rounded-[20px] border border-arena-border overflow-hidden shadow-[0_32px_80px_rgba(0,0,0,0.35)]"
+                  className="w-full max-w-70 sm:max-w-[320px] lg:max-w-85 mx-auto rounded-[20px] border border-arena-border overflow-hidden shadow-[0_32px_80px_rgba(0,0,0,0.35)]"
                   style={{ background: "var(--surface)" }}
                 >
                   <div className="flex items-center gap-2 px-4 py-3 border-b border-arena-border">
@@ -5173,14 +5208,14 @@ export default function Landing() {
 
                   <div className="p-4">
                     <div
-                      className="relative mx-auto mb-4 h-[140px] w-[140px] rounded-2xl border border-arena-border flex items-center justify-center"
+                      className="relative mx-auto mb-4 h-35 w-35 rounded-2xl border border-arena-border flex items-center justify-center"
                       style={{ background: "var(--bg-2)" }}
                     >
-                      <div className="absolute left-[-4px] top-[-4px] h-5 w-5 rounded-tl-md border-l-[2.5px] border-t-[2.5px] border-arena-accent" />
-                      <div className="absolute right-[-4px] top-[-4px] h-5 w-5 rounded-tr-md border-r-[2.5px] border-t-[2.5px] border-arena-accent" />
-                      <div className="absolute left-[-4px] bottom-[-4px] h-5 w-5 rounded-bl-md border-b-[2.5px] border-l-[2.5px] border-arena-accent" />
-                      <div className="absolute right-[-4px] bottom-[-4px] h-5 w-5 rounded-br-md border-b-[2.5px] border-r-[2.5px] border-arena-accent" />
-                      <div className="grid grid-cols-5 gap-[3px]">
+                      <div className="absolute left-1 top-1 h-5 w-5 rounded-tl-md border-l-[2.5px] border-t-[2.5px] border-arena-accent" />
+                      <div className="absolute right-1 top-1 h-5 w-5 rounded-tr-md border-r-[2.5px] border-t-[2.5px] border-arena-accent" />
+                      <div className="absolute left-1 bottom-1 h-5 w-5 rounded-bl-md border-b-[2.5px] border-l-[2.5px] border-arena-accent" />
+                      <div className="absolute right-1 bottom-1 h-5 w-5 rounded-br-md border-b-[2.5px] border-r-[2.5px] border-arena-accent" />
+                      <div className="grid grid-cols-5 gap-0.75">
                         {Array.from({ length: 25 }).map((_, i) => (
                           <span
                             key={i}
@@ -5265,7 +5300,7 @@ export default function Landing() {
             <div className="relative z-10">
               <div className="relative inline-block">
                 <div className="pointer-events-none absolute inset-0">
-                  <span className="absolute left-[-3.75rem] top-[30%] inline-flex -translate-x-3 -translate-y-1/2 opacity-0 transition-all duration-300 group-hover:translate-x-0 group-hover:opacity-100 sm:left-[-8rem]">
+                  <span className="absolute left-15 top-[30%] inline-flex -translate-x-3 -translate-y-1/2 opacity-0 transition-all duration-300 group-hover:translate-x-0 group-hover:opacity-100 sm:left-32">
                     <svg
                       viewBox="0 0 52 20"
                       className="h-4 w-12 text-arena-accent/80 sm:h-5 sm:w-14"
@@ -5287,7 +5322,7 @@ export default function Landing() {
                       />
                     </svg>
                   </span>
-                  <span className="absolute right-[-3.75rem] top-[30%] inline-flex translate-x-3 -translate-y-1/2 opacity-0 transition-all duration-300 group-hover:translate-x-0 group-hover:opacity-100 sm:right-[-8rem]">
+                  <span className="absolute right-15 top-[30%] inline-flex translate-x-3 -translate-y-1/2 opacity-0 transition-all duration-300 group-hover:translate-x-0 group-hover:opacity-100 sm:right-[-8rem]">
                     <svg
                       viewBox="0 0 52 20"
                       className="h-4 w-12 text-arena-accent/80 sm:h-5 sm:w-14"

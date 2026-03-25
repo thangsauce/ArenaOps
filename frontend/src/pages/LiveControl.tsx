@@ -54,7 +54,16 @@ function MatchScore({
     <div
       className={`${styles.scoreControl} ${large ? styles.scoreControlLarge : ""}`}
     >
-      <div aria-live="polite" aria-atomic="true" style={{ flex: 1, minWidth: 0, display: 'flex', justifyContent: 'center' }}>
+      <div
+        aria-live="polite"
+        aria-atomic="true"
+        style={{
+          flex: 1,
+          minWidth: 0,
+          display: "flex",
+          justifyContent: "center",
+        }}
+      >
         <input
           type="text"
           inputMode="numeric"
@@ -155,7 +164,10 @@ export default function LiveControl() {
   const formatCountdown = (matchId: string) => {
     const timer = delayedMatchTimers[matchId];
     if (!timer) return "00:00";
-    const remaining = Math.max(0, timer.durationSeconds - (elapsedSeconds[matchId] ?? 0));
+    const remaining = Math.max(
+      0,
+      timer.durationSeconds - (elapsedSeconds[matchId] ?? 0),
+    );
     const m = Math.floor(remaining / 60);
     const s = remaining % 60;
     return `${String(m).padStart(2, "0")}:${String(s).padStart(2, "0")}`;
@@ -285,7 +297,12 @@ export default function LiveControl() {
       {/* Live matches */}
       <section className={styles.section}>
         <h2 className={styles.sectionTitle} style={{ color: "var(--red)" }}>
-          <Radio size={13} className="animate-pulse" style={{ animationDuration: "2.2s" }} /> Live Now
+          <Radio
+            size={13}
+            className="animate-pulse"
+            style={{ animationDuration: "2.2s" }}
+          />{" "}
+          Live Now
         </h2>
         {live.length === 0 && (
           <div className={styles.empty}>No matches live right now.</div>
@@ -737,7 +754,7 @@ export default function LiveControl() {
                 value={customDelay}
                 onChange={(e) => setCustomDelay(e.target.value)}
               />
-              <div className="absolute right-[88px] inset-y-0.5 flex flex-col justify-between py-[2px] opacity-0 group-hover:opacity-100 transition-opacity">
+              <div className="absolute right-22 inset-y-0.5 flex flex-col justify-between py-0.5 opacity-0 group-hover:opacity-100 transition-opacity">
                 <button
                   className="text-arena-text-muted hover:text-arena-text transition-colors p-0.5 rounded hover:bg-arena-surface"
                   onClick={(e) => {
