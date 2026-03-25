@@ -1,22 +1,15 @@
-import { createContext, useCallback, useContext, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import type { ReactNode } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { AlertTriangle, Check, X } from 'lucide-react';
 import { useApp } from '../store/store';
-
-export type ToastVariant = 'success' | 'error';
+import { ToastContext, type ToastVariant } from './toastContext';
 
 interface ToastItem {
   id: string;
   message: string;
   variant: ToastVariant;
 }
-
-interface ToastContextValue {
-  toast: (message: string, variant?: ToastVariant) => void;
-}
-
-const ToastContext = createContext<ToastContextValue | null>(null);
 
 export function ToastProvider({ children }: { children: ReactNode }) {
   const { settings } = useApp();
@@ -84,10 +77,4 @@ export function ToastProvider({ children }: { children: ReactNode }) {
       </div>
     </ToastContext.Provider>
   );
-}
-
-export function useToast(): (message: string, variant?: ToastVariant) => void {
-  const ctx = useContext(ToastContext);
-  if (!ctx) throw new Error('useToast must be used inside ToastProvider');
-  return ctx.toast;
 }
