@@ -16,9 +16,11 @@ import {
   Share2,
   ChevronDown,
   Trash2,
+  Plus,
+  ThumbsUp,
 } from "lucide-react";
 import { useApp } from "../store/store";
-import type { Match, Participant } from "../types";
+import type { Match, Participant, TournamentFormat } from "../types";
 import styles from "./TournamentDetail.module.css";
 import { formatDate, formatTimeRange } from "../utils/time";
 import { useToast } from '../components/Toast';
@@ -32,6 +34,21 @@ const COL_GAP = 44; // horizontal gap between tree columns
 const CONN_MID = 22; // COL_GAP / 2 — where the vertical connector sits
 
 type BracketView = "flow" | "tree" | "list";
+type MatchSlotSide = "participant1Id" | "participant2Id";
+type AssignableEntry = {
+  id: string;
+  label: string;
+  secondaryLabel: string;
+};
+type EntrySeed = {
+  participantId: string;
+  sortSeed: number;
+};
+type RosterRemoveTarget = {
+  ids: string[];
+  name: string;
+  kind: "player" | "team";
+};
 
 const INDIVIDUAL_GAMES = new Set([
   "chess",
@@ -84,11 +101,89 @@ const matchStatusStyles: Record<
   },
 };
 
-function getRoundLabel(round: number, maxRound: number): string {
+function getRoundLabel(
+  round: number,
+  maxRound: number,
+  format: TournamentFormat,
+): string {
+  if (format === "round-robin") return "Round Robin";
+  if (format === "swiss") return `Swiss Round ${round}`;
+  if (
+    format === "free-for-all" ||
+    format === "group-stage" ||
+    format === "battle-royale" ||
+    format === "ladder"
+  ) {
+    return `Round ${round}`;
+  }
   if (round === maxRound) return "Grand Final";
   if (round === maxRound - 1) return "Semifinals";
   if (round === maxRound - 2) return "Quarterfinals";
   return `Round ${round}`;
+}
+
+function slugify(value: string) {
+  return value
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+}
+
+function buildGeneratedMatches(
+  format: TournamentFormat,
+  entryIds: EntrySeed[],
+): Match[] {
+  const sortedEntryIds = [...entryIds]
+    .sort((a, b) => a.sortSeed - b.sortSeed)
+    .map((entry) => entry.participantId);
+
+  if (format === "round-robin") {
+    const matches: Match[] = [];
+    let matchNumber = 1;
+    for (let i = 0; i < sortedEntryIds.length; i += 1) {
+      for (let j = i + 1; j < sortedEntryIds.length; j += 1) {
+        matches.push({
+          id: `m-${Date.now()}-${matchNumber}`,
+          round: 1,
+          matchNumber,
+          participant1Id: sortedEntryIds[i],
+          participant2Id: sortedEntryIds[j],
+          winnerId: null,
+          score1: 0,
+          score2: 0,
+          status: "scheduled",
+        });
+        matchNumber += 1;
+      }
+    }
+    return matches;
+  }
+
+  const totalSlots = 2 ** Math.ceil(Math.log2(Math.max(2, sortedEntryIds.length)));
+  const rounds = Math.log2(totalSlots);
+  const matches: Match[] = [];
+  let matchNumber = 1;
+
+  for (let round = 1; round <= rounds; round += 1) {
+    const matchCount = totalSlots / 2 ** round;
+    for (let index = 0; index < matchCount; index += 1) {
+      const isFirstRound = round === 1;
+      matches.push({
+        id: `m-${Date.now()}-${matchNumber}`,
+        round,
+        matchNumber: index + 1,
+        participant1Id: isFirstRound ? sortedEntryIds[index * 2] ?? null : null,
+        participant2Id: isFirstRound ? sortedEntryIds[index * 2 + 1] ?? null : null,
+        winnerId: null,
+        score1: 0,
+        score2: 0,
+        status: "scheduled",
+      });
+      matchNumber += 1;
+    }
+  }
+
+  return matches;
 }
 
 // ── Avatar ────────────────────────────────────────────────────────────────────
@@ -134,9 +229,9 @@ function Avatar({
         height: size,
         borderRadius: "50%",
         flexShrink: 0,
-        background: `hsl(${hue}, 35%, 22%)`,
-        border: `1px solid hsl(${hue}, 35%, 34%)`,
-        color: `hsl(${hue}, 60%, 65%)`,
+        background: p ? `hsl(${hue}, 35%, 22%)` : "transparent",
+        border: p ? `1px solid hsl(${hue}, 35%, 34%)` : "none",
+        color: p ? `hsl(${hue}, 60%, 65%)` : "var(--text-2)",
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
@@ -144,7 +239,7 @@ function Avatar({
         fontWeight: 700,
       }}
     >
-      {p ? initials : "?"}
+      {p ? initials : <ThumbsUp size={Math.round(size * 0.46)} strokeWidth={2.2} />}
     </div>
   );
 }
@@ -170,6 +265,8 @@ function MatchCard({
   onUpdateLiveScore,
   onStartMatch,
   onCompleteMatch,
+  onAssignEntry,
+  canStartMatches = true,
 }: {
   match: Match;
   participants: Participant[];
@@ -187,6 +284,8 @@ function MatchCard({
   ) => void;
   onStartMatch?: (match: Match) => void;
   onCompleteMatch?: (match: Match) => void;
+  onAssignEntry?: (match: Match, side: MatchSlotSide) => void;
+  canStartMatches?: boolean;
 }) {
   const p1 = participants.find((p) => p.id === match.participant1Id);
   const p2 = participants.find((p) => p.id === match.participant2Id);
@@ -194,6 +293,8 @@ function MatchCard({
   const isLive = match.status === "live";
   const showScore =
     match.status !== "scheduled" && match.status !== "cancelled";
+  const canStartMatch =
+    match.participant1Id !== null && match.participant2Id !== null;
   const p1Label = getEntryLabel(p1, teamMode);
   const p2Label = getEntryLabel(p2, teamMode);
   const currentScores = liveScores ?? {
@@ -202,9 +303,20 @@ function MatchCard({
   };
   const renderEntryLabel = (
     label: string,
+    side: MatchSlotSide,
     participant?: Participant,
   ) =>
-    teamMode && participant && label !== "TBD" ? (
+    label === "TBD" && match.round === 1 ? (
+      <button
+        type="button"
+        className={styles.addEntryBtn}
+        onClick={() => onAssignEntry?.(match, side)}
+      >
+        Add {teamMode ? "Team" : "Player"}
+      </button>
+    ) : label === "TBD" ? (
+      <span className={styles.participantName}>TBD</span>
+    ) : teamMode && participant ? (
       <button
         type="button"
         className={styles.participantNameButton}
@@ -240,7 +352,7 @@ function MatchCard({
             size={20}
             label={p1Label}
           />
-          {renderEntryLabel(p1Label, p1)}
+          {renderEntryLabel(p1Label, "participant1Id", p1)}
           {match.status === "live" ? (
             <div className={styles.inlineScoreControl}>
               <button
@@ -291,7 +403,7 @@ function MatchCard({
             size={20}
             label={p2Label}
           />
-          {renderEntryLabel(p2Label, p2)}
+          {renderEntryLabel(p2Label, "participant2Id", p2)}
           {match.status === "live" ? (
             <div className={styles.inlineScoreControl}>
               <button
@@ -335,15 +447,21 @@ function MatchCard({
       </div>
       {(match.status === "scheduled" || match.status === "live") && (
         <div className={styles.matchCardActions}>
-          {match.status === "scheduled" ? (
+          {match.status === "scheduled" && canStartMatches ? (
             <button
               type="button"
               className={styles.matchActionBtn}
+              disabled={!canStartMatch}
               onClick={() => onStartMatch?.(match)}
+              title={
+                canStartMatch
+                  ? "Start match"
+                  : `Add both ${teamMode ? "teams" : "players"} before starting`
+              }
             >
               Start Match
             </button>
-          ) : (
+          ) : match.status === "live" ? (
             <button
               type="button"
               className={`${styles.matchActionBtn} ${styles.matchActionBtnPrimary}`}
@@ -351,7 +469,7 @@ function MatchCard({
             >
               Mark Done
             </button>
-          )}
+          ) : null}
         </div>
       )}
     </div>
@@ -364,6 +482,7 @@ type ViewProps = {
   matches: Match[];
   participants: Participant[];
   logos: Record<string, string>;
+  format: TournamentFormat;
   teamMode?: boolean;
   onEntryClick?: (teamName: string) => void;
   getLiveScores?: (match: Match) => { score1: number; score2: number };
@@ -376,6 +495,8 @@ type ViewProps = {
   ) => void;
   onStartMatch?: (match: Match) => void;
   onCompleteMatch?: (match: Match) => void;
+  onAssignEntry?: (match: Match, side: MatchSlotSide) => void;
+  canStartMatches?: boolean;
 };
 
 type TeamGroup = {
@@ -440,12 +561,15 @@ function FlowView({
   matches,
   participants,
   logos,
+  format,
   teamMode = false,
   onEntryClick,
   getLiveScores,
   onUpdateLiveScore,
   onStartMatch,
   onCompleteMatch,
+  onAssignEntry,
+  canStartMatches = true,
 }: ViewProps) {
   const maxRound = Math.max(...rounds);
   const champion = getChampionInfo(matches, participants, logos, teamMode);
@@ -453,7 +577,7 @@ function FlowView({
     <div className={styles.bracket}>
       {rounds.map((round) => (
         <div key={round} className={styles.round}>
-          <p className={styles.roundLabel}>{getRoundLabel(round, maxRound)}</p>
+          <p className={styles.roundLabel}>{getRoundLabel(round, maxRound, format)}</p>
           <div className={styles.roundMatches}>
             {matches
               .filter((m) => m.round === round)
@@ -470,6 +594,8 @@ function FlowView({
                   onUpdateLiveScore={onUpdateLiveScore}
                   onStartMatch={onStartMatch}
                   onCompleteMatch={onCompleteMatch}
+                  onAssignEntry={onAssignEntry}
+                  canStartMatches={canStartMatches}
                 />
               ))}
           </div>
@@ -491,12 +617,15 @@ function TreeView({
   matches,
   participants,
   logos,
+  format,
   teamMode = false,
   onEntryClick,
   getLiveScores,
   onUpdateLiveScore,
   onStartMatch,
   onCompleteMatch,
+  onAssignEntry,
+  canStartMatches = true,
 }: ViewProps) {
   const maxRound = Math.max(...rounds);
   const baseRows = Math.pow(2, maxRound - 1);
@@ -517,7 +646,7 @@ function TreeView({
           return (
             <div key={round} className={styles.treeRound}>
               <p className={styles.roundLabel} style={{ textAlign: "center" }}>
-                {getRoundLabel(round, maxRound)}
+                {getRoundLabel(round, maxRound, format)}
               </p>
               <div
                 className={styles.treeRoundBody}
@@ -554,6 +683,8 @@ function TreeView({
                         onUpdateLiveScore={onUpdateLiveScore}
                         onStartMatch={onStartMatch}
                         onCompleteMatch={onCompleteMatch}
+                        onAssignEntry={onAssignEntry}
+                        canStartMatches={canStartMatches}
                       />
                     </div>
 
@@ -615,12 +746,15 @@ function ListView({
   matches,
   participants,
   logos,
+  format,
   teamMode = false,
   onEntryClick,
   getLiveScores,
   onUpdateLiveScore,
   onStartMatch,
   onCompleteMatch,
+  onAssignEntry,
+  canStartMatches = true,
 }: ViewProps) {
   const maxRound = Math.max(...rounds);
   const champion = getChampionInfo(matches, participants, logos, teamMode);
@@ -630,7 +764,7 @@ function ListView({
       {rounds.map((round) => (
         <div key={round}>
           <p className={styles.listRoundLabel}>
-            {getRoundLabel(round, maxRound)}
+            {getRoundLabel(round, maxRound, format)}
           </p>
           <div className={styles.listMatches}>
             {matches
@@ -646,6 +780,8 @@ function ListView({
                 const st = matchStatusStyles[match.status];
                 const showScore =
                   match.status !== "scheduled" && match.status !== "cancelled";
+                const canStartMatch =
+                  match.participant1Id !== null && match.participant2Id !== null;
                 const p1Label = getEntryLabel(p1, teamMode);
                 const p2Label = getEntryLabel(p2, teamMode);
                 const currentScores = getLiveScores?.(match) ?? {
@@ -654,9 +790,20 @@ function ListView({
                 };
                 const renderListLabel = (
                   label: string,
+                  side: MatchSlotSide,
                   participant?: Participant,
                 ) =>
-                  teamMode && participant && label !== "TBD" ? (
+                  label === "TBD" && match.round === 1 ? (
+                    <button
+                      type="button"
+                      className={styles.addEntryBtn}
+                      onClick={() => onAssignEntry?.(match, side)}
+                    >
+                      Add {teamMode ? "Team" : "Player"}
+                    </button>
+                  ) : label === "TBD" ? (
+                    <span className={styles.listName}>TBD</span>
+                  ) : teamMode && participant ? (
                     <button
                       type="button"
                       className={styles.listNameButton}
@@ -685,7 +832,7 @@ function ListView({
                         size={24}
                         label={p1Label}
                       />
-                      {renderListLabel(p1Label, p1)}
+                      {renderListLabel(p1Label, "participant1Id", p1)}
                       {match.status === "live" ? (
                         <div className={styles.inlineScoreControl}>
                           <button
@@ -740,7 +887,7 @@ function ListView({
                         size={24}
                         label={p2Label}
                       />
-                      {renderListLabel(p2Label, p2)}
+                      {renderListLabel(p2Label, "participant2Id", p2)}
                       {match.status === "live" ? (
                         <div className={styles.inlineScoreControl}>
                           <button
@@ -799,15 +946,16 @@ function ListView({
                     </span>
                     {(match.status === "scheduled" || match.status === "live") && (
                       <div className={styles.listRowActions}>
-                        {match.status === "scheduled" ? (
+                        {match.status === "scheduled" && canStartMatches ? (
                           <button
                             type="button"
                             className={styles.matchActionBtn}
+                            disabled={!canStartMatch}
                             onClick={() => onStartMatch?.(match)}
                           >
                             Start Match
                           </button>
-                        ) : (
+                        ) : match.status === "live" ? (
                           <button
                             type="button"
                             className={`${styles.matchActionBtn} ${styles.matchActionBtnPrimary}`}
@@ -815,7 +963,7 @@ function ListView({
                           >
                             Mark Done
                           </button>
-                        )}
+                        ) : null}
                       </div>
                     )}
                   </div>
@@ -835,12 +983,14 @@ function ParticipantRow({
   onLogoUpload,
   teamMode = false,
   memberIndex,
+  onRemove,
 }: {
   participant: Participant;
   logo?: string;
   onLogoUpload: (file: File) => void;
   teamMode?: boolean;
   memberIndex?: number;
+  onRemove?: () => void;
 }) {
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -900,6 +1050,11 @@ function ParticipantRow({
         {participant.availability.length} time block
         {participant.availability.length > 1 ? "s" : ""}
       </span>
+      {onRemove && (
+        <button type="button" className={styles.removeRosterBtn} onClick={onRemove}>
+          <Trash2 size={13} /> Remove Player
+        </button>
+      )}
     </div>
   );
 }
@@ -911,6 +1066,9 @@ function TeamRow({
   onToggle,
   onLogoUpload,
   headerRef,
+  onRemoveTeam,
+  onAddMember,
+  onRemoveMember,
 }: {
   team: TeamGroup;
   logos: Record<string, string>;
@@ -918,6 +1076,9 @@ function TeamRow({
   onToggle: () => void;
   onLogoUpload: (participantId: string, file: File) => void;
   headerRef?: (node: HTMLButtonElement | null) => void;
+  onRemoveTeam?: () => void;
+  onAddMember?: () => void;
+  onRemoveMember?: (member: Participant) => void;
 }) {
   const primaryMember = team.members[0];
   const confirmedMembers = team.members.filter(
@@ -957,6 +1118,18 @@ function TeamRow({
 
       {expanded && (
         <div className={styles.teamMembers}>
+          <div className={styles.teamMembersHeader}>
+            {onAddMember && (
+              <button type="button" className={styles.addRosterBtn} onClick={onAddMember}>
+                <Plus size={13} /> Add Player
+              </button>
+            )}
+            {onRemoveTeam && (
+              <button type="button" className={styles.removeRosterBtn} onClick={onRemoveTeam}>
+                <Trash2 size={13} /> Remove Team
+              </button>
+            )}
+          </div>
           {team.members.map((member, index) => (
             <ParticipantRow
               key={member.id}
@@ -965,6 +1138,7 @@ function TeamRow({
               onLogoUpload={(file) => onLogoUpload(member.id, file)}
               teamMode={false}
               memberIndex={index + 1}
+              onRemove={onRemoveMember ? () => onRemoveMember(member) : undefined}
             />
           ))}
         </div>
@@ -977,6 +1151,7 @@ function TeamRow({
 type PendingSelection =
   | { kind: "location"; id: string }
   | { kind: "timeBlock"; id: string };
+type AddRosterTarget = "player" | "team";
 
 export default function TournamentDetail() {
   const { id } = useParams();
@@ -989,6 +1164,9 @@ export default function TournamentDetail() {
     completeMatch,
     updateTournament,
     updateTournamentStatus,
+    updateMatch,
+    addParticipants,
+    removeParticipants,
   } = useApp();
   const tournament = tournaments.find((t) => t.id === id);
 
@@ -1004,6 +1182,25 @@ export default function TournamentDetail() {
   const [pendingSelection, setPendingSelection] = useState<PendingSelection | null>(
     null,
   );
+  const [confirmGenerateBracket, setConfirmGenerateBracket] = useState(false);
+  const [assignEntryTarget, setAssignEntryTarget] = useState<{
+    matchId: string;
+    side: MatchSlotSide;
+  } | null>(null);
+  const [selectedAssignEntryId, setSelectedAssignEntryId] = useState<string | null>(
+    null,
+  );
+  const [showAddRosterModal, setShowAddRosterModal] = useState(false);
+  const [addRosterTarget, setAddRosterTarget] = useState<AddRosterTarget>("player");
+  const [addMemberTeamName, setAddMemberTeamName] = useState<string | null>(null);
+  const [newPlayerName, setNewPlayerName] = useState("");
+  const [newPlayerEmail, setNewPlayerEmail] = useState("");
+  const [newTeamName, setNewTeamName] = useState("");
+  const [newCaptainName, setNewCaptainName] = useState("");
+  const [newCaptainEmail, setNewCaptainEmail] = useState("");
+  const [newTeamMemberCount, setNewTeamMemberCount] = useState("1");
+  const [confirmRemoveRoster, setConfirmRemoveRoster] =
+    useState<RosterRemoveTarget | null>(null);
   const [expandedTeams, setExpandedTeams] = useState<string[]>([]);
   const [liveScores, setLiveScores] = useState<
     Record<string, { score1: number; score2: number }>
@@ -1076,11 +1273,13 @@ export default function TournamentDetail() {
       }, [])
     : [];
   const rosterEntryCount = isIndividualGame ? participants.length : teamGroups.length;
+  const rosterCapacityReached = rosterEntryCount >= tournament.maxParticipants;
   const canOpenRegistration = rosterEntryCount >= 1;
   const canActivateTournament =
     rosterEntryCount >= 2 &&
     Boolean(tournament.venueLocationId) &&
     Boolean(tournament.selectedTimeBlockId);
+  const canGenerateBracket = matches.length === 0 && rosterEntryCount >= 2;
 
   const viewButtons: {
     key: BracketView;
@@ -1160,6 +1359,154 @@ export default function TournamentDetail() {
       score1: scores.score1,
       score2: scores.score2,
     });
+  };
+
+  const bracketEntries: EntrySeed[] = isIndividualGame
+    ? participants.map((participant, index) => ({
+        participantId: participant.id,
+        sortSeed: participant.seed ?? index + 1,
+      }))
+    : teamGroups.map((team, index) => ({
+        participantId: team.members[0]?.id ?? `team-${index}`,
+        sortSeed:
+          Math.min(
+            ...team.members.map((member, memberIndex) => member.seed ?? index + memberIndex + 1),
+          ) || index + 1,
+      }));
+
+  const assignableEntries: AssignableEntry[] = isIndividualGame
+    ? participants.map((participant) => ({
+        id: participant.id,
+        label: participant.name,
+        secondaryLabel: participant.email,
+      }))
+    : teamGroups.map((team) => ({
+        id: team.members[0]?.id ?? team.name,
+        label: team.name,
+        secondaryLabel: `${team.members.length} member${team.members.length === 1 ? "" : "s"}`,
+      }));
+
+  const assignTargetMatch = assignEntryTarget
+    ? matches.find((match) => match.id === assignEntryTarget.matchId) ?? null
+    : null;
+
+  const availableEntries = assignTargetMatch
+    ? assignableEntries.filter((entry) => {
+        const otherSideId =
+          assignEntryTarget?.side === "participant1Id"
+            ? assignTargetMatch.participant2Id
+            : assignTargetMatch.participant1Id;
+        return entry.id !== otherSideId;
+      })
+    : [];
+
+  const resetRosterForm = () => {
+    setNewPlayerName("");
+    setNewPlayerEmail("");
+    setNewTeamName("");
+    setNewCaptainName("");
+    setNewCaptainEmail("");
+    setNewTeamMemberCount("1");
+  };
+
+  const openAddRoster = (target: AddRosterTarget, teamName?: string) => {
+    resetRosterForm();
+    setAddRosterTarget(target);
+    setAddMemberTeamName(teamName ?? null);
+    setShowAddRosterModal(true);
+  };
+
+  const handleGenerateBracket = () => {
+    if (!canGenerateBracket) {
+      toast(`Add at least two ${isIndividualGame ? "players" : "teams"} before generating a bracket`);
+      setConfirmGenerateBracket(false);
+      return;
+    }
+    updateTournament(tournament.id, {
+      matches: buildGeneratedMatches(tournament.format, bracketEntries),
+    });
+    toast("Bracket generated");
+    setConfirmGenerateBracket(false);
+  };
+
+  const openAssignEntryPicker = (match: Match, side: MatchSlotSide) => {
+    if (match.round !== 1) return;
+    setSelectedAssignEntryId(null);
+    setAssignEntryTarget({ matchId: match.id, side });
+  };
+
+  const handleAssignEntry = () => {
+    if (!assignEntryTarget || !selectedAssignEntryId) return;
+    updateMatch(tournament.id, assignEntryTarget.matchId, {
+      [assignEntryTarget.side]: selectedAssignEntryId,
+      winnerId: null,
+    });
+    const assignedEntry = assignableEntries.find((entry) => entry.id === selectedAssignEntryId);
+    toast(`${assignedEntry?.label ?? (isIndividualGame ? "Player" : "Team")} added to bracket`);
+    setAssignEntryTarget(null);
+    setSelectedAssignEntryId(null);
+  };
+
+  const openStartMatchConfirm = (match: Match) => {
+    if (tournament.status !== "active") {
+      toast("Tournament must be active before matches can start");
+      return;
+    }
+    if (!match.participant1Id || !match.participant2Id) {
+      toast(`Add both ${isIndividualGame ? "players" : "teams"} before starting the match`);
+      return;
+    }
+    setConfirmStartMatch(match);
+  };
+
+  const handleAddRoster = () => {
+    const timestamp = Date.now();
+    if (isIndividualGame || addRosterTarget === "player" || addMemberTeamName) {
+      if (!newPlayerName.trim() || !newPlayerEmail.trim()) return;
+      addParticipants(tournament.id, [
+        {
+          id: `p${timestamp}`,
+          name: newPlayerName.trim(),
+          email: newPlayerEmail.trim(),
+          team: addMemberTeamName ?? undefined,
+          status: "confirmed",
+          availability: [],
+        },
+      ]);
+      toast(addMemberTeamName ? "Player added to team" : "Player added");
+    } else {
+      if (!newTeamName.trim() || !newCaptainName.trim() || !newCaptainEmail.trim()) {
+        return;
+      }
+      const teamName = newTeamName.trim();
+      const teamSlug = slugify(teamName) || `team-${timestamp}`;
+      const memberCount = Math.max(1, Number(newTeamMemberCount) || 1);
+      addParticipants(
+        tournament.id,
+        Array.from({ length: memberCount }, (_, index) => ({
+          id: `p${timestamp}-${index + 1}`,
+          name: index === 0 ? newCaptainName.trim() : `${teamName} Player ${index + 1}`,
+          email:
+            index === 0
+              ? newCaptainEmail.trim()
+              : `${teamSlug}-${index + 1}@team.local`,
+          team: teamName,
+          status: "confirmed",
+          availability: [],
+        })),
+      );
+      toast("Team added");
+    }
+    setShowAddRosterModal(false);
+    setAddMemberTeamName(null);
+    resetRosterForm();
+  };
+
+  const handleRemoveRoster = () => {
+    if (!confirmRemoveRoster) return;
+    removeParticipants(tournament.id, confirmRemoveRoster.ids);
+    toast(confirmRemoveRoster.kind === "team" ? "Team removed" : "Player removed");
+    setConfirmRemoveRoster(null);
   };
 
   const handleRequestLocationSelection = (locationId: string) => {
@@ -1345,32 +1692,49 @@ export default function TournamentDetail() {
         <section className={styles.section}>
           <div className={styles.bracketHeader}>
             <h2 className={styles.sectionTitle}>Bracket</h2>
-            {matches.length > 0 && (
-              <div className={styles.viewSwitcher}>
-                {viewButtons.map(({ key, label, Icon }, index) => (
-                  <button
-                    ref={(node) => {
-                      bracketViewRefs.current[index] = node;
-                    }}
-                    key={key}
-                    className={`${styles.viewBtn} ${bracketView === key ? styles.viewBtnActive : ""}`}
-                    onClick={() => setBracketView(key)}
-                    onKeyDown={(e) => handleBracketViewKeyDown(e, index)}
-                    role="tab"
-                    aria-selected={bracketView === key}
-                    tabIndex={bracketView === key ? 0 : -1}
-                  >
-                    <Icon size={13} />
-                    {label}
-                  </button>
-                ))}
-              </div>
-            )}
+            <div className={styles.bracketHeaderActions}>
+              {matches.length > 0 && (
+                <div className={styles.viewSwitcher}>
+                  {viewButtons.map(({ key, label, Icon }, index) => (
+                    <button
+                      ref={(node) => {
+                        bracketViewRefs.current[index] = node;
+                      }}
+                      key={key}
+                      className={`${styles.viewBtn} ${bracketView === key ? styles.viewBtnActive : ""}`}
+                      onClick={() => setBracketView(key)}
+                      onKeyDown={(e) => handleBracketViewKeyDown(e, index)}
+                      role="tab"
+                      aria-selected={bracketView === key}
+                      tabIndex={bracketView === key ? 0 : -1}
+                    >
+                      <Icon size={13} />
+                      {label}
+                    </button>
+                  ))}
+                </div>
+              )}
+              {matches.length === 0 && (
+                <button
+                  type="button"
+                  className={styles.addRosterBtn}
+                  disabled={!canGenerateBracket}
+                  onClick={() => setConfirmGenerateBracket(true)}
+                  title={
+                    canGenerateBracket
+                      ? "Generate bracket"
+                      : `Add at least two ${isIndividualGame ? "players" : "teams"} first`
+                  }
+                >
+                  <GitBranch size={13} /> Generate Bracket
+                </button>
+              )}
+            </div>
           </div>
 
           {matches.length === 0 ? (
             <div className={styles.empty}>
-              No matches yet — bracket will appear once the tournament starts.
+              No matches yet. Generate the bracket when the roster is ready.
             </div>
           ) : bracketView === "flow" ? (
             <FlowView
@@ -1378,12 +1742,15 @@ export default function TournamentDetail() {
               matches={matches}
               participants={participants}
               logos={logos}
+              format={tournament.format}
               teamMode={!isIndividualGame}
               onEntryClick={handleTeamEntryClick}
               getLiveScores={getLiveScores}
               onUpdateLiveScore={updateLiveScore}
-              onStartMatch={setConfirmStartMatch}
+              onStartMatch={openStartMatchConfirm}
               onCompleteMatch={openCompleteConfirm}
+              onAssignEntry={openAssignEntryPicker}
+              canStartMatches={tournament.status === "active"}
             />
           ) : bracketView === "tree" ? (
             <TreeView
@@ -1391,12 +1758,15 @@ export default function TournamentDetail() {
               matches={matches}
               participants={participants}
               logos={logos}
+              format={tournament.format}
               teamMode={!isIndividualGame}
               onEntryClick={handleTeamEntryClick}
               getLiveScores={getLiveScores}
               onUpdateLiveScore={updateLiveScore}
-              onStartMatch={setConfirmStartMatch}
+              onStartMatch={openStartMatchConfirm}
               onCompleteMatch={openCompleteConfirm}
+              onAssignEntry={openAssignEntryPicker}
+              canStartMatches={tournament.status === "active"}
             />
           ) : (
             <ListView
@@ -1404,12 +1774,15 @@ export default function TournamentDetail() {
               matches={matches}
               participants={participants}
               logos={logos}
+              format={tournament.format}
               teamMode={!isIndividualGame}
               onEntryClick={handleTeamEntryClick}
               getLiveScores={getLiveScores}
               onUpdateLiveScore={updateLiveScore}
-              onStartMatch={setConfirmStartMatch}
+              onStartMatch={openStartMatchConfirm}
               onCompleteMatch={openCompleteConfirm}
+              onAssignEntry={openAssignEntryPicker}
+              canStartMatches={tournament.status === "active"}
             />
           )}
         </section>
@@ -1418,9 +1791,24 @@ export default function TournamentDetail() {
         <section className={styles.section} ref={rosterSectionRef}>
           <div className={styles.bracketHeader}>
             <h2 className={styles.sectionTitle}>{rosterLabel}</h2>
-            <span className={styles.logoHint}>
-              <Upload size={11} /> Click an avatar to add a logo or photo
-            </span>
+            <div className={styles.rosterHeaderActions}>
+              <span className={styles.logoHint}>
+                <Upload size={11} /> Click an avatar to add a logo or photo
+              </span>
+              <button
+                type="button"
+                className={styles.addRosterBtn}
+                disabled={rosterCapacityReached}
+                onClick={() => openAddRoster(isIndividualGame ? "player" : "team")}
+                title={
+                  rosterCapacityReached
+                    ? `${tournament.maxParticipants} ${countLabel} reached`
+                    : `Add ${isIndividualGame ? "player" : "team"}`
+                }
+              >
+                <Plus size={13} /> Add {isIndividualGame ? "Player" : "Team"}
+              </button>
+            </div>
           </div>
           <div className={styles.participantList}>
             {isIndividualGame
@@ -1431,6 +1819,13 @@ export default function TournamentDetail() {
                     logo={logos[p.id]}
                     onLogoUpload={(file) => handleLogoUpload(p.id, file)}
                     teamMode={false}
+                    onRemove={() =>
+                      setConfirmRemoveRoster({
+                        ids: [p.id],
+                        name: p.name,
+                        kind: "player",
+                      })
+                    }
                   />
                 ))
               : teamGroups.map((team) => (
@@ -1450,6 +1845,21 @@ export default function TournamentDetail() {
                       )
                     }
                     onLogoUpload={handleLogoUpload}
+                    onRemoveTeam={() =>
+                      setConfirmRemoveRoster({
+                        ids: team.members.map((member) => member.id),
+                        name: team.name,
+                        kind: "team",
+                      })
+                    }
+                    onAddMember={() => openAddRoster("player", team.name)}
+                    onRemoveMember={(member) =>
+                      setConfirmRemoveRoster({
+                        ids: [member.id],
+                        name: member.name,
+                        kind: "player",
+                      })
+                    }
                   />
                 ))}
           </div>
@@ -1535,6 +1945,15 @@ export default function TournamentDetail() {
         )}
       </div>
       <ConfirmDialog
+        open={confirmGenerateBracket}
+        title="Generate bracket?"
+        description="This will create the tournament matchups before the tournament starts."
+        confirmLabel="Generate Bracket"
+        confirmVariant="success"
+        onConfirm={handleGenerateBracket}
+        onCancel={() => setConfirmGenerateBracket(false)}
+      />
+      <ConfirmDialog
         open={confirmStartMatch !== null}
         title="Start match?"
         description="This will move the scheduled match into live status."
@@ -1574,6 +1993,119 @@ export default function TournamentDetail() {
           setConfirmCompleteMatch(null);
         }}
         onCancel={() => setConfirmCompleteMatch(null)}
+      />
+      <ConfirmDialog
+        open={assignEntryTarget !== null}
+        title={`Add ${isIndividualGame ? "player" : "team"} to match?`}
+        description="Choose an entry first, then apply it to this bracket slot."
+        confirmLabel="Apply"
+        confirmVariant="success"
+        confirmDisabled={!selectedAssignEntryId}
+        customContent={
+          <div className={styles.assignEntryList}>
+            {availableEntries.length === 0 ? (
+              <div className={styles.assignEntryEmpty}>
+                No available {isIndividualGame ? "players" : "teams"} to add.
+              </div>
+            ) : (
+              availableEntries.map((entry) => (
+                <button
+                  key={entry.id}
+                  type="button"
+                  className={`${styles.assignEntryOption} ${selectedAssignEntryId === entry.id ? styles.assignEntryOptionSelected : ""}`}
+                  onClick={() => setSelectedAssignEntryId(entry.id)}
+                >
+                  <span className={styles.assignEntryLabel}>{entry.label}</span>
+                  <span className={styles.assignEntryMeta}>{entry.secondaryLabel}</span>
+                </button>
+              ))
+            )}
+          </div>
+        }
+        onConfirm={handleAssignEntry}
+        onCancel={() => {
+          setAssignEntryTarget(null);
+          setSelectedAssignEntryId(null);
+        }}
+      />
+      <ConfirmDialog
+        open={showAddRosterModal}
+        title={
+          addMemberTeamName
+            ? `Add player to ${addMemberTeamName}?`
+            : `Add ${isIndividualGame || addRosterTarget === "player" ? "player" : "team"}`
+        }
+        description={
+          addMemberTeamName
+            ? "Enter the player details to add them to this team."
+            : `Enter the ${isIndividualGame || addRosterTarget === "player" ? "player" : "team"} details.`
+        }
+        confirmLabel="Apply"
+        confirmVariant="success"
+        customContent={
+          isIndividualGame || addRosterTarget === "player" || addMemberTeamName ? (
+            <div style={{ display: "grid", gap: 10 }}>
+              <input
+                value={newPlayerName}
+                onChange={(e) => setNewPlayerName(e.target.value)}
+                placeholder="Name"
+                style={{ width: "100%", padding: "10px 12px", borderRadius: 12, border: "1px solid var(--border-2)", background: "var(--surface)", color: "var(--text)" }}
+              />
+              <input
+                value={newPlayerEmail}
+                onChange={(e) => setNewPlayerEmail(e.target.value)}
+                placeholder="Email"
+                style={{ width: "100%", padding: "10px 12px", borderRadius: 12, border: "1px solid var(--border-2)", background: "var(--surface)", color: "var(--text)" }}
+              />
+            </div>
+          ) : (
+            <div style={{ display: "grid", gap: 10 }}>
+              <input
+                value={newTeamName}
+                onChange={(e) => setNewTeamName(e.target.value)}
+                placeholder="Team name"
+                style={{ width: "100%", padding: "10px 12px", borderRadius: 12, border: "1px solid var(--border-2)", background: "var(--surface)", color: "var(--text)" }}
+              />
+              <input
+                value={newCaptainName}
+                onChange={(e) => setNewCaptainName(e.target.value)}
+                placeholder="Captain name"
+                style={{ width: "100%", padding: "10px 12px", borderRadius: 12, border: "1px solid var(--border-2)", background: "var(--surface)", color: "var(--text)" }}
+              />
+              <input
+                value={newCaptainEmail}
+                onChange={(e) => setNewCaptainEmail(e.target.value)}
+                placeholder="Captain email"
+                style={{ width: "100%", padding: "10px 12px", borderRadius: 12, border: "1px solid var(--border-2)", background: "var(--surface)", color: "var(--text)" }}
+              />
+              <input
+                value={newTeamMemberCount}
+                onChange={(e) => setNewTeamMemberCount(e.target.value)}
+                placeholder="Team size"
+                inputMode="numeric"
+                style={{ width: "100%", padding: "10px 12px", borderRadius: 12, border: "1px solid var(--border-2)", background: "var(--surface)", color: "var(--text)" }}
+              />
+            </div>
+          )
+        }
+        onConfirm={handleAddRoster}
+        onCancel={() => {
+          setShowAddRosterModal(false);
+          setAddMemberTeamName(null);
+          resetRosterForm();
+        }}
+      />
+      <ConfirmDialog
+        open={confirmRemoveRoster !== null}
+        title={confirmRemoveRoster?.kind === "team" ? "Remove team?" : "Remove player?"}
+        description={
+          confirmRemoveRoster?.kind === "team"
+            ? `This will remove ${confirmRemoveRoster?.name ?? "this team"} and clear it from the bracket.`
+            : `This will remove ${confirmRemoveRoster?.name ?? "this player"} and clear them from the bracket.`
+        }
+        confirmLabel={confirmRemoveRoster?.kind === "team" ? "Remove Team" : "Remove Player"}
+        onConfirm={handleRemoveRoster}
+        onCancel={() => setConfirmRemoveRoster(null)}
       />
       <ConfirmDialog
         open={pendingSelection !== null}
