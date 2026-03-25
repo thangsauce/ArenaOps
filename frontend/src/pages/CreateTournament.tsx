@@ -1026,13 +1026,13 @@ export default function CreateTournament() {
               ref={stepThreeLaunchRef}
               className={styles.launchBtn}
               disabled
-              title="Open registration first before launching the tournament"
+              title="Open registration first, then activate the tournament from Tournament Detail"
               onKeyDown={(e) => {
                 handleStepThreeNav(e, 'launch');
               }}
             >
               <Rocket size={16} />
-              <span>Launch Tournament</span>
+              <span>Activate After Registration</span>
             </button>
           </div>
         </div>

@@ -797,14 +797,15 @@
 
     .scoreInputTypeable,
     .scoreInputTypeableLarge {
-        min-width: 0;
-        max-width: calc(100% - 30px);
+        min-width: 28px;
+        width: auto;
         font-size: 1.25rem;
         text-align: center;
     }
 
     .scoreInputTypeableLarge {
         font-size: 1.65rem;
+        min-width: 40px;
     }
 
     .scoreBtns {

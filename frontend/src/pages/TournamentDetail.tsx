@@ -1509,15 +1509,46 @@ export default function TournamentDetail() {
     setConfirmRemoveRoster(null);
   };
 
-  const handleRequestLocationSelection = (locationId: string) => {
+  const hasRoomConflictInTimeBlock = (locationId: string, timeBlockId: string) =>
+    matches.some(
+      (match) =>
+        match.locationId === locationId &&
+        match.timeBlockId === timeBlockId &&
+        match.status !== "completed" &&
+        match.status !== "cancelled",
+    );
+
+  const getAvailableRoomCountForTimeBlock = (timeBlockId: string) =>
+    locations.filter(
+      (location) =>
+        location.available &&
+        !hasRoomConflictInTimeBlock(location.id, timeBlockId),
+    ).length;
+
+  const isTimeBlockSelectable = (timeBlockId: string) => {
+    if (selectedVenueLocation) {
+      return (
+        selectedVenueLocation.available &&
+        !hasRoomConflictInTimeBlock(selectedVenueLocation.id, timeBlockId)
+      );
+    }
+    return getAvailableRoomCountForTimeBlock(timeBlockId) > 0;
+  };
+
+  const isLocationSelectable = (locationId: string) => {
     const location = locations.find((item) => item.id === locationId);
-    if (!location?.available) return;
+    if (!location?.available) return false;
+    if (!selectedTimeBlock) return true;
+    return !hasRoomConflictInTimeBlock(locationId, selectedTimeBlock.id);
+  };
+
+  const handleRequestLocationSelection = (locationId: string) => {
+    if (!isLocationSelectable(locationId)) return;
     setPendingSelection({ kind: "location", id: locationId });
   };
 
   const handleRequestTimeBlockSelection = (timeBlockId: string) => {
-    const timeBlock = timeBlocks.find((item) => item.id === timeBlockId);
-    if (!timeBlock) return;
+    if (!isTimeBlockSelectable(timeBlockId)) return;
     setPendingSelection({ kind: "timeBlock", id: timeBlockId });
   };
 
@@ -1870,39 +1901,56 @@ export default function TournamentDetail() {
           <section className={styles.section}>
             <h2 className={styles.sectionTitle}>Time Slots</h2>
             <div className={styles.locationGrid}>
-              {timeBlocks.map((timeBlock) => (
-                <button
-                  type="button"
-                  key={timeBlock.id}
-                  className={`${styles.locationCard} ${tournament.selectedTimeBlockId === timeBlock.id ? styles.locationSelected : ""}`}
-                  onClick={() => handleRequestTimeBlockSelection(timeBlock.id)}
-                >
-                  <Clock size={14} />
-                  <div>
-                    <p className={styles.locName}>{timeBlock.label}</p>
-                    <p className={styles.locBuilding}>
-                      {formatDate(timeBlock.date, {
-                        month: "short",
-                        day: "numeric",
-                        year: "numeric",
-                      })}{" "}
-                      ·{" "}
-                      {formatTimeRange(
-                        timeBlock.start,
-                        timeBlock.end,
-                        timeBlock.date,
-                        settings.timePrefs.format,
-                        settings.timePrefs.timezone,
-                      )}
-                    </p>
-                  </div>
-                  <span className={styles.locStatus} style={{ color: "var(--accent)" }}>
-                    {tournament.selectedTimeBlockId === timeBlock.id
-                      ? "Selected"
-                      : "Available"}
-                  </span>
-                </button>
-              ))}
+              {timeBlocks.map((timeBlock) => {
+                const availableRoomCount = getAvailableRoomCountForTimeBlock(timeBlock.id);
+                const selectable = isTimeBlockSelectable(timeBlock.id);
+                const isSelected = tournament.selectedTimeBlockId === timeBlock.id;
+                return (
+                  <button
+                    type="button"
+                    key={timeBlock.id}
+                    className={`${styles.locationCard} ${!selectable && !isSelected ? styles.unavailable : ""} ${isSelected ? styles.locationSelected : ""}`}
+                    disabled={!selectable && !isSelected}
+                    onClick={() => handleRequestTimeBlockSelection(timeBlock.id)}
+                  >
+                    <Clock size={14} />
+                    <div>
+                      <p className={styles.locName}>{timeBlock.label}</p>
+                      <p className={styles.locBuilding}>
+                        {formatDate(timeBlock.date, {
+                          month: "short",
+                          day: "numeric",
+                          year: "numeric",
+                        })}{" "}
+                        ·{" "}
+                        {formatTimeRange(
+                          timeBlock.start,
+                          timeBlock.end,
+                          timeBlock.date,
+                          settings.timePrefs.format,
+                          settings.timePrefs.timezone,
+                        )}
+                      </p>
+                    </div>
+                    <span
+                      className={styles.locStatus}
+                      style={{
+                        color: isSelected
+                          ? "var(--accent)"
+                          : selectable
+                            ? "var(--text-2)"
+                            : "var(--red)",
+                      }}
+                    >
+                      {isSelected
+                        ? "Selected"
+                        : selectable
+                          ? `${availableRoomCount} room${availableRoomCount === 1 ? "" : "s"} available`
+                          : "No rooms available"}
+                    </span>
+                  </button>
+                );
+              })}
             </div>
           </section>
         )}
@@ -1911,35 +1959,47 @@ export default function TournamentDetail() {
           <section className={styles.section}>
             <h2 className={styles.sectionTitle}>Locations</h2>
             <div className={styles.locationGrid}>
-              {locations.map((l) => (
-                <button
-                  type="button"
-                  key={l.id}
-                  className={`${styles.locationCard} ${!l.available ? styles.unavailable : ""} ${tournament.venueLocationId === l.id ? styles.locationSelected : ""}`}
-                  disabled={!l.available}
-                  onClick={() => handleRequestLocationSelection(l.id)}
-                >
-                  <MapPin size={14} />
-                  <div>
-                    <p className={styles.locName}>{l.name}</p>
-                    <p className={styles.locBuilding}>
-                      {l.building} · Cap. {l.capacity}
-                    </p>
-                  </div>
-                  <span
-                    className={styles.locStatus}
-                    style={{
-                      color: l.available ? "var(--accent)" : "var(--red)",
-                    }}
+              {locations.map((l) => {
+                const selectable = isLocationSelectable(l.id);
+                const isSelected = tournament.venueLocationId === l.id;
+                return (
+                  <button
+                    type="button"
+                    key={l.id}
+                    className={`${styles.locationCard} ${(!selectable && !isSelected) || !l.available ? styles.unavailable : ""} ${isSelected ? styles.locationSelected : ""}`}
+                    disabled={!selectable && !isSelected}
+                    onClick={() => handleRequestLocationSelection(l.id)}
                   >
-                    {l.available
-                      ? tournament.venueLocationId === l.id
+                    <MapPin size={14} />
+                    <div>
+                      <p className={styles.locName}>{l.name}</p>
+                      <p className={styles.locBuilding}>
+                        {l.building} · Cap. {l.capacity}
+                      </p>
+                    </div>
+                    <span
+                      className={styles.locStatus}
+                      style={{
+                        color: isSelected
+                          ? "var(--accent)"
+                          : selectable
+                            ? "var(--text-2)"
+                            : "var(--red)",
+                      }}
+                    >
+                      {isSelected
                         ? "Selected"
-                        : "Available"
-                      : "Booked"}
-                  </span>
-                </button>
-              ))}
+                        : selectable
+                          ? selectedTimeBlock
+                            ? "Available in slot"
+                            : "Available"
+                          : selectedTimeBlock
+                            ? "Booked in slot"
+                            : "Booked"}
+                    </span>
+                  </button>
+                );
+              })}
             </div>
           </section>
         )}

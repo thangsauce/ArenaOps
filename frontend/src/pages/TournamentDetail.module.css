@@ -260,6 +260,8 @@
   justify-content: space-between;
   align-items: center;
   margin-bottom: 10px;
+  gap: 8px;
+  min-width: 0;
 }
 
 .matchNum {
@@ -267,6 +269,7 @@
   font-weight: 700;
   letter-spacing: 0.06em;
   color: var(--text-3);
+  min-width: 0;
 }
 
 .matchStatus {
@@ -278,6 +281,8 @@
   border: 1px solid transparent;
   border-radius: 999px;
   padding: 3px 8px;
+  white-space: nowrap;
+  flex-shrink: 0;
 }
 
 .liveDot {
@@ -717,6 +722,7 @@
   border: 1px solid transparent;
   border-radius: 999px;
   padding: 4px 8px;
+  white-space: nowrap;
 }
 .listRowActions {
   display: flex;
@@ -1038,10 +1044,16 @@
 
   .headerActions {
     width: 100%;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+  }
+
+  .headerActions .shareBtn {
+    flex: 0 0 auto;
   }
 
   .headerActions .shareBtn:last-child {
-    margin-left: auto;
+    margin-left: 0;
   }
 
   .bracketHeader {

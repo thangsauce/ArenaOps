@@ -40,7 +40,7 @@ function MatchScore({
     <div
       className={`${styles.scoreControl} ${large ? styles.scoreControlLarge : ""}`}
     >
-      <div aria-live="polite" aria-atomic="true">
+      <div aria-live="polite" aria-atomic="true" style={{ flex: 1, minWidth: 0, display: 'flex', justifyContent: 'center' }}>
         <input
           type="text"
           inputMode="numeric"

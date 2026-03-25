@@ -1,13 +1,12 @@
 import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Trophy, Users, User, Zap, Clock, ChevronRight, ArrowUpRight, Gamepad2, Dumbbell, Brain, Diamond, LayoutGrid, Search, CheckCircle2 } from 'lucide-react';
+import { Trophy, Users, User, Zap, Clock, ChevronRight, ArrowUpRight, Gamepad2, Dumbbell, Brain, Diamond, LayoutGrid, Search, FileText } from 'lucide-react';
 import { useApp } from '../store/store';
 import type { Tournament } from '../types';
 import { motion } from 'framer-motion';
 import type { Variants } from 'framer-motion';
 import { formatDate } from '../utils/time';
 import { buildAppSearchResults } from '../utils/appSearch';
-import { useToast } from '../components/Toast';
 import EmptyState from '../components/EmptyState';
 import WelcomeBanner from '../components/WelcomeBanner';
 
@@ -59,8 +58,6 @@ const INDIVIDUAL_GAMES = new Set([
 
 function TournamentCard({ t }: { t: Tournament }) {
   const navigate = useNavigate();
-  const { updateTournamentStatus } = useApp();
-  const toast = useToast();
   const isIndividualGame = INDIVIDUAL_GAMES.has(t.game.toLowerCase());
   const confirmed = t.participants.filter(p => p.status === 'confirmed').length;
   const liveMatches = t.matches.filter(m => m.status === 'live').length;
@@ -115,15 +112,14 @@ function TournamentCard({ t }: { t: Tournament }) {
         {t.status === 'draft' && (
           <button
             type="button"
-            className="mb-4 w-full inline-flex items-center justify-center gap-2 rounded-xl border border-arena-accent/30 bg-arena-accent/10 px-4 py-2.5 text-sm font-bold text-arena-accent transition-all hover:bg-arena-accent hover:text-arena-bg active:scale-[0.98]"
+            className="mb-4 w-full inline-flex items-center justify-center gap-2 rounded-xl border border-orange-500/30 bg-orange-500/10 px-4 py-2.5 text-sm font-bold text-orange-400 transition-all hover:bg-orange-500/16 hover:text-orange-300 active:scale-[0.98]"
             onClick={(e) => {
               e.stopPropagation();
-              updateTournamentStatus(t.id, 'registration');
-              toast(`${t.name} is now open for registration`);
+              navigate(`/tournaments/${t.id}`);
             }}
           >
-            <CheckCircle2 size={16} />
-            <span>Register Now</span>
+            <FileText size={16} />
+            <span>Information Needed</span>
           </button>
         )}
 
