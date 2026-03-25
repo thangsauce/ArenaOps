@@ -24,7 +24,7 @@ import { useApp } from "../store/store";
 import type { Match, Participant, TournamentFormat } from "../types";
 import styles from "./TournamentDetail.module.css";
 import { formatDate, formatTimeRange } from "../utils/time";
-import { useToast } from '../components/Toast';
+import { useToast } from '../components/useToast';
 import ConfirmDialog from '../components/ConfirmDialog';
 
 const ShareModal = lazy(() => import("../components/ShareModal"));
@@ -1767,7 +1767,7 @@ export default function TournamentDetail() {
             )}
             {liveMatches.length > 0 && (
               <div className={styles.metaItem} style={{ color: "var(--red)" }}>
-                <Radio size={14} />
+                <Radio size={14} className="animate-pulse" style={{ animationDuration: "2.2s" }} />
                 {liveMatches.length} match{liveMatches.length > 1 ? "es" : ""}{" "}
                 live
               </div>

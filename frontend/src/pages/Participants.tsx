@@ -3,7 +3,7 @@ import { CheckCircle2, ChevronDown, ChevronUp, Circle, Mail, Plus, Search, Trash
 import { useApp } from '../store/store';
 import type { Participant, ParticipantStatus } from '../types';
 import styles from './Participants.module.css';
-import { useToast } from '../components/Toast';
+import { useToast } from '../components/useToast';
 import ConfirmDialog from '../components/ConfirmDialog';
 import EmptyState from '../components/EmptyState';
 

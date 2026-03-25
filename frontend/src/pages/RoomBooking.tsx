@@ -3,7 +3,7 @@ import { MapPin, Users, CheckCircle2, XCircle, AlertTriangle, Clock, LayoutGrid,
 import { useApp } from '../store/store';
 import { formatTime } from '../utils/time';
 import styles from './RoomBooking.module.css';
-import { useToast } from '../components/Toast';
+import { useToast } from '../components/useToast';
 
 export default function RoomBooking() {
   const { tournaments, timePrefs, bookRoom } = useApp();

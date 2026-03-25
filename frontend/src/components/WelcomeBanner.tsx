@@ -165,24 +165,40 @@ export default function WelcomeBanner() {
 
           <div className="relative z-10 px-5 py-4 pr-12">
             <h2 className="font-bold text-lg mb-0.5">
-              <span className="text-arena-accent">Welcome to Arena</span>
-              <span className="text-arena-text">Ops!</span>
+              <span className="text-arena-accent">Welcome to ArenaOps!</span>
             </h2>
             <p className="text-arena-text-muted text-sm mb-3">
-              Here's how to get started in 3 steps:
+              Your tournament command center — here's how to get the most out of ArenaOps:
             </p>
             <div className="flex flex-wrap gap-2">
-              {['1. Create a tournament', '2. Add participants', '3. Open Live Control'].map(step => (
+              {[
+                { step: '1', label: 'Create a tournament' },
+                { step: '2', label: 'Register participants' },
+                { step: '3', label: 'Schedule matches' },
+                { step: '4', label: 'Book rooms & venues' },
+                { step: '5', label: 'Go live in Live Control' },
+                { step: '6', label: 'Track via Notifications' },
+              ].map(({ step, label }) => (
                 <span
                   key={step}
-                  className="text-xs font-medium px-3 py-1 rounded-full border"
+                  className="text-xs font-medium px-3 py-1.5 rounded-full border flex items-center gap-1.5"
                   style={{
                     background: `rgba(var(--accent-rgb), 0.12)`,
                     borderColor: `rgba(var(--accent-rgb), 0.25)`,
                     color: 'var(--accent)',
                   }}
                 >
-                  {step}
+                  <span
+                    className="inline-flex items-center justify-center rounded-full text-[10px] font-bold leading-none"
+                    style={{
+                      width: 16,
+                      height: 16,
+                      background: `rgba(var(--accent-rgb), 0.25)`,
+                    }}
+                  >
+                    {step}
+                  </span>
+                  {label}
                 </span>
               ))}
             </div>

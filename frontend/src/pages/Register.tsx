@@ -1,7 +1,7 @@
 import { useRef, useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
+import BrandLogo from "../components/BrandLogo";
 import {
-  Zap,
   User,
   Mail,
   Lock,
@@ -61,9 +61,7 @@ export default function Register() {
             to="/"
             className="inline-flex items-center gap-2 mb-16 hover:opacity-80 transition-opacity"
           >
-            <div className="p-2 bg-arena-accent/10 rounded-lg text-arena-accent">
-              <Zap size={22} className="fill-current" />
-            </div>
+            <BrandLogo size={36} />
             <span className="font-display tracking-wide text-3xl font-bold">
               ArenaOPS
             </span>
@@ -138,9 +136,7 @@ export default function Register() {
             to="/"
             className="flex md:hidden items-center gap-2 mb-10 justify-center"
           >
-            <div className="p-2 bg-arena-accent/10 rounded-lg text-arena-accent">
-              <Zap size={22} className="fill-current" />
-            </div>
+            <BrandLogo size={32} />
             <span className="font-display tracking-wide text-2xl font-bold">
               ArenaOPS
             </span>

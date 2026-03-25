@@ -29,7 +29,7 @@ import {
 } from "../store/store";
 import { formatTime } from "../utils/time";
 import { motion, AnimatePresence } from "framer-motion";
-import { useToast } from '../components/Toast';
+import { useToast } from '../components/useToast';
 
 const PREVIEW_DATE = "2026-03-15";
 

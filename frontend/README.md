@@ -1,4 +1,4 @@
-# ArenaOPS — Tournament Management Platform
+# ArenaOps — Tournament Management Platform
 
 A full-featured tournament management SPA built for clubs and organizers running E-Sports, Sports, Board, and Card game competitions. Manage everything from registration through live match control in one interface.
 
@@ -13,13 +13,15 @@ A full-featured tournament management SPA built for clubs and organizers running
 - 25 games across all four categories with branded cards
 - Interactive animated background hinting at the four game types
 - Per-character 3D flip animation on the "Everything your club needs" section
+- Custom **AO monogram logo** (Bebas Neue, theme-aware) in navbar and footer
 
 ### Dashboard
 
 - Overview of active tournaments, live matches, upcoming matches, and key stats
 - Category tabs with Lucide icons (E-Sports / Sports / Board & Card)
 - Quick-action stat cards with colored accents
-- Empty state with create CTA when no tournaments exist
+- **Empty state** with create CTA when no tournaments exist
+- **Welcome banner** — canvas fireworks animation on first visit with 3-step onboarding guide
 
 ### Tournament Management
 
@@ -37,14 +39,18 @@ A full-featured tournament management SPA built for clubs and organizers running
 ### Schedule
 
 - **Grid and list views** of match timelines
-- Report delays directly from the schedule
-- Configurable week start day and default view in Settings
+- Report delays directly from the schedule with **double-confirmation dialog**
+- **Delay countdown timer** — counts down from selected delay duration, persists across navigation
+- Resume match early via **confirmed Resume Now** action
+- Status badge changes to **Delayed** during active delay
 
 ### Live Control
 
 - Real-time match management with score entry
-- No-show reporting, delay handling, and room reassignment
-- Live and delayed match highlighting with amber/red accents
+- No-show reporting and room reassignment
+- **Delay handling** — pick a duration, confirm twice, countdown timer shown on card
+- Resume match via confirmed dialog; timer persists across page navigation
+- Mobile-friendly score inputs with accessible `aria-live` announcements
 
 ### Room Booking
 
@@ -54,6 +60,7 @@ A full-featured tournament management SPA built for clubs and organizers running
 
 ### Notifications
 
+- **Toast notifications** — slide-in alerts for all key actions (create, update, delete, error)
 - In-app alerts for match start, delays, no-shows, and room changes
 - **Audio feedback** — programmatic two-tone chime via Web Audio API (no external file)
 - **Time-grouped feed** — Today / Yesterday / Earlier sections
@@ -76,6 +83,14 @@ A full-featured tournament management SPA built for clubs and organizers running
 
 - Global search across tournaments, participants, matches, rooms, notifications, and settings sections
 - Keyboard-friendly with instant results dropdown
+
+### Accessibility (HCI)
+
+- **Skip to main content** link for keyboard users
+- `aria-label` on all icon-only buttons
+- `aria-live="polite"` regions for score changes and dynamic content
+- `prefers-reduced-motion` fallback on the welcome banner fireworks
+- Sufficient color contrast across dark and light themes
 
 ---
 
@@ -141,16 +156,21 @@ npm run deploy    # Builds and pushes to GitHub Pages
 
 ```text
 frontend/
-├── src/
-│   ├── assets/             # Game logos and images
-│   ├── components/
-│   │   └── layout/         # AppLayout, Sidebar, ShareModal
-│   ├── data/               # Mock tournament and participant data
-│   ├── pages/              # Route-level pages (15+)
-│   ├── store/              # React Context, state helpers, settings
-│   ├── types/              # Shared TypeScript type definitions
-│   └── utils/              # Date/time formatting utilities
 ├── public/
+│   └── favicon.svg             # Theme-aware AO monogram (dark/light)
+├── src/
+│   ├── assets/                 # Game logos and images
+│   ├── components/
+│   │   ├── BrandLogo.tsx       # Inline SVG AO logo (uses CSS theme vars)
+│   │   ├── ConfirmDialog.tsx   # Reusable confirmation modal
+│   │   ├── Toast.tsx           # Toast notification system
+│   │   ├── WelcomeBanner.tsx   # First-visit onboarding banner w/ fireworks
+│   │   └── layout/             # AppLayout, Sidebar, ShareModal
+│   ├── data/                   # Mock tournament and participant data
+│   ├── pages/                  # Route-level pages (15+)
+│   ├── store/                  # React Context, state helpers, settings
+│   ├── types/                  # Shared TypeScript type definitions
+│   └── utils/                  # Date/time formatting utilities
 └── package.json
 ```
 

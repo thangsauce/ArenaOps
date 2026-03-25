@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, CheckCircle2, CalendarDays, ChevronLeft, ChevronRight, Gamepad2, Dumbbell, Brain, Diamond, FileText, Rocket, Users } from 'lucide-react';
 import type { TournamentFormat, TournamentStatus } from '../types';
 import { useApp } from '../store/store';
-import { useToast } from '../components/Toast';
+import { useToast } from '../components/useToast';
 import styles from './CreateTournament.module.css';
 import valorantLogo from "../assets/game-logos/valorant-icon.png";
 import leagueOfLegendsLogo from "../assets/game-logos/league-of-legends-icon.png";

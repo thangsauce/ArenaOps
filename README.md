@@ -1,4 +1,4 @@
-# ArenaOPS
+# ArenaOps
 
 Tournament management platform for every sport and game — from E-Sports and athletics to board games and card tournaments. Run brackets, live matches, schedules, participant registration, room bookings, and notifications all from one interface.
 
@@ -8,12 +8,14 @@ Tournament management platform for every sport and game — from E-Sports and at
 
 - **Multi-category support** — E-Sports, Sports, Board, and Card game tournaments with 25+ games
 - **Bracket formats** — Single/double-elimination, round-robin, and swiss
-- **Live Control** — Real-time score entry, no-show reporting, and delay handling
-- **Scheduling** — Grid and list views with player availability confirmation flow
+- **Live Control** — Real-time score entry, no-show reporting, and delay handling with countdown timers
+- **Scheduling** — Grid and list views with player availability confirmation flow and delay management
 - **Room Booking** — Assign venues to matches with double-booking conflict detection
-- **Notifications** — Sound alerts (Web Audio API), time-grouped feed, and per-event toggles
+- **Notifications** — Toast alerts, sound feedback (Web Audio API), time-grouped feed, and per-event toggles
 - **Dark / light theme** — System-aware with comfortable and compact density modes
 - **Global search** — Instant results across tournaments, participants, rooms, and settings
+- **Accessibility** — Keyboard navigation, ARIA labels, skip-to-content link, and reduced-motion support
+- **Welcome banner** — Animated fireworks onboarding for first-time users
 
 ## Tech Stack
 

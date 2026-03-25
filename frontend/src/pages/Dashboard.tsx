@@ -96,7 +96,7 @@ function TournamentCard({ t }: { t: Tournament }) {
         </div>
         {liveMatches > 0 && (
           <div className="justify-self-end flex items-center gap-1.5 bg-red-500/10 px-2.5 py-1.5 rounded-lg border border-red-500/20 text-red-400 whitespace-nowrap">
-            <Radio size={14} />
+            <Radio size={14} className="animate-pulse" style={{ animationDuration: '2.2s' }} />
             <span className="font-bold">{liveMatches} live</span>
           </div>
         )}
@@ -339,7 +339,7 @@ export default function Dashboard() {
         {[
           { label: all.length === 1 ? 'Total Tournament' : 'Total Tournaments', value: all.length,          Icon: Trophy,  color: 'text-arena-text',   iconColor: 'text-arena-text-muted',  top: '' },
           { label: active.length === 1 ? 'Active Tournament' : 'Active Tournaments', value: active.length,      Icon: Trophy,  color: 'text-arena-accent', iconColor: 'text-arena-accent',       top: 'border-t-2 border-arena-accent/40', glow: 'shadow-[0_4px_20px_rgba(232,255,71,0.08)]' },
-          { label: liveNow === 1 ? 'Match Live' : 'Matches Live',      value: liveNow,             Icon: Radio,   color: liveNow > 0 ? 'text-red-400' : 'text-arena-text', iconColor: liveNow > 0 ? 'text-red-400' : 'text-arena-text-muted', top: liveNow > 0 ? 'border-t-2 border-red-500/40' : '', glow: liveNow > 0 ? 'shadow-[0_4px_20px_rgba(248,113,113,0.08)]' : '' },
+          { label: liveNow === 1 ? 'Match Live' : 'Matches Live',      value: liveNow,             Icon: Radio,   color: liveNow > 0 ? 'text-red-400' : 'text-arena-text', iconColor: liveNow > 0 ? 'text-red-400 animate-pulse' : 'text-arena-text-muted', top: liveNow > 0 ? 'border-t-2 border-red-500/40' : '', glow: liveNow > 0 ? 'shadow-[0_4px_20px_rgba(248,113,113,0.08)]' : '' },
           { label: teamTournaments === 1 ? 'Team Tournament' : 'Team Tournaments',  value: teamTournaments,     Icon: Users,   color: 'text-arena-text',   iconColor: 'text-arena-text-muted',  top: '' },
           { label: individualTournaments === 1 ? 'Individual Event' : 'Individual Events', value: individualTournaments, Icon: User, color: 'text-arena-text',   iconColor: 'text-arena-text-muted',  top: '' },
         ].map((stat, i) => (

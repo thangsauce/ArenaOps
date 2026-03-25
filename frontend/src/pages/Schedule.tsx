@@ -138,10 +138,6 @@ export default function Schedule() {
     dateNavRefs.current[nextIndex]?.focus();
   };
 
-  useEffect(() => {
-    setView(settings.schedulePrefs.defaultView);
-  }, [settings.schedulePrefs.defaultView]);
-
   // Tick every second
   useEffect(() => {
     const timer = setInterval(() => {
@@ -214,7 +210,7 @@ export default function Schedule() {
         <div className={styles.alertBar}>
           {liveMatches.length > 0 && (
             <div className={styles.alert} data-type="live">
-              <Radio size={14} />
+              <Radio size={14} className="animate-pulse" style={{ animationDuration: "2.2s" }} />
               <strong>{liveMatches.length} live now</strong>
               {liveMatches.map((m) => (
                 <span key={m.id} className={styles.alertChip}>

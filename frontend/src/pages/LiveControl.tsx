@@ -14,7 +14,7 @@ import {
 } from "lucide-react";
 import { useApp } from "../store/store";
 import { formatTime } from "../utils/time";
-import { useToast } from "../components/Toast";
+import { useToast } from "../components/useToast";
 import ConfirmDialog from "../components/ConfirmDialog";
 import styles from "./LiveControl.module.css";
 
@@ -131,7 +131,10 @@ export default function LiveControl() {
     matchId: string;
   } | null>(null);
   const delayedMatchTimersRef = useRef(delayedMatchTimers);
-  delayedMatchTimersRef.current = delayedMatchTimers;
+
+  useEffect(() => {
+    delayedMatchTimersRef.current = delayedMatchTimers;
+  }, [delayedMatchTimers]);
 
   // Tick every second to update elapsed counters from store timers
   useEffect(() => {
@@ -282,7 +285,7 @@ export default function LiveControl() {
       {/* Live matches */}
       <section className={styles.section}>
         <h2 className={styles.sectionTitle} style={{ color: "var(--red)" }}>
-          <Radio size={13} /> Live Now
+          <Radio size={13} className="animate-pulse" style={{ animationDuration: "2.2s" }} /> Live Now
         </h2>
         {live.length === 0 && (
           <div className={styles.empty}>No matches live right now.</div>
@@ -299,10 +302,6 @@ export default function LiveControl() {
             return (
               <div key={m.id} className={styles.liveCard}>
                 <div className={styles.liveHeader}>
-                  <span className={styles.liveChip}>
-                    <span className={styles.livePulse} />
-                    LIVE
-                  </span>
                   <span className={styles.matchRef}>
                     Match {m.matchNumber} · Round {m.round}
                   </span>

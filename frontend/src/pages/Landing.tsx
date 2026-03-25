@@ -1,6 +1,7 @@
 import React, { startTransition, useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import ThemeToggle from "../components/ThemeToggle";
+import BrandLogo from "../components/BrandLogo";
 import {
   Zap,
   Trophy,
@@ -3390,9 +3391,7 @@ export default function Landing() {
           className="flex items-center gap-2 cursor-pointer"
           onClick={() => navigate("/")}
         >
-          <div className="p-2 bg-arena-accent/10 rounded-lg text-arena-accent">
-            <Zap size={22} className="fill-current" />
-          </div>
+          <BrandLogo size={32} />
           <span className="font-display tracking-wide text-2xl font-bold">
             Arena<span className="text-arena-accent">OPS</span>
           </span>
@@ -4588,9 +4587,7 @@ export default function Landing() {
               {/* Brand */}
               <div className="sm:col-span-2 lg:col-span-1 text-center sm:text-left">
                 <div className="flex items-center justify-center sm:justify-start gap-2 mb-4">
-                  <div className="p-1.5 bg-arena-accent/10 rounded-lg text-arena-accent">
-                    <Zap size={18} className="fill-current" />
-                  </div>
+                  <BrandLogo size={28} />
                   <span className="font-display tracking-wide text-xl font-bold">
                     Arena<span className="text-arena-accent">OPS</span>
                   </span>

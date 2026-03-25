@@ -47,7 +47,7 @@ export function ToastProvider({ children }: { children: ReactNode }) {
     <ToastContext.Provider value={{ toast }}>
       {children}
       <div
-        className={`fixed top-4 z-[70] flex flex-col gap-2 pointer-events-none ${
+        className={`fixed top-4 z-70 flex flex-col gap-2 pointer-events-none ${
           toastOnLeft ? 'left-4 items-start' : 'right-4 items-end'
         }`}
         aria-live="polite"
@@ -61,7 +61,7 @@ export function ToastProvider({ children }: { children: ReactNode }) {
               animate={{ opacity: 1, x: 0, scale: 1 }}
               exit={{ opacity: 0, x: toastOnLeft ? -64 : 64, scale: 0.92 }}
               transition={{ duration: 0.22, ease: 'easeOut' }}
-              className={`pointer-events-auto flex items-start gap-3 bg-arena-surface border-arena-border border rounded-xl shadow-xl px-4 py-3 min-w-[240px] max-w-[340px] ${
+              className={`pointer-events-auto flex items-start gap-3 bg-arena-surface border-arena-border border rounded-xl shadow-xl px-4 py-3 min-w-60 max-w-85 ${
                 t.variant === 'success'
                   ? 'border-l-[3px] border-l-arena-accent'
                   : 'border-l-[3px] border-l-red-500'

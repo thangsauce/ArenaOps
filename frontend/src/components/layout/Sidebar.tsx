@@ -7,13 +7,14 @@ import {
   Bell,
   Settings,
   Plus,
-  Zap,
+  Radio,
   MapPin,
   X,
   LogOut,
   Search,
 } from "lucide-react";
 import { useApp } from "../../store/useApp";
+import type { AppSettings } from "../../store/settings";
 import { useState, useRef, useEffect } from "react";
 import { buildAppSearchResults } from "../../utils/appSearch";
 
@@ -22,11 +23,51 @@ const navItems = [
   { to: "/tournaments", icon: Trophy, label: "Tournaments" },
   { to: "/participants", icon: Users, label: "Participants" },
   { to: "/schedule", icon: Calendar, label: "Schedule" },
-  { to: "/live", icon: Zap, label: "Live Control" },
+  { to: "/live", icon: Radio, label: "Live Control" },
   { to: "/rooms", icon: MapPin, label: "Room Booking" },
   { to: "/notifications", icon: Bell, label: "Notifications", useBadge: true },
   { to: "/settings", icon: Settings, label: "Settings" },
 ];
+
+const fallbackSettings: AppSettings = {
+  profile: {
+    name: "Admin User",
+    email: "demo@arenaops.gg",
+    university: "ArenaOPS",
+  },
+  appearance: {
+    theme: "dark",
+    density: "comfortable",
+    mobileMenuPosition: "left",
+  },
+  timePrefs: {
+    format: "12h",
+    timezone: "America/New_York",
+  },
+  notifications: {
+    sound: true,
+    matchStart: true,
+    delays: true,
+    noShows: true,
+    roomChanges: true,
+  },
+  schedulePrefs: {
+    defaultView: "grid",
+    weekStart: "monday",
+  },
+  participantPrefs: {
+    sortBy: "seed",
+    hideDeclined: false,
+  },
+  bracketPrefs: {
+    defaultView: "tree",
+  },
+  tournamentDefaults: {
+    format: "single-elimination",
+    maxParticipants: "8",
+    organizerName: "Admin User",
+  },
+};
 
 interface SidebarProps {
   open?: boolean;
@@ -35,16 +76,9 @@ interface SidebarProps {
 
 export default function Sidebar({ open, onClose }: SidebarProps) {
   const navigate = useNavigate();
-  let { unreadCount = 0, settings } = useApp() || {};
-  if (!settings) {
-    settings = {
-      profile: {
-        name: "Admin User",
-        email: "demo@arenaops.gg",
-        university: "ArenaOPS",
-      },
-    } as any;
-  }
+  const app = useApp();
+  const unreadCount = app?.unreadCount ?? 0;
+  const settings = app?.settings ?? fallbackSettings;
   const { name } = settings.profile;
   const timePrefs = settings.timePrefs ?? {
     format: "12h",
@@ -70,6 +104,9 @@ export default function Sidebar({ open, onClose }: SidebarProps) {
       appSearchQuery: "",
       setAppSearchQuery: () => {},
     };
+  const hasLiveMatches = tournaments.some((tournament) =>
+    tournament.matches.some((match) => match.status === "live"),
+  );
 
   useEffect(() => {
     const handler = (e: MouseEvent) => {
@@ -86,14 +123,12 @@ export default function Sidebar({ open, onClose }: SidebarProps) {
     notifications,
     timePrefs,
   });
-
-  useEffect(() => {
-    if (!showResults || results.length === 0) {
-      setFocusedResultIndex(-1);
-      return;
-    }
-    setFocusedResultIndex(0);
-  }, [showResults, results.length]);
+  const effectiveFocusedResultIndex =
+    !showResults || results.length === 0
+      ? -1
+      : focusedResultIndex < 0
+        ? 0
+        : Math.min(focusedResultIndex, results.length - 1);
 
   useEffect(() => {
     if (!open) return;
@@ -116,14 +151,16 @@ export default function Sidebar({ open, onClose }: SidebarProps) {
     if (!showResults || results.length === 0) return;
     if (e.key === "ArrowDown") {
       e.preventDefault();
-      setFocusedResultIndex((i) => Math.min(i + 1, results.length - 1));
+      setFocusedResultIndex((i) =>
+        Math.min(i < 0 ? 0 : i + 1, results.length - 1),
+      );
     } else if (e.key === "ArrowUp") {
       e.preventDefault();
-      setFocusedResultIndex((i) => Math.max(i - 1, 0));
+      setFocusedResultIndex((i) => Math.max((i < 0 ? 0 : i) - 1, 0));
     } else if (e.key === "Enter") {
-      if (focusedResultIndex < 0) return;
+      if (effectiveFocusedResultIndex < 0) return;
       e.preventDefault();
-      handleSelectResult(results[focusedResultIndex].path);
+      handleSelectResult(results[effectiveFocusedResultIndex].path);
     } else if (e.key === "Escape") {
       e.preventDefault();
       setShowResults(false);
@@ -159,8 +196,19 @@ export default function Sidebar({ open, onClose }: SidebarProps) {
       {/* Header */}
       <div className="flex items-center justify-between h-20 px-6 border-b border-arena-border/50">
         <div className="flex items-center gap-2">
-          <div className="p-1.5 bg-arena-accent/10 rounded-md text-arena-accent">
-            <Zap size={20} className="fill-current" />
+          <div className="shrink-0">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="34" height="34" aria-hidden="true">
+              <rect width="32" height="32" rx="6" fill="var(--accent)" fillOpacity="0.12"/>
+              <line x1="3"  y1="13" x2="9"  y2="13" stroke="var(--accent)" strokeWidth="1.5" strokeLinecap="round" opacity="0.4"/>
+              <line x1="3"  y1="16" x2="11" y2="16" stroke="var(--accent)" strokeWidth="1.5" strokeLinecap="round" opacity="0.65"/>
+              <line x1="3"  y1="19" x2="9"  y2="19" stroke="var(--accent)" strokeWidth="1.5" strokeLinecap="round" opacity="0.4"/>
+              <text x="11" y="22"
+                fill="var(--accent)"
+                fontFamily="'Arial Black','Impact','Helvetica Neue',sans-serif"
+                fontSize="13"
+                fontWeight="900"
+                letterSpacing="-0.5">AO</text>
+            </svg>
           </div>
           <span className="font-display font-bold text-xl tracking-wider text-arena-text">
             Arena<span className="text-arena-accent">OPS</span>
@@ -219,7 +267,7 @@ export default function Sidebar({ open, onClose }: SidebarProps) {
               {results.map((r, i) => (
                 <button
                   key={i}
-                  className={`w-full flex items-center gap-2 px-3 py-2 transition-colors text-left border-b border-arena-border last:border-0 ${i === focusedResultIndex ? "bg-arena-surface-hover" : "hover:bg-arena-surface-hover"}`}
+                  className={`w-full flex items-center gap-2 px-3 py-2 transition-colors text-left border-b border-arena-border last:border-0 ${i === effectiveFocusedResultIndex ? "bg-arena-surface-hover" : "hover:bg-arena-surface-hover"}`}
                   onClick={() => handleSelectResult(r.path)}
                   onMouseEnter={() => setFocusedResultIndex(i)}
                 >
@@ -270,7 +318,7 @@ export default function Sidebar({ open, onClose }: SidebarProps) {
                 )}
                 <Icon
                   size={18}
-                  className={`${isActive ? "text-arena-accent" : "text-arena-text-muted group-hover:text-arena-text"}`}
+                  className={`${isActive ? "text-arena-accent" : "text-arena-text-muted group-hover:text-arena-text"} ${to === "/live" && hasLiveMatches ? "animate-[pulse_2.2s_ease-in-out_infinite]" : ""}`}
                 />
                 <span className="flex-1">{label}</span>
                 {useBadge && unreadCount > 0 && (
