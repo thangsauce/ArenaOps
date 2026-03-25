@@ -383,6 +383,25 @@ select.input {
 }
 .draftBtn:hover { background: var(--surface-2); color: var(--text); }
 
+.registrationBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: var(--blue-dim);
+  border: 1px solid rgba(79, 172, 254, 0.32);
+  color: var(--blue);
+  font-weight: 700;
+  font-size: 0.88rem;
+  padding: 12px 20px;
+  border-radius: var(--radius);
+  transition: all 0.15s;
+}
+.registrationBtn:hover {
+  background: color-mix(in srgb, var(--blue-dim) 62%, var(--surface));
+  border-color: rgba(79, 172, 254, 0.44);
+}
+
 .launchBtn {
   display: inline-flex;
   align-items: center;
@@ -398,6 +417,15 @@ select.input {
   transition: opacity 0.15s, transform 0.15s;
 }
 .launchBtn:hover { opacity: 0.9; transform: translateY(-1px); }
+.launchBtn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  transform: none;
+}
+.launchBtn:disabled:hover {
+  opacity: 0.4;
+  transform: none;
+}
 
 /* ── Date Picker ── */
 .datePicker {
@@ -574,6 +602,7 @@ select.input {
 
   .nextBtn,
   .draftBtn,
+  .registrationBtn,
   .launchBtn,
   .cancelBtn {
     width: 100%;

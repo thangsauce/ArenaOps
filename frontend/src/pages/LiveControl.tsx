@@ -79,6 +79,9 @@ export default function LiveControl() {
     completeMatch,
     reportNoShow,
     reportDelay,
+    delayedMatchTimers,
+    setDelayedMatchTimer,
+    clearDelayedMatchTimer,
   } = useApp();
   const toast = useToast();
   const tournament = tournaments[0];
@@ -106,43 +109,23 @@ export default function LiveControl() {
   const [liveScores, setLiveScores] = useState<
     Record<string, { score1: number; score2: number }>
   >({});
-  const [delayStartTimes, setDelayStartTimes] = useState<
-    Record<string, number>
-  >({});
-  const [delayDurations, setDelayDurations] = useState<Record<string, number>>(
-    {},
-  );
   const [elapsedSeconds, setElapsedSeconds] = useState<Record<string, number>>(
     {},
   );
   const [confirmResume, setConfirmResume] = useState<{
     matchId: string;
   } | null>(null);
-  const delayStartTimesRef = useRef(delayStartTimes);
-  delayStartTimesRef.current = delayStartTimes;
+  const delayedMatchTimersRef = useRef(delayedMatchTimers);
+  delayedMatchTimersRef.current = delayedMatchTimers;
 
-  // Initialise timers for any matches already delayed on mount
-  useEffect(() => {
-    const now = Date.now();
-    setDelayStartTimes((prev) => {
-      const next = { ...prev };
-      tournament.matches
-        .filter((m) => m.status === "delayed")
-        .forEach((m) => {
-          if (!next[m.id]) next[m.id] = now;
-        });
-      return next;
-    });
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
-
-  // Tick every second to update elapsed counters
+  // Tick every second to update elapsed counters from store timers
   useEffect(() => {
     const timer = setInterval(() => {
       const now = Date.now();
       setElapsedSeconds(() => {
         const next: Record<string, number> = {};
-        Object.entries(delayStartTimesRef.current).forEach(([id, start]) => {
-          next[id] = Math.floor((now - start) / 1000);
+        Object.entries(delayedMatchTimersRef.current).forEach(([id, t]) => {
+          next[id] = Math.floor((now - t.startAt) / 1000);
         });
         return next;
       });
@@ -151,8 +134,9 @@ export default function LiveControl() {
   }, []);
 
   const formatCountdown = (matchId: string) => {
-    const duration = delayDurations[matchId] ?? 0;
-    const remaining = Math.max(0, duration - (elapsedSeconds[matchId] ?? 0));
+    const timer = delayedMatchTimers[matchId];
+    if (!timer) return "00:00";
+    const remaining = Math.max(0, timer.durationSeconds - (elapsedSeconds[matchId] ?? 0));
     const m = Math.floor(remaining / 60);
     const s = remaining % 60;
     return `${String(m).padStart(2, "0")}:${String(s).padStart(2, "0")}`;
@@ -386,7 +370,7 @@ export default function LiveControl() {
                 <p className={styles.delayPlayers}>
                   {getName(m.participant1Id)} vs {getName(m.participant2Id)}
                 </p>
-                {delayDurations[m.id] !== undefined && (
+                {delayedMatchTimers[m.id] !== undefined && (
                   <div className={styles.delayTimer}>
                     <Clock size={11} />
                     {formatCountdown(m.id)} remaining
@@ -774,14 +758,10 @@ export default function LiveControl() {
             confirmDelay.matchId,
             confirmDelay.minutes,
           );
-          setDelayStartTimes((prev) => ({
-            ...prev,
-            [confirmDelay.matchId]: Date.now(),
-          }));
-          setDelayDurations((prev) => ({
-            ...prev,
-            [confirmDelay.matchId]: confirmDelay.minutes * 60,
-          }));
+          setDelayedMatchTimer(confirmDelay.matchId, {
+            startAt: Date.now(),
+            durationSeconds: confirmDelay.minutes * 60,
+          });
           setConfirmDelay(null);
           setDelayModal(null);
           setCustomDelay("");
@@ -798,16 +778,7 @@ export default function LiveControl() {
         onConfirm={() => {
           if (!confirmResume) return;
           startMatch(tournament.id, confirmResume.matchId);
-          setDelayStartTimes((prev) => {
-            const next = { ...prev };
-            delete next[confirmResume.matchId];
-            return next;
-          });
-          setDelayDurations((prev) => {
-            const next = { ...prev };
-            delete next[confirmResume.matchId];
-            return next;
-          });
+          clearDelayedMatchTimer(confirmResume.matchId);
           setElapsedSeconds((prev) => {
             const next = { ...prev };
             delete next[confirmResume.matchId];

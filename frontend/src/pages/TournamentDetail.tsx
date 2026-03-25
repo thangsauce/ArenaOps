@@ -20,7 +20,7 @@ import {
 import { useApp } from "../store/store";
 import type { Match, Participant } from "../types";
 import styles from "./TournamentDetail.module.css";
-import { formatDate } from "../utils/time";
+import { formatDate, formatTimeRange } from "../utils/time";
 import { useToast } from '../components/Toast';
 import ConfirmDialog from '../components/ConfirmDialog';
 
@@ -974,10 +974,22 @@ function TeamRow({
 }
 
 // ── Main page ─────────────────────────────────────────────────────────────────
+type PendingSelection =
+  | { kind: "location"; id: string }
+  | { kind: "timeBlock"; id: string };
+
 export default function TournamentDetail() {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { tournaments, settings, deleteTournament, startMatch, completeMatch } = useApp();
+  const {
+    tournaments,
+    settings,
+    deleteTournament,
+    startMatch,
+    completeMatch,
+    updateTournament,
+    updateTournamentStatus,
+  } = useApp();
   const tournament = tournaments.find((t) => t.id === id);
 
   const [bracketView, setBracketView] = useState<BracketView>(
@@ -987,6 +999,11 @@ export default function TournamentDetail() {
   const [showShare, setShowShare] = useState(false);
   const toast = useToast();
   const [confirmDelete, setConfirmDelete] = useState(false);
+  const [confirmTournamentStatusChange, setConfirmTournamentStatusChange] =
+    useState<"draft" | "registration" | "active" | null>(null);
+  const [pendingSelection, setPendingSelection] = useState<PendingSelection | null>(
+    null,
+  );
   const [expandedTeams, setExpandedTeams] = useState<string[]>([]);
   const [liveScores, setLiveScores] = useState<
     Record<string, { score1: number; score2: number }>
@@ -1029,7 +1046,13 @@ export default function TournamentDetail() {
 
   const participants = tournament.participants ?? [];
   const matches = tournament.matches ?? [];
+  const timeBlocks = tournament.timeBlocks ?? [];
   const locations = tournament.locations ?? [];
+  const selectedVenueLocation =
+    locations.find((location) => location.id === tournament.venueLocationId) ?? null;
+  const selectedTimeBlock =
+    timeBlocks.find((timeBlock) => timeBlock.id === tournament.selectedTimeBlockId) ??
+    null;
   const rounds = [...new Set(matches.map((m) => m.round))].sort(
     (a, b) => a - b,
   );
@@ -1052,6 +1075,12 @@ export default function TournamentDetail() {
         return groups;
       }, [])
     : [];
+  const rosterEntryCount = isIndividualGame ? participants.length : teamGroups.length;
+  const canOpenRegistration = rosterEntryCount >= 1;
+  const canActivateTournament =
+    rosterEntryCount >= 2 &&
+    Boolean(tournament.venueLocationId) &&
+    Boolean(tournament.selectedTimeBlockId);
 
   const viewButtons: {
     key: BracketView;
@@ -1133,6 +1162,63 @@ export default function TournamentDetail() {
     });
   };
 
+  const handleRequestLocationSelection = (locationId: string) => {
+    const location = locations.find((item) => item.id === locationId);
+    if (!location?.available) return;
+    setPendingSelection({ kind: "location", id: locationId });
+  };
+
+  const handleRequestTimeBlockSelection = (timeBlockId: string) => {
+    const timeBlock = timeBlocks.find((item) => item.id === timeBlockId);
+    if (!timeBlock) return;
+    setPendingSelection({ kind: "timeBlock", id: timeBlockId });
+  };
+
+  const handleConfirmSelection = () => {
+    if (!pendingSelection) return;
+    if (pendingSelection.kind === "location") {
+      const location = locations.find((item) => item.id === pendingSelection.id);
+      if (!location?.available) {
+        setPendingSelection(null);
+        return;
+      }
+      updateTournament(tournament.id, { venueLocationId: pendingSelection.id });
+      toast(`${location.name} selected`);
+    } else {
+      const timeBlock = timeBlocks.find((item) => item.id === pendingSelection.id);
+      if (!timeBlock) {
+        setPendingSelection(null);
+        return;
+      }
+      updateTournament(tournament.id, { selectedTimeBlockId: pendingSelection.id });
+      toast(`${timeBlock.label} selected`);
+    }
+    setPendingSelection(null);
+  };
+
+  const handleConfirmStatusChange = () => {
+    if (!confirmTournamentStatusChange) return;
+    if (confirmTournamentStatusChange === "registration" && !canOpenRegistration) {
+      toast(`Add at least one ${isIndividualGame ? "player" : "team"} first`);
+      return;
+    }
+    if (confirmTournamentStatusChange === "active" && !canActivateTournament) {
+      toast(
+        `Add at least two ${isIndividualGame ? "players" : "teams"}, select a time slot, and select a room before activating`,
+      );
+      return;
+    }
+    updateTournamentStatus(tournament.id, confirmTournamentStatusChange);
+    toast(
+      confirmTournamentStatusChange === "registration"
+        ? "Tournament opened for registration"
+        : confirmTournamentStatusChange === "draft"
+          ? "Tournament moved to draft"
+          : "Tournament activated",
+    );
+    setConfirmTournamentStatusChange(null);
+  };
+
   return (
     <div className={styles.page}>
       <div className={styles.topBar}>
@@ -1159,6 +1245,18 @@ export default function TournamentDetail() {
               <Clock size={14} />
               {formatDate(tournament.startDate)}
             </div>
+            {selectedTimeBlock && (
+              <div className={styles.metaItem}>
+                <Clock size={14} />
+                {selectedTimeBlock.label}
+              </div>
+            )}
+            {selectedVenueLocation && (
+              <div className={styles.metaItem}>
+                <MapPin size={14} />
+                {selectedVenueLocation.name}
+              </div>
+            )}
             {liveMatches.length > 0 && (
               <div className={styles.metaItem} style={{ color: "var(--red)" }}>
                 <Zap size={14} />
@@ -1176,6 +1274,53 @@ export default function TournamentDetail() {
             >
               <Trash2 size={15} /> Delete
             </button>
+            {tournament.status === "draft" && (
+              <button
+                className={styles.shareBtn}
+                style={{
+                  color: "var(--blue)",
+                  borderColor: "rgba(79,172,254,0.32)",
+                  background: "var(--blue-dim)",
+                }}
+                disabled={!canOpenRegistration}
+                title={
+                  canOpenRegistration
+                    ? "Open registration now"
+                    : `Add at least one ${isIndividualGame ? "player" : "team"} first`
+                }
+                onClick={() => setConfirmTournamentStatusChange("registration")}
+              >
+                <Users size={15} /> Register Now
+              </button>
+            )}
+            {tournament.status === "registration" && (
+              <button
+                className={styles.shareBtn}
+                style={{
+                  color: "var(--amber)",
+                  borderColor: "rgba(var(--amber-rgb),0.34)",
+                  background: "var(--amber-dim)",
+                }}
+                onClick={() => setConfirmTournamentStatusChange("draft")}
+              >
+                Move to Draft
+              </button>
+            )}
+            {(tournament.status === "draft" ||
+              tournament.status === "registration") && (
+              <button
+                className={styles.shareBtn}
+                disabled={!canActivateTournament}
+                title={
+                  canActivateTournament
+                    ? "Activate tournament now"
+                    : `Add at least two ${isIndividualGame ? "players" : "teams"}, choose a time slot, and choose a room first`
+                }
+                onClick={() => setConfirmTournamentStatusChange("active")}
+              >
+                <Zap size={15} /> Activate Now
+              </button>
+            )}
             <button
               className={styles.shareBtn}
               onClick={() => setShowShare(true)}
@@ -1311,14 +1456,58 @@ export default function TournamentDetail() {
         </section>
 
         {/* ── Locations ── */}
+        {timeBlocks.length > 0 && (
+          <section className={styles.section}>
+            <h2 className={styles.sectionTitle}>Time Slots</h2>
+            <div className={styles.locationGrid}>
+              {timeBlocks.map((timeBlock) => (
+                <button
+                  type="button"
+                  key={timeBlock.id}
+                  className={`${styles.locationCard} ${tournament.selectedTimeBlockId === timeBlock.id ? styles.locationSelected : ""}`}
+                  onClick={() => handleRequestTimeBlockSelection(timeBlock.id)}
+                >
+                  <Clock size={14} />
+                  <div>
+                    <p className={styles.locName}>{timeBlock.label}</p>
+                    <p className={styles.locBuilding}>
+                      {formatDate(timeBlock.date, {
+                        month: "short",
+                        day: "numeric",
+                        year: "numeric",
+                      })}{" "}
+                      ·{" "}
+                      {formatTimeRange(
+                        timeBlock.start,
+                        timeBlock.end,
+                        timeBlock.date,
+                        settings.timePrefs.format,
+                        settings.timePrefs.timezone,
+                      )}
+                    </p>
+                  </div>
+                  <span className={styles.locStatus} style={{ color: "var(--accent)" }}>
+                    {tournament.selectedTimeBlockId === timeBlock.id
+                      ? "Selected"
+                      : "Available"}
+                  </span>
+                </button>
+              ))}
+            </div>
+          </section>
+        )}
+
         {locations.length > 0 && (
           <section className={styles.section}>
             <h2 className={styles.sectionTitle}>Locations</h2>
             <div className={styles.locationGrid}>
               {locations.map((l) => (
-                <div
+                <button
+                  type="button"
                   key={l.id}
-                  className={`${styles.locationCard} ${!l.available ? styles.unavailable : ""}`}
+                  className={`${styles.locationCard} ${!l.available ? styles.unavailable : ""} ${tournament.venueLocationId === l.id ? styles.locationSelected : ""}`}
+                  disabled={!l.available}
+                  onClick={() => handleRequestLocationSelection(l.id)}
                 >
                   <MapPin size={14} />
                   <div>
@@ -1333,9 +1522,13 @@ export default function TournamentDetail() {
                       color: l.available ? "var(--accent)" : "var(--red)",
                     }}
                   >
-                    {l.available ? "Available" : "Booked"}
+                    {l.available
+                      ? tournament.venueLocationId === l.id
+                        ? "Selected"
+                        : "Available"
+                      : "Booked"}
                   </span>
-                </div>
+                </button>
               ))}
             </div>
           </section>
@@ -1383,6 +1576,23 @@ export default function TournamentDetail() {
         onCancel={() => setConfirmCompleteMatch(null)}
       />
       <ConfirmDialog
+        open={pendingSelection !== null}
+        title={
+          pendingSelection?.kind === "location"
+            ? "Select location?"
+            : "Select time slot?"
+        }
+        description={
+          pendingSelection?.kind === "location"
+            ? "This will set the tournament's selected room."
+            : "This will set the tournament's selected time slot."
+        }
+        confirmLabel="Apply"
+        confirmVariant="success"
+        onConfirm={handleConfirmSelection}
+        onCancel={() => setPendingSelection(null)}
+      />
+      <ConfirmDialog
         open={confirmDelete}
         title="Delete tournament?"
         description="This cannot be undone. All match data will be lost."
@@ -1393,6 +1603,39 @@ export default function TournamentDetail() {
           navigate('/dashboard');
         }}
         onCancel={() => setConfirmDelete(false)}
+      />
+      <ConfirmDialog
+        open={confirmTournamentStatusChange !== null}
+        title={
+          confirmTournamentStatusChange === "registration"
+            ? "Open registration?"
+            : confirmTournamentStatusChange === "draft"
+              ? "Move to draft?"
+              : "Activate tournament?"
+        }
+        description={
+          confirmTournamentStatusChange === "registration"
+            ? "This will make the tournament available for registration."
+            : confirmTournamentStatusChange === "draft"
+              ? "This will move the tournament back to draft."
+              : "This will activate the tournament and allow matches to start."
+        }
+        confirmLabel={
+          confirmTournamentStatusChange === "registration"
+            ? "Register Now"
+            : confirmTournamentStatusChange === "draft"
+              ? "Move to Draft"
+              : "Activate Now"
+        }
+        confirmVariant={
+          confirmTournamentStatusChange === "registration"
+            ? "success"
+            : confirmTournamentStatusChange === "draft"
+              ? "warning"
+              : "success"
+        }
+        onConfirm={handleConfirmStatusChange}
+        onCancel={() => setConfirmTournamentStatusChange(null)}
       />
     </div>
   );

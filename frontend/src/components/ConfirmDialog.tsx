@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, type ReactNode } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 
 interface ConfirmDialogProps {
@@ -7,6 +7,8 @@ interface ConfirmDialogProps {
   description: string;
   confirmLabel?: string;
   confirmVariant?: 'danger' | 'warning' | 'success';
+  confirmDisabled?: boolean;
+  customContent?: ReactNode;
   onConfirm: () => void;
   onCancel: () => void;
 }
@@ -17,6 +19,8 @@ export default function ConfirmDialog({
   description,
   confirmLabel = 'Delete',
   confirmVariant = 'danger',
+  confirmDisabled = false,
+  customContent,
   onConfirm,
   onCancel,
 }: ConfirmDialogProps) {
@@ -96,6 +100,7 @@ export default function ConfirmDialog({
               {title}
             </h2>
             <p className="text-arena-text-muted text-sm mb-5">{description}</p>
+            {customContent ? <div className="mb-5">{customContent}</div> : null}
             <div className="flex gap-3 justify-end">
               <button
                 ref={cancelRef}
@@ -106,14 +111,15 @@ export default function ConfirmDialog({
               </button>
               <button
                 ref={confirmRef}
+                disabled={confirmDisabled}
                 onClick={onConfirm}
-                className={`px-4 py-2 text-sm rounded-xl text-white transition-colors font-semibold ${
+                className={`px-4 py-2 text-sm rounded-xl transition-colors font-semibold ${
                   confirmVariant === 'warning'
-                    ? 'bg-orange-500 hover:bg-orange-400'
+                    ? 'bg-orange-500 hover:bg-orange-400 text-arena-bg'
                     : confirmVariant === 'success'
-                      ? 'bg-arena-accent hover:bg-arena-accent-hover'
-                      : 'bg-red-500 hover:bg-red-600'
-                }`}
+                      ? 'bg-arena-accent hover:bg-arena-accent-hover text-arena-bg'
+                      : 'bg-red-500 hover:bg-red-600 text-white'
+                } disabled:opacity-50 disabled:cursor-not-allowed`}
               >
                 {confirmLabel}
               </button>

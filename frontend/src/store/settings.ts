@@ -133,7 +133,7 @@ export const DEFAULT_SETTINGS: AppSettings = {
 };
 
 // ── Notification & AppState (here to avoid circular deps with context.ts) ────
-import type { Tournament, Match } from "../types";
+import type { Tournament, Match, Participant } from "../types";
 
 export interface Notification {
   id: string;
@@ -191,10 +191,16 @@ export interface AppState {
   ) => void;
   bookRoom: (tournamentId: string, matchId: string, locationId: string) => void;
   addTournament: (tournament: Tournament) => void;
+  updateTournament: (
+    tournamentId: string,
+    updates: Partial<Tournament>,
+  ) => void;
   updateTournamentStatus: (
     tournamentId: string,
     status: Tournament["status"],
   ) => void;
   deleteTournament: (tournamentId: string) => void;
   removeParticipant: (tournamentId: string, participantId: string) => void;
+  removeParticipants: (tournamentId: string, participantIds: string[]) => void;
+  addParticipants: (tournamentId: string, participants: Participant[]) => void;
 }

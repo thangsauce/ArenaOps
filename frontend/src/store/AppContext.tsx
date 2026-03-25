@@ -1,5 +1,5 @@
 import { useState, useCallback, useMemo, useEffect, type ReactNode } from 'react';
-import type { Match, Tournament } from '../types';
+import type { Match, Participant, Tournament } from '../types';
 import { mockTournaments } from '../data/mockData';
 import {
   DEFAULT_SETTINGS,
@@ -90,11 +90,40 @@ export function AppProvider({ children }: { children: ReactNode }) {
     setTournaments(prev => [...prev, tournament]);
   }, []);
 
-  const updateTournamentStatus = useCallback((tournamentId: string, status: Tournament['status']) => {
+  const getRosterEntryCount = useCallback((tournament: Tournament) => {
+    const teamNames = new Set(
+      tournament.participants
+        .map(participant => participant.team?.trim())
+        .filter((teamName): teamName is string => Boolean(teamName))
+    );
+
+    return teamNames.size > 0 ? teamNames.size : tournament.participants.length;
+  }, []);
+
+  const updateTournament = useCallback((tournamentId: string, updates: Partial<Tournament>) => {
     setTournaments(prev =>
-      prev.map(t => (t.id === tournamentId ? { ...t, status } : t))
+      prev.map(t => (t.id === tournamentId ? { ...t, ...updates } : t))
     );
   }, []);
+
+  const updateTournamentStatus = useCallback((tournamentId: string, status: Tournament['status']) => {
+    setTournaments(prev =>
+      prev.map(t => {
+        if (t.id !== tournamentId) return t;
+        if (status !== 'active') return { ...t, status };
+
+        const rosterEntryCount = getRosterEntryCount(t);
+        const hasSelectedVenue = Boolean(t.venueLocationId);
+        const hasTimeSlot = Boolean(t.selectedTimeBlockId);
+
+        if (rosterEntryCount < 2 || !hasSelectedVenue || !hasTimeSlot) {
+          return t;
+        }
+
+        return { ...t, status };
+      })
+    );
+  }, [getRosterEntryCount]);
 
   const deleteTournament = useCallback((tournamentId: string) => {
     setTournaments(prev => prev.filter(t => t.id !== tournamentId));
@@ -110,6 +139,46 @@ export function AppProvider({ children }: { children: ReactNode }) {
     );
   }, []);
 
+  const removeParticipants = useCallback((tournamentId: string, participantIds: string[]) => {
+    if (participantIds.length === 0) return;
+    const removedIds = new Set(participantIds);
+    setTournaments(prev =>
+      prev.map(t => {
+        if (t.id !== tournamentId) return t;
+        return {
+          ...t,
+          participants: t.participants.filter(p => !removedIds.has(p.id)),
+          matches: t.matches.map(match => {
+            const participant1Removed = match.participant1Id ? removedIds.has(match.participant1Id) : false;
+            const participant2Removed = match.participant2Id ? removedIds.has(match.participant2Id) : false;
+            const winnerRemoved = match.winnerId ? removedIds.has(match.winnerId) : false;
+            if (!participant1Removed && !participant2Removed && !winnerRemoved) return match;
+            return {
+              ...match,
+              participant1Id: participant1Removed ? null : match.participant1Id,
+              participant2Id: participant2Removed ? null : match.participant2Id,
+              winnerId: null,
+              score1: participant1Removed || participant2Removed ? 0 : match.score1,
+              score2: participant1Removed || participant2Removed ? 0 : match.score2,
+              status: participant1Removed || participant2Removed ? 'scheduled' : match.status,
+            };
+          }),
+        };
+      })
+    );
+  }, []);
+
+  const addParticipants = useCallback((tournamentId: string, participantsToAdd: Participant[]) => {
+    if (participantsToAdd.length === 0) return;
+    setTournaments(prev =>
+      prev.map(t =>
+        t.id !== tournamentId
+          ? t
+          : { ...t, participants: [...t.participants, ...participantsToAdd] }
+      )
+    );
+  }, []);
+
   const startMatch = useCallback((tournamentId: string, matchId: string) => {
     updateMatch(tournamentId, matchId, { status: 'live' });
     const t = tournaments.find(x => x.id === tournamentId);
@@ -120,7 +189,51 @@ export function AppProvider({ children }: { children: ReactNode }) {
   }, [tournaments, updateMatch, addNotification]);
 
   const completeMatch = useCallback((tournamentId: string, matchId: string, winnerId: string | null, score1: number, score2: number) => {
-    updateMatch(tournamentId, matchId, { status: 'completed', winnerId, score1, score2 });
+    setTournaments(prev =>
+      prev.map(t => {
+        if (t.id !== tournamentId) return t;
+
+        const currentMatch = t.matches.find(m => m.id === matchId);
+        if (!currentMatch) return t;
+
+        const supportsAdvancement =
+          t.format === 'single-elimination' || t.format === 'double-elimination';
+
+        const nextRound = currentMatch.round + 1;
+        const nextMatchNumber = Math.ceil(currentMatch.matchNumber / 2);
+        const winnerSlotKey =
+          currentMatch.matchNumber % 2 === 1 ? 'participant1Id' : 'participant2Id';
+
+        return {
+          ...t,
+          matches: t.matches.map(match => {
+            if (match.id === matchId) {
+              return {
+                ...match,
+                status: 'completed',
+                winnerId,
+                score1,
+                score2,
+              };
+            }
+
+            if (
+              supportsAdvancement &&
+              winnerId &&
+              match.round === nextRound &&
+              match.matchNumber === nextMatchNumber
+            ) {
+              return {
+                ...match,
+                [winnerSlotKey]: winnerId,
+              };
+            }
+
+            return match;
+          }),
+        };
+      })
+    );
     const t = tournaments.find(x => x.id === tournamentId);
     const winner = winnerId ? t?.participants.find(p => p.id === winnerId)?.name ?? 'Unknown' : null;
     addNotification({
@@ -180,8 +293,8 @@ export function AppProvider({ children }: { children: ReactNode }) {
       addNotification, markAllRead, markRead,
       updateMatch, reportNoShow, reportDelay, setDelayedMatchTimer,
       clearDelayedMatchTimer, startMatch, completeMatch, bookRoom,
-      addTournament, updateTournamentStatus,
-      deleteTournament, removeParticipant,
+      addTournament, updateTournament, updateTournamentStatus,
+      deleteTournament, removeParticipant, removeParticipants, addParticipants,
     }}>
       {children}
     </AppContext.Provider>

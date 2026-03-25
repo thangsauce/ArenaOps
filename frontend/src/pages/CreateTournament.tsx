@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect, type ComponentType, type CSSProperties, type KeyboardEvent, type MutableRefObject } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, CheckCircle2, CalendarDays, ChevronLeft, ChevronRight, Gamepad2, Dumbbell, Brain, Diamond, FileText, Rocket } from 'lucide-react';
-import type { TournamentFormat } from '../types';
+import { ArrowLeft, CheckCircle2, CalendarDays, ChevronLeft, ChevronRight, Gamepad2, Dumbbell, Brain, Diamond, FileText, Rocket, Users } from 'lucide-react';
+import type { TournamentFormat, TournamentStatus } from '../types';
 import { useApp } from '../store/store';
 import { useToast } from '../components/Toast';
 import styles from './CreateTournament.module.css';
@@ -439,6 +439,7 @@ export default function CreateTournament() {
   const stepTwoContinueRef = useRef<HTMLButtonElement | null>(null);
   const stepThreeCancelRef = useRef<HTMLButtonElement | null>(null);
   const stepThreeDraftRef = useRef<HTMLButtonElement | null>(null);
+  const stepThreeRegistrationRef = useRef<HTMLButtonElement | null>(null);
   const stepThreeLaunchRef = useRef<HTMLButtonElement | null>(null);
 
   type FormField = keyof typeof form;
@@ -591,13 +592,14 @@ export default function CreateTournament() {
   };
   const handleStepThreeNav = (
     e: KeyboardEvent<HTMLButtonElement>,
-    current: 'cancel' | 'draft' | 'launch',
+    current: 'cancel' | 'draft' | 'registration' | 'launch',
   ) => {
     const isMobileView = window.matchMedia('(max-width: 768px)').matches;
-    const order: Array<'cancel' | 'draft' | 'launch'> = ['cancel', 'draft', 'launch'];
+    const order: Array<'cancel' | 'draft' | 'registration' | 'launch'> = ['cancel', 'draft', 'registration', 'launch'];
     const refs = {
       cancel: stepThreeCancelRef,
       draft: stepThreeDraftRef,
+      registration: stepThreeRegistrationRef,
       launch: stepThreeLaunchRef,
     };
     const currentIndex = order.indexOf(current);
@@ -618,6 +620,27 @@ export default function CreateTournament() {
           : (currentIndex - 1 + order.length) % order.length;
       refs[order[nextIndex]].current?.focus();
     }
+  };
+
+  const createTournament = (status: TournamentStatus, message: string) => {
+    addTournament({
+      id: `t${Date.now()}`,
+      name: form.name,
+      game: form.game,
+      format: form.format as TournamentFormat,
+      maxParticipants: parseInt(form.maxParticipants),
+      startDate: form.startDate,
+      organizerName: form.organizerName,
+      description: form.description,
+      createdAt: new Date().toISOString(),
+      status,
+      participants: [],
+      matches: [],
+      locations: [],
+      timeBlocks: [],
+    });
+    toast(message);
+    navigate('/dashboard');
   };
 
   return (
@@ -972,48 +995,12 @@ export default function CreateTournament() {
             <button
               ref={stepThreeDraftRef}
               className={styles.draftBtn}
-              onClick={() => {
-              addTournament({
-                id: `t${Date.now()}`,
-                name: form.name,
-                game: form.game,
-                format: form.format as TournamentFormat,
-                maxParticipants: parseInt(form.maxParticipants),
-                startDate: form.startDate,
-                organizerName: form.organizerName,
-                description: form.description,
-                createdAt: new Date().toISOString(),
-                status: 'draft',
-                participants: [],
-                matches: [],
-                locations: [],
-                timeBlocks: [],
-              });
-              toast('Tournament saved as draft');
-              navigate('/dashboard');
-            }}
+              onClick={() => createTournament('draft', 'Tournament saved as draft')}
               onKeyDown={(e) => {
                 handleStepThreeNav(e, 'draft');
                 if (e.key === 'Enter') {
                   e.preventDefault();
-                  addTournament({
-                    id: `t${Date.now()}`,
-                    name: form.name,
-                    game: form.game,
-                    format: form.format as TournamentFormat,
-                    maxParticipants: parseInt(form.maxParticipants),
-                    startDate: form.startDate,
-                    organizerName: form.organizerName,
-                    description: form.description,
-                    createdAt: new Date().toISOString(),
-                    status: 'draft',
-                    participants: [],
-                    matches: [],
-                    locations: [],
-                    timeBlocks: [],
-                  });
-                  toast('Tournament saved as draft');
-                  navigate('/dashboard');
+                  createTournament('draft', 'Tournament saved as draft');
                 }
               }}
             >
@@ -1021,51 +1008,27 @@ export default function CreateTournament() {
               <span>Save as Draft</span>
             </button>
             <button
-              ref={stepThreeLaunchRef}
-              className={styles.launchBtn}
-              onClick={() => {
-              addTournament({
-                id: `t${Date.now()}`,
-                name: form.name,
-                game: form.game,
-                format: form.format as TournamentFormat,
-                maxParticipants: parseInt(form.maxParticipants),
-                startDate: form.startDate,
-                organizerName: form.organizerName,
-                description: form.description,
-                createdAt: new Date().toISOString(),
-                status: 'active' as const,
-                participants: [],
-                matches: [],
-                locations: [],
-                timeBlocks: [],
-              });
-              toast('Tournament launched!');
-              navigate('/dashboard');
-            }}
+              ref={stepThreeRegistrationRef}
+              className={styles.registrationBtn}
+              onClick={() => createTournament('registration', 'Tournament opened for registration')}
               onKeyDown={(e) => {
-                handleStepThreeNav(e, 'launch');
+                handleStepThreeNav(e, 'registration');
                 if (e.key === 'Enter') {
                   e.preventDefault();
-                  addTournament({
-                    id: `t${Date.now()}`,
-                    name: form.name,
-                    game: form.game,
-                    format: form.format as TournamentFormat,
-                    maxParticipants: parseInt(form.maxParticipants),
-                    startDate: form.startDate,
-                    organizerName: form.organizerName,
-                    description: form.description,
-                    createdAt: new Date().toISOString(),
-                    status: 'active',
-                    participants: [],
-                    matches: [],
-                    locations: [],
-                    timeBlocks: [],
-                  });
-                  toast('Tournament launched!');
-                  navigate('/dashboard');
+                  createTournament('registration', 'Tournament opened for registration');
                 }
+              }}
+            >
+              <Users size={16} />
+              <span>Open Registration</span>
+            </button>
+            <button
+              ref={stepThreeLaunchRef}
+              className={styles.launchBtn}
+              disabled
+              title="Open registration first before launching the tournament"
+              onKeyDown={(e) => {
+                handleStepThreeNav(e, 'launch');
               }}
             >
               <Rocket size={16} />

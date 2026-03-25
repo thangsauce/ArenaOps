@@ -50,6 +50,8 @@ export interface Match {
   timeBlockId?: string;
   locationId?: string;
   scheduledAt?: string;
+  delayStartedAt?: number;
+  delayDurationSeconds?: number;
 }
 
 export interface Tournament {
@@ -67,4 +69,6 @@ export interface Tournament {
   organizerName: string;
   maxParticipants: number;
   description: string;
+  venueLocationId?: string;
+  selectedTimeBlockId?: string;
 }

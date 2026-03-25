@@ -12,6 +12,8 @@ export const mockTournaments: Tournament[] = [
     description: "Annual spring esports tournament open to all UCF students.",
     createdAt: "2026-03-01",
     startDate: "2026-03-15",
+    selectedTimeBlockId: "tb1",
+    venueLocationId: "l1",
     timeBlocks: [
       {
         id: "tb1",
@@ -301,6 +303,8 @@ export const mockTournaments: Tournament[] = [
     description: "End-of-semester chess championship.",
     createdAt: "2026-02-10",
     startDate: "2026-02-28",
+    selectedTimeBlockId: "tb6",
+    venueLocationId: "l5",
     timeBlocks: [
       {
         id: "tb6",

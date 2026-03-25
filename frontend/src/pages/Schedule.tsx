@@ -522,18 +522,6 @@ export default function Schedule() {
                                 <span className={styles.livePulse} />
                               )}
                               {st.label}
-                              {m.status === "delayed" &&
-                                delayedMatchTimers[m.id] !== undefined && (
-                                  <span
-                                    style={{
-                                      marginLeft: "4px",
-                                      fontWeight: "normal",
-                                      opacity: 0.9,
-                                    }}
-                                  >
-                                    {formatCountdown(m.id)} remaining
-                                  </span>
-                                )}
                             </div>
                             {m.status === "live" && (
                               <button
