@@ -353,9 +353,9 @@
     align-items: center;
     gap: 5px;
     font-size: 0.78rem;
-    color: var(--text-2);
-    background: var(--surface);
-    border: 1px solid var(--border-2);
+    color: #22c55e;
+    background: rgba(34, 197, 94, 0.12);
+    border: 1px solid rgba(34, 197, 94, 0.3);
     border-radius: var(--radius-sm);
     padding: 7px 12px;
     cursor: pointer;
@@ -363,7 +363,8 @@
     transition: all 0.15s;
 }
 .rescheduleBtn:hover {
-    color: var(--text);
+    background: rgba(34, 197, 94, 0.2);
+    color: #16a34a;
 }
 .removeDelayBtn {
     display: flex;
