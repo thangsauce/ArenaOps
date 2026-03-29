@@ -38,10 +38,10 @@ export default function Login() {
   return (
     <div className="min-h-screen flex flex-col md:flex-row bg-arena-bg font-sans text-arena-text overflow-hidden">
       {/* Left Panel */}
-      <div className="hidden md:flex md:w-5/12 lg:w-1/2 relative p-12 flex-col justify-center overflow-hidden border-r border-arena-border bg-[#0d0d14]">
+      <div className="hidden md:flex md:w-5/12 lg:w-1/2 relative p-12 flex-col justify-center overflow-hidden border-r border-arena-border bg-[radial-gradient(circle_at_top,#eef5cf_0%,#f7f8ef_34%,#eef1e2_65%,#e6eadb_100%)] dark:bg-[radial-gradient(circle_at_top,#1e2212_0%,#13150f_38%,#0d0d14_100%)]">
         {/* Decorative Grid */}
-        <div className="absolute inset-0 bg-[linear-gradient(to_right,#ffffff05_1px,transparent_1px),linear-gradient(to_bottom,#ffffff05_1px,transparent_1px)] bg-size-[4rem_4rem] mask-[radial-gradient(ellipse_60%_60%_at_50%_50%,#000_70%,transparent_100%)]" />
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-125 h-125 bg-arena-accent/5 blur-[100px] rounded-full pointer-events-none" />
+        <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(94,107,0,0.08)_1px,transparent_1px),linear-gradient(to_bottom,rgba(94,107,0,0.08)_1px,transparent_1px)] dark:bg-[linear-gradient(to_right,#ffffff05_1px,transparent_1px),linear-gradient(to_bottom,#ffffff05_1px,transparent_1px)] bg-size-[4rem_4rem] mask-[radial-gradient(ellipse_60%_60%_at_50%_50%,#000_70%,transparent_100%)]" />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-125 h-125 bg-arena-accent/12 dark:bg-arena-accent/5 blur-[100px] rounded-full pointer-events-none" />
 
         <div className="relative z-10 max-w-md mx-auto">
           <Link
@@ -67,7 +67,7 @@ export default function Login() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.1 }}
-            className="text-lg text-gray-400 mb-10 leading-relaxed"
+            className="text-lg text-arena-text-muted dark:text-gray-400 mb-10 leading-relaxed"
           >
             Manage tournaments, track matches live, and run events your club
             will remember.
@@ -87,9 +87,9 @@ export default function Login() {
             ].map((text, i) => (
               <li
                 key={i}
-                className="flex items-center gap-3 text-gray-300 font-medium"
+                className="flex items-center gap-3 text-arena-text dark:text-gray-300 font-medium"
               >
-                <span className="w-1.5 h-1.5 rounded-full bg-arena-accent shrink-0 shadow-[0_0_8px_rgba(232,255,71,0.8)]" />
+                <span className="w-1.5 h-1.5 rounded-full bg-arena-accent shrink-0 shadow-[0_0_8px_rgba(94,107,0,0.35)] dark:shadow-[0_0_8px_rgba(232,255,71,0.8)]" />
                 {text}
               </li>
             ))}
@@ -98,8 +98,8 @@ export default function Login() {
       </div>
 
       {/* Right Form */}
-      <div className="flex-1 flex items-center justify-center p-6 sm:p-12 relative">
-        <div className="absolute right-0 top-0 w-100 h-100 bg-blue-500/5 blur-[120px] rounded-full pointer-events-none" />
+      <div className="flex-1 flex items-center justify-center p-6 sm:p-12 relative bg-[linear-gradient(180deg,rgba(255,255,255,0.55),transparent)] dark:bg-none">
+        <div className="absolute right-0 top-0 w-100 h-100 bg-arena-accent/8 dark:bg-blue-500/5 blur-[120px] rounded-full pointer-events-none" />
 
         {/* Home Button */}
         <button
@@ -114,7 +114,7 @@ export default function Login() {
           initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.4 }}
-          className="w-full max-w-md"
+          className="w-full max-w-md rounded-[28px] border border-black/6 dark:border-white/8 bg-white/88 dark:bg-arena-surface/70 backdrop-blur-xl shadow-[0_28px_80px_rgba(17,24,39,0.08)] dark:shadow-[0_28px_80px_rgba(0,0,0,0.38)] p-8 sm:p-10"
         >
           {/* Mobile Logo */}
           <Link
@@ -150,7 +150,7 @@ export default function Login() {
                 <input
                   id="email"
                   type="email"
-                  className="w-full bg-arena-surface/80 border border-arena-border rounded-xl py-3.5 pl-11 pr-4 text-arena-text placeholder:text-arena-text-muted focus:outline-none focus:border-arena-accent/50 focus:ring-1 focus:ring-arena-accent/50 transition-all font-medium"
+                  className="w-full bg-white/90 dark:bg-arena-surface/80 border border-black/8 dark:border-arena-border rounded-xl py-3.5 pl-11 pr-4 text-arena-text placeholder:text-arena-text-muted focus:outline-none focus:border-arena-accent/50 focus:ring-1 focus:ring-arena-accent/50 transition-all font-medium"
                   placeholder="you@university.edu"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
@@ -188,7 +188,7 @@ export default function Login() {
                   ref={passwordRef}
                   id="password"
                   type={showPass ? "text" : "password"}
-                  className="w-full bg-arena-surface/80 border border-arena-border rounded-xl py-3.5 pl-11 pr-12 text-arena-text placeholder:text-arena-text-muted focus:outline-none focus:border-arena-accent/50 focus:ring-1 focus:ring-arena-accent/50 transition-all font-medium"
+                  className="w-full bg-white/90 dark:bg-arena-surface/80 border border-black/8 dark:border-arena-border rounded-xl py-3.5 pl-11 pr-12 text-arena-text placeholder:text-arena-text-muted focus:outline-none focus:border-arena-accent/50 focus:ring-1 focus:ring-arena-accent/50 transition-all font-medium"
                   placeholder="••••••••"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
