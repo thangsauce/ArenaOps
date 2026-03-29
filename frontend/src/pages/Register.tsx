@@ -62,7 +62,7 @@ export default function Register() {
             className="inline-flex items-center gap-2 mb-16 hover:opacity-80 transition-opacity"
           >
             <BrandLogo size={36} />
-            <span className="font-display tracking-wide text-3xl font-bold">
+            <span className="font-display tracking-wide text-3xl font-bold text-[#182109] dark:text-white [text-shadow:0_1px_0_rgba(255,255,255,0.35)] dark:[text-shadow:0_8px_30px_rgba(0,0,0,0.45)]">
               ArenaOPS
             </span>
           </Link>
@@ -71,7 +71,7 @@ export default function Register() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
-            className="font-display text-5xl lg:text-6xl font-black uppercase leading-[0.9] tracking-tight mb-6"
+            className="font-display text-5xl lg:text-6xl font-black uppercase leading-[0.9] tracking-tight mb-6 text-[#182109] dark:text-white [text-shadow:0_1px_0_rgba(255,255,255,0.35)] dark:[text-shadow:0_8px_30px_rgba(0,0,0,0.45)]"
           >
             Built for clubs,
             <br />
@@ -252,7 +252,7 @@ export default function Register() {
                   className="text-sm font-semibold text-arena-text ml-1"
                   htmlFor="confirmPass"
                 >
-                  Password confirmation
+                  Re-enter
                 </label>
                 <div className="relative flex items-center w-full">
                   <Lock

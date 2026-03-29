@@ -1,4 +1,4 @@
-.page { padding: 32px 40px; width: 100%; animation: fadeIn 0.3s ease; }
+.page { padding: 32px 40px; width: 100%; max-width: 100%; overflow-x: hidden; animation: fadeIn 0.3s ease; }
 
 .header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 20px; padding-bottom: 20px; border-bottom: 1px solid var(--border); }
 .headerIntro { display: flex; flex-direction: column; align-items: flex-start; gap: 12px; }
@@ -89,12 +89,63 @@
 .roomConflict { border-color: rgba(var(--amber-rgb),0.35) !important; background: rgba(var(--amber-rgb),0.04) !important; cursor: not-allowed; }
 .roomSelected { border-color: var(--accent) !important; background: var(--accent-dim) !important; }
 .roomIdle { opacity: 0.78; }
-.roomHeader { display: flex; justify-content: space-between; align-items: flex-start; }
+.roomHeader { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; }
 .roomName { font-size: 0.9rem; font-weight: 600; color: var(--text); }
 .roomBuilding { font-size: 0.72rem; color: var(--text-3); margin-top: 2px; }
-.roomMeta { display: flex; justify-content: space-between; align-items: center; }
+.roomMeta { display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap; }
 .roomCap { display: flex; align-items: center; gap: 4px; font-size: 0.75rem; color: var(--text-2); }
 .roomUsage { font-size: 0.72rem; color: var(--text-3); }
+.roomAdminPanel {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  background: var(--bg-3);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 10px 11px;
+}
+.roomAdminLabel {
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-3);
+}
+.roomAdminName { font-size: 0.8rem; font-weight: 600; color: var(--text); overflow-wrap: anywhere; }
+.roomAdminDetails {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 12px;
+}
+.roomAdminDetail {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.72rem;
+  color: var(--text-2);
+  overflow-wrap: anywhere;
+}
+.roomAdminMissing { font-size: 0.74rem; color: var(--text-3); }
+.roomAdminActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 10px;
+}
+.contactAction {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.74rem;
+  font-weight: 600;
+  color: var(--accent);
+  background: var(--accent-dim);
+  border: 1px solid rgba(var(--accent-rgb), 0.28);
+  border-radius: 999px;
+  padding: 7px 11px;
+  text-decoration: none;
+}
+.contactAction:hover { opacity: 0.88; }
 .conflictWarning { display: flex; align-items: center; gap: 5px; font-size: 0.7rem; color: var(--amber); background: var(--amber-dim); padding: 5px 8px; border-radius: 4px; }
 .roomStatusLabel { font-size: 0.7rem; font-weight: 600; color: var(--text-3); margin-top: 2px; }
 .roomStatusLabel[data-available="true"] { color: var(--accent); }
@@ -135,6 +186,8 @@
   .header { flex-direction: column; gap: 10px; align-items: flex-start; }
   .headerIntro { width: 100%; }
   .headerRight { align-items: flex-start; width: 100%; }
+  .title { font-size: 1.6rem; }
+  .sub { font-size: 0.8rem; }
   .viewSwitcher {
     width: 100%;
     flex-wrap: nowrap;
@@ -157,6 +210,8 @@
   .assignBanner,
   .viewerHeader,
   .summaryMatchTop { flex-direction: column; align-items: flex-start; }
+  .assignBanner { padding: 14px; }
+  .assignBannerClear { width: 100%; justify-content: center; }
   .summaryHeader {
     flex-direction: row;
     align-items: center;
@@ -180,13 +235,51 @@
   .timeBoardGrid { grid-template-columns: 1fr; }
   .roomGrid { grid-template-columns: 1fr; }
   .viewerGrid { grid-template-columns: 1fr; }
+  .timeBoard { padding: 14px; }
+  .timeBoardHeader { gap: 10px; }
+  .timeBoardCount { font-size: 0.68rem; padding: 4px 8px; }
+  .panelTitle { flex-wrap: wrap; }
+  .selectHint { margin-left: 0; }
+  .matchCard,
+  .roomCard,
+  .bookingSummary,
+  .viewerCard,
+  .timeGroupCard,
+  .summaryMatchCard { min-width: 0; }
+  .roomHeader { align-items: flex-start; }
+  .roomMeta { flex-direction: column; align-items: flex-start; }
+  .roomUsage { white-space: normal; }
+  .roomAdminPanel { padding: 9px 10px; }
+  .roomAdminDetails { flex-direction: column; align-items: flex-start; gap: 6px; }
+  .roomAdminDetail { width: 100%; }
+  .roomAdminActions { flex-direction: column; }
+  .contactAction { width: 100%; justify-content: center; }
+  .summaryRoomRow {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+  .summaryRoomCount { align-self: flex-start; }
+  .summaryRoom,
+  .summaryRoomMeta,
+  .summaryMatchPlayers,
+  .summaryMatchTime { overflow-wrap: anywhere; }
+  .confirmDetails { padding: 12px; }
+  .confirmRow {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+  }
   .modal {
     width: calc(100vw - 24px);
     max-width: calc(100vw - 24px);
     margin: 0 12px;
     padding: 20px;
   }
+  .modalTitle { font-size: 1.2rem; margin-bottom: 14px; }
   .modalActions { flex-direction: column; }
+  .cancelBtn,
+  .bookBtn { width: 100%; }
 }
 
 .overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.6); display: flex; align-items: center; justify-content: center; z-index: 100; backdrop-filter: blur(4px); }

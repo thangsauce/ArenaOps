@@ -1,9 +1,10 @@
 import { useState, useEffect, useRef } from 'react';
-import { MapPin, Users, CheckCircle2, XCircle, AlertTriangle, Clock, LayoutGrid, Rows3, ChevronDown } from 'lucide-react';
+import { MapPin, Users, CheckCircle2, XCircle, AlertTriangle, Clock, LayoutGrid, Rows3, ChevronDown, Mail, Phone } from 'lucide-react';
 import { useApp } from '../store/store';
 import { formatTime } from '../utils/time';
 import styles from './RoomBooking.module.css';
 import { useToast } from '../components/useToast';
+import type { Location } from '../types';
 
 export default function RoomBooking() {
   const { tournaments, timePrefs, bookRoom } = useApp();
@@ -108,6 +109,73 @@ export default function RoomBooking() {
     if (e.key !== 'Enter' && e.key !== ' ') return;
     e.preventDefault();
     onActivate();
+  };
+
+  const getContactLabel = (location: Location) => {
+    if (location.adminName) return location.adminName;
+    if (location.adminEmail) return location.adminEmail;
+    if (location.adminPhone) return location.adminPhone;
+    return 'Contact unavailable';
+  };
+
+  const getPhoneHref = (phone?: string) =>
+    phone ? `tel:${phone.replace(/[^\d+]/g, '')}` : null;
+
+  const renderRoomAdminDetails = (location: Location) => {
+    if (!location.adminName && !location.adminEmail && !location.adminPhone) {
+      return (
+        <p className={styles.roomAdminMissing}>
+          Room administrator contact not available yet.
+        </p>
+      );
+    }
+
+    return (
+      <div className={styles.roomAdminPanel}>
+        <p className={styles.roomAdminLabel}>Room administrator</p>
+        <p className={styles.roomAdminName}>{getContactLabel(location)}</p>
+        <div className={styles.roomAdminDetails}>
+          {location.adminEmail && (
+            <span className={styles.roomAdminDetail}>
+              <Mail size={11} />
+              {location.adminEmail}
+            </span>
+          )}
+          {location.adminPhone && (
+            <span className={styles.roomAdminDetail}>
+              <Phone size={11} />
+              {location.adminPhone}
+            </span>
+          )}
+        </div>
+      </div>
+    );
+  };
+
+  const renderRoomAdminActions = (location: Location) => {
+    const phoneHref = getPhoneHref(location.adminPhone);
+
+    if (!location.adminEmail && !phoneHref) return null;
+
+    return (
+      <div className={styles.roomAdminActions}>
+        {location.adminEmail && (
+          <a
+            className={styles.contactAction}
+            href={`mailto:${location.adminEmail}?subject=${encodeURIComponent(`ArenaOps room request: ${location.name}`)}`}
+          >
+            <Mail size={12} />
+            Email admin
+          </a>
+        )}
+        {phoneHref && (
+          <a className={styles.contactAction} href={phoneHref}>
+            <Phone size={12} />
+            Call admin
+          </a>
+        )}
+      </div>
+    );
   };
 
   return (
@@ -290,6 +358,7 @@ export default function RoomBooking() {
                                   <span className={styles.roomCap}><Users size={12} />Cap. {loc.capacity}</span>
                                   <span className={styles.roomUsage}>{usedBy.length} match{usedBy.length !== 1 ? 'es' : ''} booked</span>
                                 </div>
+                                {renderRoomAdminDetails(loc)}
                                 {hasConflict && (
                                   <div className={styles.conflictWarning}>
                                     <AlertTriangle size={11} />
@@ -344,6 +413,8 @@ export default function RoomBooking() {
                       </span>
                     </div>
                     <p className={styles.summaryRoomMeta}>{loc.building} · Cap. {loc.capacity}</p>
+                    {renderRoomAdminDetails(loc)}
+                    {renderRoomAdminActions(loc)}
                     <p className={styles.summaryMatchTime}>
                       {loc.available ? <CheckCircle2 size={11} /> : <XCircle size={11} />}
                       {loc.available ? 'No current assignments' : 'Room currently unavailable'}
@@ -373,11 +444,13 @@ export default function RoomBooking() {
                         <div>
                           <p className={styles.summaryRoom}><MapPin size={12} />{loc.name}</p>
                           <p className={styles.summaryRoomMeta}>{loc.building} · Cap. {loc.capacity}</p>
+                          {renderRoomAdminDetails(loc)}
                         </div>
                         <span className={styles.summaryRoomCount}>
                           {booked.length} match{booked.length !== 1 ? 'es' : ''}
                         </span>
                       </div>
+                      {renderRoomAdminActions(loc)}
                       <div className={styles.summaryMatchesList}>
                         {booked.map(m => {
                           const tb = tournament.timeBlocks.find(t => t.id === m.timeBlockId);
@@ -430,6 +503,8 @@ export default function RoomBooking() {
                     <div className={styles.confirmRow}><span>Room</span><strong>{loc.name}, {loc.building}</strong></div>
                     <div className={styles.confirmRow}><span>Capacity</span><strong>{loc.capacity} people</strong></div>
                   </div>
+                  {renderRoomAdminDetails(loc)}
+                  {renderRoomAdminActions(loc)}
                   <p className={styles.confirmNote}>All participants will be notified within 30 seconds of this assignment.</p>
                   <div className={styles.modalActions}>
                     <button className={styles.cancelBtn} onClick={() => setConfirmOpen(false)}>Cancel</button>

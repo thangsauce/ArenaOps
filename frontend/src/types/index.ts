@@ -35,6 +35,9 @@ export interface Location {
   building: string;
   capacity: number;
   available: boolean;
+  adminName?: string;
+  adminEmail?: string;
+  adminPhone?: string;
 }
 
 export interface Match {

@@ -44,6 +44,9 @@ export const mockTournaments: Tournament[] = [
         building: "Student Union",
         capacity: 20,
         available: true,
+        adminName: "Maya Patel",
+        adminEmail: "gaminglab@ucf.edu",
+        adminPhone: "(407) 555-0141",
       },
       {
         id: "l2",
@@ -51,6 +54,9 @@ export const mockTournaments: Tournament[] = [
         building: "Classroom Bldg",
         capacity: 30,
         available: true,
+        adminName: "Jordan Brooks",
+        adminEmail: "room204@ucf.edu",
+        adminPhone: "(407) 555-0187",
       },
       {
         id: "l3",
@@ -58,6 +64,9 @@ export const mockTournaments: Tournament[] = [
         building: "Recreation Center",
         capacity: 50,
         available: false,
+        adminName: "Elena Cruz",
+        adminEmail: "reccenter@ucf.edu",
+        adminPhone: "(407) 555-0129",
       },
     ],
     participants: [
@@ -262,6 +271,9 @@ export const mockTournaments: Tournament[] = [
         building: "Athletics Complex",
         capacity: 22,
         available: true,
+        adminName: "Marcus Reed",
+        adminEmail: "athleticsrooms@ucf.edu",
+        adminPhone: "(407) 555-0175",
       },
     ],
     participants: [
@@ -328,6 +340,9 @@ export const mockTournaments: Tournament[] = [
         building: "Student Union",
         capacity: 24,
         available: true,
+        adminName: "Nina Alvarez",
+        adminEmail: "strategyroom@ucf.edu",
+        adminPhone: "(407) 555-0134",
       },
       {
         id: "l6",
@@ -335,6 +350,9 @@ export const mockTournaments: Tournament[] = [
         building: "Student Union",
         capacity: 18,
         available: true,
+        adminName: "Chris Walker",
+        adminEmail: "clublounge@ucf.edu",
+        adminPhone: "(407) 555-0193",
       },
     ],
     participants: [

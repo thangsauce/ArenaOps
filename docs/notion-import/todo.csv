@@ -1,0 +1,25 @@
+Task,Area,Status,Done
+Connect frontend pages to the backend API,Current Priorities,Not started,false
+Add authentication for login/register flows,Current Priorities,Not started,false
+Choose backend hosting and deployment setup,Current Priorities,Not started,false
+Add request validation and tests for backend routes,Current Priorities,Not started,false
+Remove or consolidate the extra `backend/src/index.js` entry point,Backend,Not started,false
+Add update/delete endpoints for core resources,Backend,Not started,false
+Standardize API error handling,Backend,Not started,false
+Add seed/dev data strategy for local development,Backend,Not started,false
+Define environment variable strategy for frontend/backend integration,Backend,Not started,false
+Replace `mockData.ts` with real fetch/API client logic,Frontend,Not started,false
+Add loading and error states for API-backed views,Frontend,Not started,false
+Do a full mobile responsive pass,Frontend,Not started,false
+Add real bracket visualization,Frontend,Not started,false
+Decide how notifications should sync with backend state,Frontend,Not started,false
+Add API endpoint reference note in Obsidian,Documentation,Not started,false
+Add database schema note based on current Mongoose models,Documentation,Not started,false
+Add architecture diagram for frontend/backend flow,Documentation,Not started,false
+Add backend deployment checklist,Documentation,Not started,false
+Frontend app built with React, TypeScript, Vite, and route-based pages,Done,Complete,true
+GitHub Actions deployment to GitHub Pages,Done,Complete,true
+Backend scaffolded with Express, Mongoose, controllers, routes, and models,Done,Complete,true
+Health check and core resource endpoints added,Done,Complete,true
+Room booking conflict detection implemented,Done,Complete,true
+Theme system, animations, notifications, and category/game coverage expanded,Done,Complete,true
