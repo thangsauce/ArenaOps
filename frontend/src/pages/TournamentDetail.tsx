@@ -1,4 +1,4 @@
-import React, { lazy, Suspense, useEffect, useState, useRef } from "react";
+import React, { lazy, Suspense, useState, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import {
   ArrowLeft,
@@ -50,6 +50,7 @@ type RosterRemoveTarget = {
   name: string;
   kind: "player" | "team";
 };
+type AddRosterMode = "existing" | "new";
 
 const INDIVIDUAL_GAMES = new Set([
   "chess",
@@ -130,6 +131,24 @@ function slugify(value: string) {
     .replace(/^-+|-+$/g, "");
 }
 
+function createMatchId(round: number, matchNumber: number) {
+  return `m-r${round}-n${matchNumber}`;
+}
+
+function createParticipantIdFactory(participants: Participant[]) {
+  const highestNumericId = participants.reduce((maxId, participant) => {
+    const match = /^p(\d+)$/.exec(participant.id);
+    return match ? Math.max(maxId, Number(match[1])) : maxId;
+  }, 0);
+
+  let nextId = highestNumericId + 1;
+  return () => {
+    const id = `p${nextId}`;
+    nextId += 1;
+    return id;
+  };
+}
+
 function shuffleEntries<T>(items: T[]) {
   const shuffled = [...items];
   for (let index = shuffled.length - 1; index > 0; index -= 1) {
@@ -137,6 +156,46 @@ function shuffleEntries<T>(items: T[]) {
     [shuffled[index], shuffled[swapIndex]] = [shuffled[swapIndex], shuffled[index]];
   }
   return shuffled;
+}
+
+function buildRoundRobinMatches(entryIds: string[]): Match[] {
+  if (entryIds.length < 2) return [];
+
+  const hasBye = entryIds.length % 2 !== 0;
+  const rotation = hasBye ? [...entryIds, "__bye__"] : [...entryIds];
+  const totalRounds = rotation.length - 1;
+  const matchesPerRound = rotation.length / 2;
+  const matches: Match[] = [];
+  let matchNumber = 1;
+
+  for (let round = 1; round <= totalRounds; round += 1) {
+    for (let index = 0; index < matchesPerRound; index += 1) {
+      const participant1Id = rotation[index];
+      const participant2Id = rotation[rotation.length - 1 - index];
+
+      if (participant1Id !== "__bye__" && participant2Id !== "__bye__") {
+        matches.push({
+          id: createMatchId(round, matchNumber),
+          round,
+          matchNumber,
+          participant1Id,
+          participant2Id,
+          winnerId: null,
+          score1: 0,
+          score2: 0,
+          status: "scheduled",
+        });
+        matchNumber += 1;
+      }
+    }
+
+    const fixed = rotation[0];
+    const rest = rotation.slice(1);
+    rest.unshift(rest.pop()!);
+    rotation.splice(0, rotation.length, fixed, ...rest);
+  }
+
+  return matches;
 }
 
 function buildGeneratedMatches(
@@ -150,25 +209,7 @@ function buildGeneratedMatches(
   );
 
   if (format === "round-robin") {
-    const matches: Match[] = [];
-    let matchNumber = 1;
-    for (let i = 0; i < randomizedEntryIds.length; i += 1) {
-      for (let j = i + 1; j < randomizedEntryIds.length; j += 1) {
-        matches.push({
-          id: `m-${Date.now()}-${matchNumber}`,
-          round: 1,
-          matchNumber,
-          participant1Id: randomizedEntryIds[i],
-          participant2Id: randomizedEntryIds[j],
-          winnerId: null,
-          score1: 0,
-          score2: 0,
-          status: "scheduled",
-        });
-        matchNumber += 1;
-      }
-    }
-    return matches;
+    return buildRoundRobinMatches(randomizedEntryIds);
   }
 
   const totalSlots = 2 ** Math.ceil(Math.log2(Math.max(2, randomizedEntryIds.length)));
@@ -181,7 +222,7 @@ function buildGeneratedMatches(
     for (let index = 0; index < matchCount; index += 1) {
       const isFirstRound = round === 1;
       matches.push({
-        id: `m-${Date.now()}-${matchNumber}`,
+        id: createMatchId(round, matchNumber),
         round,
         matchNumber: index + 1,
         participant1Id: isFirstRound ? randomizedEntryIds[index * 2] ?? null : null,
@@ -1208,6 +1249,7 @@ export default function TournamentDetail() {
   const [selectedExistingRosterId, setSelectedExistingRosterId] = useState<string | null>(
     null,
   );
+  const [addRosterMode, setAddRosterMode] = useState<AddRosterMode>("existing");
   const [newPlayerName, setNewPlayerName] = useState("");
   const [newPlayerEmail, setNewPlayerEmail] = useState("");
   const [newTeamName, setNewTeamName] = useState("");
@@ -1229,10 +1271,6 @@ export default function TournamentDetail() {
   const bracketViewRefs = useRef<Array<HTMLButtonElement | null>>([]);
   const rosterSectionRef = useRef<HTMLElement | null>(null);
   const teamHeaderRefs = useRef<Record<string, HTMLButtonElement | null>>({});
-
-  useEffect(() => {
-    setBracketView(settings.bracketPrefs.defaultView);
-  }, [settings.bracketPrefs.defaultView]);
 
   const handleLogoUpload = (participantId: string, file: File) => {
     const reader = new FileReader();
@@ -1312,7 +1350,7 @@ export default function TournamentDetail() {
     return `Before activating, ${missing.join(", and ")}.`;
   };
 
-  const viewButtons: {
+  const allViewButtons: {
     key: BracketView;
     label: string;
     Icon: React.ElementType;
@@ -1321,6 +1359,14 @@ export default function TournamentDetail() {
     { key: "flow", label: "Flow", Icon: LayoutGrid },
     { key: "list", label: "List", Icon: List },
   ];
+
+  const viewButtons = tournament.format === "round-robin"
+    ? allViewButtons.filter((view) => view.key !== "tree")
+    : allViewButtons;
+  const effectiveBracketView =
+    tournament.format === "round-robin" && bracketView === "tree"
+      ? "flow"
+      : bracketView;
 
   const handleBracketViewKeyDown = (
     e: React.KeyboardEvent<HTMLButtonElement>,
@@ -1493,6 +1539,7 @@ export default function TournamentDetail() {
       : canApplyManualTeam;
 
   const resetRosterForm = () => {
+    setAddRosterMode("existing");
     setSelectedExistingRosterId(null);
     setNewPlayerName("");
     setNewPlayerEmail("");
@@ -1553,7 +1600,7 @@ export default function TournamentDetail() {
   };
 
   const handleAddRoster = () => {
-    const timestamp = Date.now();
+    const nextParticipantId = createParticipantIdFactory(tournament.participants);
     if (isIndividualGame || addRosterTarget === "player" || addMemberTeamName) {
       if (selectedExistingRosterId) {
         const selectedPlayer = existingPlayerOptions.find(
@@ -1563,7 +1610,7 @@ export default function TournamentDetail() {
         addParticipants(tournament.id, [
           {
             ...selectedPlayer,
-            id: `p${timestamp}`,
+            id: nextParticipantId(),
             team: addMemberTeamName ?? selectedPlayer.team,
           },
         ]);
@@ -1572,7 +1619,7 @@ export default function TournamentDetail() {
         if (!newPlayerName.trim() || !newPlayerEmail.trim()) return;
         addParticipants(tournament.id, [
           {
-            id: `p${timestamp}`,
+            id: nextParticipantId(),
             name: newPlayerName.trim(),
             email: newPlayerEmail.trim(),
             team: addMemberTeamName ?? undefined,
@@ -1590,9 +1637,9 @@ export default function TournamentDetail() {
         if (!selectedTeam) return;
         addParticipants(
           tournament.id,
-          selectedTeam.members.map((member, index) => ({
+          selectedTeam.members.map((member) => ({
             ...member,
-            id: `p${timestamp}-${index + 1}`,
+            id: nextParticipantId(),
             team: selectedTeam.label,
           })),
         );
@@ -1602,12 +1649,13 @@ export default function TournamentDetail() {
           return;
         }
         const teamName = newTeamName.trim();
-        const teamSlug = slugify(teamName) || `team-${timestamp}`;
+        const captainId = nextParticipantId();
+        const teamSlug = slugify(teamName) || `team-${captainId}`;
         const memberCount = Math.max(1, Number(newTeamMemberCount) || 1);
         addParticipants(
           tournament.id,
           Array.from({ length: memberCount }, (_, index) => ({
-            id: `p${timestamp}-${index + 1}`,
+            id: index === 0 ? captainId : nextParticipantId(),
             name: index === 0 ? newCaptainName.trim() : `${teamName} Player ${index + 1}`,
             email:
               index === 0
@@ -1866,12 +1914,12 @@ export default function TournamentDetail() {
                         bracketViewRefs.current[index] = node;
                       }}
                       key={key}
-                      className={`${styles.viewBtn} ${bracketView === key ? styles.viewBtnActive : ""}`}
+                      className={`${styles.viewBtn} ${effectiveBracketView === key ? styles.viewBtnActive : ""}`}
                       onClick={() => setBracketView(key)}
                       onKeyDown={(e) => handleBracketViewKeyDown(e, index)}
                       role="tab"
-                      aria-selected={bracketView === key}
-                      tabIndex={bracketView === key ? 0 : -1}
+                      aria-selected={effectiveBracketView === key}
+                      tabIndex={effectiveBracketView === key ? 0 : -1}
                     >
                       <Icon size={13} />
                       {label}
@@ -1901,7 +1949,7 @@ export default function TournamentDetail() {
             <div className={styles.empty}>
               No matches yet. Generate the bracket when the roster is ready.
             </div>
-          ) : bracketView === "flow" ? (
+          ) : effectiveBracketView === "flow" ? (
             <FlowView
               rounds={rounds}
               matches={matches}
@@ -1917,7 +1965,7 @@ export default function TournamentDetail() {
               onAssignEntry={openAssignEntryPicker}
               canStartMatches={tournament.status === "active"}
             />
-          ) : bracketView === "tree" ? (
+          ) : effectiveBracketView === "tree" ? (
             <TreeView
               rounds={rounds}
               matches={matches}
@@ -2240,116 +2288,140 @@ export default function TournamentDetail() {
         customContent={
           isIndividualGame || addRosterTarget === "player" || addMemberTeamName ? (
             <div style={{ display: "grid", gap: 10 }}>
-              <div className={styles.assignEntryList}>
-                {existingPlayerOptions.length === 0 ? (
-                  <div className={styles.assignEntryEmpty}>
-                    No existing players available.
-                  </div>
-                ) : (
-                  existingPlayerOptions.map((entry) => (
-                    <button
-                      key={entry.id}
-                      type="button"
-                      className={`${styles.assignEntryOption} ${selectedExistingRosterId === entry.id ? styles.assignEntryOptionSelected : ""}`}
-                      onClick={() =>
-                        setSelectedExistingRosterId((current) =>
-                          current === entry.id ? null : entry.id,
-                        )
-                      }
-                    >
-                      <span className={styles.assignEntryLabel}>{entry.label}</span>
-                      <span className={styles.assignEntryMeta}>{entry.secondaryLabel}</span>
-                    </button>
-                  ))
-                )}
+              <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+                <button
+                  type="button"
+                  className={`${styles.viewBtn} ${addRosterMode === "existing" ? styles.viewBtnActive : ""}`}
+                  onClick={() => setAddRosterMode("existing")}
+                >
+                  Use existing
+                </button>
+                <button
+                  type="button"
+                  className={`${styles.viewBtn} ${addRosterMode === "new" ? styles.viewBtnActive : ""}`}
+                  onClick={() => {
+                    setAddRosterMode("new");
+                    setSelectedExistingRosterId(null);
+                  }}
+                >
+                  Create new
+                </button>
               </div>
-              <div style={{ fontSize: "0.78rem", color: "var(--text-3)", textAlign: "center" }}>
-                or enter a new player
-              </div>
-              <input
-                value={newPlayerName}
-                onChange={(e) => {
-                  setNewPlayerName(e.target.value);
-                  if (selectedExistingRosterId) setSelectedExistingRosterId(null);
-                }}
-                placeholder="Name"
-                style={{ width: "100%", padding: "10px 12px", borderRadius: 12, border: "1px solid var(--border-2)", background: "var(--surface)", color: "var(--text)" }}
-              />
-              <input
-                value={newPlayerEmail}
-                onChange={(e) => {
-                  setNewPlayerEmail(e.target.value);
-                  if (selectedExistingRosterId) setSelectedExistingRosterId(null);
-                }}
-                placeholder="Email"
-                style={{ width: "100%", padding: "10px 12px", borderRadius: 12, border: "1px solid var(--border-2)", background: "var(--surface)", color: "var(--text)" }}
-              />
+              {addRosterMode === "existing" ? (
+                <div className={styles.assignEntryList}>
+                  {existingPlayerOptions.length === 0 ? (
+                    <div className={styles.assignEntryEmpty}>
+                      No existing players available.
+                    </div>
+                  ) : (
+                    existingPlayerOptions.map((entry) => (
+                      <button
+                        key={entry.id}
+                        type="button"
+                        className={`${styles.assignEntryOption} ${selectedExistingRosterId === entry.id ? styles.assignEntryOptionSelected : ""}`}
+                        onClick={() =>
+                          setSelectedExistingRosterId((current) =>
+                            current === entry.id ? null : entry.id,
+                          )
+                        }
+                      >
+                        <span className={styles.assignEntryLabel}>{entry.label}</span>
+                        <span className={styles.assignEntryMeta}>{entry.secondaryLabel}</span>
+                      </button>
+                    ))
+                  )}
+                </div>
+              ) : (
+                <>
+                  <input
+                    value={newPlayerName}
+                    onChange={(e) => setNewPlayerName(e.target.value)}
+                    placeholder="Name"
+                    style={{ width: "100%", padding: "10px 12px", borderRadius: 12, border: "1px solid var(--border-2)", background: "var(--surface)", color: "var(--text)" }}
+                  />
+                  <input
+                    value={newPlayerEmail}
+                    onChange={(e) => setNewPlayerEmail(e.target.value)}
+                    placeholder="Email"
+                    style={{ width: "100%", padding: "10px 12px", borderRadius: 12, border: "1px solid var(--border-2)", background: "var(--surface)", color: "var(--text)" }}
+                  />
+                </>
+              )}
             </div>
           ) : (
             <div style={{ display: "grid", gap: 10 }}>
-              <div className={styles.assignEntryList}>
-                {existingTeamOptions.length === 0 ? (
-                  <div className={styles.assignEntryEmpty}>
-                    No existing teams available.
-                  </div>
-                ) : (
-                  existingTeamOptions.map((entry) => (
-                    <button
-                      key={entry.id}
-                      type="button"
-                      className={`${styles.assignEntryOption} ${selectedExistingRosterId === entry.id ? styles.assignEntryOptionSelected : ""}`}
-                      onClick={() =>
-                        setSelectedExistingRosterId((current) =>
-                          current === entry.id ? null : entry.id,
-                        )
-                      }
-                    >
-                      <span className={styles.assignEntryLabel}>{entry.label}</span>
-                      <span className={styles.assignEntryMeta}>{entry.secondaryLabel}</span>
-                    </button>
-                  ))
-                )}
+              <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+                <button
+                  type="button"
+                  className={`${styles.viewBtn} ${addRosterMode === "existing" ? styles.viewBtnActive : ""}`}
+                  onClick={() => setAddRosterMode("existing")}
+                >
+                  Use existing
+                </button>
+                <button
+                  type="button"
+                  className={`${styles.viewBtn} ${addRosterMode === "new" ? styles.viewBtnActive : ""}`}
+                  onClick={() => {
+                    setAddRosterMode("new");
+                    setSelectedExistingRosterId(null);
+                  }}
+                >
+                  Create new
+                </button>
               </div>
-              <div style={{ fontSize: "0.78rem", color: "var(--text-3)", textAlign: "center" }}>
-                or enter a new team
-              </div>
-              <input
-                value={newTeamName}
-                onChange={(e) => {
-                  setNewTeamName(e.target.value);
-                  if (selectedExistingRosterId) setSelectedExistingRosterId(null);
-                }}
-                placeholder="Team name"
-                style={{ width: "100%", padding: "10px 12px", borderRadius: 12, border: "1px solid var(--border-2)", background: "var(--surface)", color: "var(--text)" }}
-              />
-              <input
-                value={newCaptainName}
-                onChange={(e) => {
-                  setNewCaptainName(e.target.value);
-                  if (selectedExistingRosterId) setSelectedExistingRosterId(null);
-                }}
-                placeholder="Captain name"
-                style={{ width: "100%", padding: "10px 12px", borderRadius: 12, border: "1px solid var(--border-2)", background: "var(--surface)", color: "var(--text)" }}
-              />
-              <input
-                value={newCaptainEmail}
-                onChange={(e) => {
-                  setNewCaptainEmail(e.target.value);
-                  if (selectedExistingRosterId) setSelectedExistingRosterId(null);
-                }}
-                placeholder="Captain email"
-                style={{ width: "100%", padding: "10px 12px", borderRadius: 12, border: "1px solid var(--border-2)", background: "var(--surface)", color: "var(--text)" }}
-              />
-              <input
-                value={newTeamMemberCount}
-                onChange={(e) => {
-                  setNewTeamMemberCount(e.target.value);
-                  if (selectedExistingRosterId) setSelectedExistingRosterId(null);
-                }}
-                placeholder="Team size"
-                inputMode="numeric"
-                style={{ width: "100%", padding: "10px 12px", borderRadius: 12, border: "1px solid var(--border-2)", background: "var(--surface)", color: "var(--text)" }}
-              />
+              {addRosterMode === "existing" ? (
+                <div className={styles.assignEntryList}>
+                  {existingTeamOptions.length === 0 ? (
+                    <div className={styles.assignEntryEmpty}>
+                      No existing teams available.
+                    </div>
+                  ) : (
+                    existingTeamOptions.map((entry) => (
+                      <button
+                        key={entry.id}
+                        type="button"
+                        className={`${styles.assignEntryOption} ${selectedExistingRosterId === entry.id ? styles.assignEntryOptionSelected : ""}`}
+                        onClick={() =>
+                          setSelectedExistingRosterId((current) =>
+                            current === entry.id ? null : entry.id,
+                          )
+                        }
+                      >
+                        <span className={styles.assignEntryLabel}>{entry.label}</span>
+                        <span className={styles.assignEntryMeta}>{entry.secondaryLabel}</span>
+                      </button>
+                    ))
+                  )}
+                </div>
+              ) : (
+                <>
+                  <input
+                    value={newTeamName}
+                    onChange={(e) => setNewTeamName(e.target.value)}
+                    placeholder="Team name"
+                    style={{ width: "100%", padding: "10px 12px", borderRadius: 12, border: "1px solid var(--border-2)", background: "var(--surface)", color: "var(--text)" }}
+                  />
+                  <input
+                    value={newCaptainName}
+                    onChange={(e) => setNewCaptainName(e.target.value)}
+                    placeholder="Captain name"
+                    style={{ width: "100%", padding: "10px 12px", borderRadius: 12, border: "1px solid var(--border-2)", background: "var(--surface)", color: "var(--text)" }}
+                  />
+                  <input
+                    value={newCaptainEmail}
+                    onChange={(e) => setNewCaptainEmail(e.target.value)}
+                    placeholder="Captain email"
+                    style={{ width: "100%", padding: "10px 12px", borderRadius: 12, border: "1px solid var(--border-2)", background: "var(--surface)", color: "var(--text)" }}
+                  />
+                  <input
+                    value={newTeamMemberCount}
+                    onChange={(e) => setNewTeamMemberCount(e.target.value)}
+                    placeholder="Team size"
+                    inputMode="numeric"
+                    style={{ width: "100%", padding: "10px 12px", borderRadius: 12, border: "1px solid var(--border-2)", background: "var(--surface)", color: "var(--text)" }}
+                  />
+                </>
+              )}
             </div>
           )
         }

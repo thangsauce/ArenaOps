@@ -3,6 +3,7 @@ import { useNavigate, Link } from "react-router-dom";
 import BrandLogo from "../components/BrandLogo";
 import {
   User,
+  Building2,
   Mail,
   Lock,
   Eye,
@@ -14,11 +15,13 @@ import { motion } from "framer-motion";
 
 export default function Register() {
   const navigate = useNavigate();
+  const organizationRef = useRef<HTMLInputElement | null>(null);
   const emailRef = useRef<HTMLInputElement | null>(null);
   const passwordRef = useRef<HTMLInputElement | null>(null);
   const confirmPassRef = useRef<HTMLInputElement | null>(null);
   const createAccountRef = useRef<HTMLButtonElement | null>(null);
   const [name, setName] = useState("");
+  const [organization, setOrganization] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPass, setConfirmPass] = useState("");
@@ -169,12 +172,45 @@ export default function Register() {
                   placeholder="Alex Johnson"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
+                    onKeyDown={(e) => {
+                      if (e.key !== "Enter") return;
+                      e.preventDefault();
+                      organizationRef.current?.focus();
+                    }}
+                  autoComplete="name"
+                />
+              </div>
+            </div>
+
+            <div className="space-y-2 flex flex-col items-start w-full">
+              <label
+                className="text-sm font-semibold text-arena-text ml-1"
+                htmlFor="organization"
+              >
+                Organization name
+                <span className="ml-1 text-xs font-medium text-arena-text-muted">
+                  Optional
+                </span>
+              </label>
+              <div className="relative flex items-center w-full">
+                <Building2
+                  size={18}
+                  className="absolute left-4 text-arena-text-muted pointer-events-none"
+                />
+                <input
+                  ref={organizationRef}
+                  id="organization"
+                  type="text"
+                  className="w-full bg-white/90 dark:bg-arena-surface/80 border border-black/8 dark:border-arena-border rounded-xl py-3 pl-11 pr-4 text-arena-text placeholder:text-arena-text-muted focus:outline-none focus:border-arena-accent/50 focus:ring-1 focus:ring-arena-accent/50 transition-all font-medium"
+                  placeholder="UCF Esports Club"
+                  value={organization}
+                  onChange={(e) => setOrganization(e.target.value)}
                   onKeyDown={(e) => {
                     if (e.key !== "Enter") return;
                     e.preventDefault();
                     emailRef.current?.focus();
                   }}
-                  autoComplete="name"
+                  autoComplete="organization"
                 />
               </div>
             </div>

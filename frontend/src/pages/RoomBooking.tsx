@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { MapPin, Users, CheckCircle2, XCircle, AlertTriangle, Clock, LayoutGrid, Rows3, ChevronDown, Mail, Phone } from 'lucide-react';
+import { MapPin, Users, CheckCircle2, XCircle, AlertTriangle, Clock, LayoutGrid, Rows3, ChevronDown, Mail, Phone, Shield, Plus, Trash2 } from 'lucide-react';
 import { useApp } from '../store/store';
 import { formatTime } from '../utils/time';
 import styles from './RoomBooking.module.css';
@@ -7,7 +7,7 @@ import { useToast } from '../components/useToast';
 import type { Location } from '../types';
 
 export default function RoomBooking() {
-  const { tournaments, timePrefs, bookRoom } = useApp();
+  const { tournaments, timePrefs, bookRoom, updateTournament } = useApp();
   const toast = useToast();
   const tournament = tournaments[0]; // Spring Valorant Open
 
@@ -16,6 +16,26 @@ export default function RoomBooking() {
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [justBooked, setJustBooked] = useState<string | null>(null);
   const [bookingView, setBookingView] = useState<'assign' | 'assignments'>('assign');
+  const [showAdminPanel, setShowAdminPanel] = useState(false);
+  const [adminRoomId, setAdminRoomId] = useState<string | null>(
+    tournament?.venueLocationId ?? tournament?.locations[0]?.id ?? null,
+  );
+  const [showAddRoomForm, setShowAddRoomForm] = useState(false);
+  const [editingRoomId, setEditingRoomId] = useState<string | null>(null);
+  const [confirmRemoveRoom, setConfirmRemoveRoom] = useState<Location | null>(null);
+  const [adminDraft, setAdminDraft] = useState({
+    adminName: '',
+    adminEmail: '',
+    adminPhone: '',
+  });
+  const [newRoomDraft, setNewRoomDraft] = useState({
+    name: '',
+    building: '',
+    capacity: '',
+    adminName: '',
+    adminEmail: '',
+    adminPhone: '',
+  });
   const [expandedTimeBlocks, setExpandedTimeBlocks] = useState<string[]>(() =>
     tournament?.timeBlocks[0] ? [tournament.timeBlocks[0].id] : [],
   );
@@ -74,13 +94,18 @@ export default function RoomBooking() {
 
   const assignedMatches = tournament.matches.filter(m => m.locationId);
   const unassignedRooms = tournament.locations.filter(
-    loc => !tournament.matches.some(m => m.locationId === loc.id),
+    loc => loc.available && !tournament.matches.some(m => m.locationId === loc.id),
   );
   const timeBlockBoards = tournament.timeBlocks.map(tb => ({
     timeBlock: tb,
-    matches: tournament.matches.filter(m => m.timeBlockId === tb.id && m.status !== 'completed' && m.status !== 'cancelled'),
+    matches: tournament.matches.filter(m => m.timeBlockId === tb.id && m.status === 'scheduled'),
   }));
   const selectedMatchData = selectedMatch ? tournament.matches.find(m => m.id === selectedMatch) ?? null : null;
+  const activeAdminLocation =
+    tournament.locations.find((location) => location.id === adminRoomId) ??
+    tournament.locations.find((location) => location.id === tournament.venueLocationId) ??
+    tournament.locations[0] ??
+    null;
 
   const viewButtons = [
     { key: 'assign' as const, label: 'Assign', Icon: LayoutGrid },
@@ -121,12 +146,121 @@ export default function RoomBooking() {
   const getPhoneHref = (phone?: string) =>
     phone ? `tel:${phone.replace(/[^\d+]/g, '')}` : null;
 
-  const renderRoomAdminDetails = (location: Location) => {
+  const startEditingAdmin = (location: Location) => {
+    setEditingRoomId(location.id);
+    setAdminDraft({
+      adminName: location.adminName ?? '',
+      adminEmail: location.adminEmail ?? '',
+      adminPhone: location.adminPhone ?? '',
+    });
+  };
+
+  const cancelEditingAdmin = () => {
+    setEditingRoomId(null);
+    setAdminDraft({
+      adminName: '',
+      adminEmail: '',
+      adminPhone: '',
+    });
+  };
+
+  const saveRoomAdmin = (locationId: string) => {
+    updateTournament(tournament.id, {
+      locations: tournament.locations.map((location) =>
+        location.id !== locationId
+          ? location
+          : {
+              ...location,
+              adminName: adminDraft.adminName.trim() || undefined,
+              adminEmail: adminDraft.adminEmail.trim() || undefined,
+              adminPhone: adminDraft.adminPhone.trim() || undefined,
+            },
+      ),
+    });
+    toast('Room administrator updated');
+    cancelEditingAdmin();
+  };
+
+  const renderRoomAdminDetails = (location: Location, editable = false) => {
+    const isEditing = editingRoomId === location.id;
+
+    if (isEditing) {
+      return (
+        <div className={styles.roomAdminEditor}>
+          <p className={styles.roomAdminLabel}>Edit room administrator</p>
+          <label className={styles.roomAdminField}>
+            <span>Name</span>
+            <input
+              className={styles.roomAdminInput}
+              value={adminDraft.adminName}
+              onChange={(e) => setAdminDraft((prev) => ({ ...prev, adminName: e.target.value }))}
+              placeholder="Administrator name"
+            />
+          </label>
+          <label className={styles.roomAdminField}>
+            <span>Email</span>
+            <input
+              className={styles.roomAdminInput}
+              type="email"
+              value={adminDraft.adminEmail}
+              onChange={(e) => setAdminDraft((prev) => ({ ...prev, adminEmail: e.target.value }))}
+              placeholder="roomadmin@example.com"
+            />
+          </label>
+          <label className={styles.roomAdminField}>
+            <span>Phone</span>
+            <input
+              className={styles.roomAdminInput}
+              value={adminDraft.adminPhone}
+              onChange={(e) => setAdminDraft((prev) => ({ ...prev, adminPhone: e.target.value }))}
+              placeholder="(555) 123-4567"
+            />
+          </label>
+          <div className={styles.roomAdminEditorActions}>
+            <button
+              type="button"
+              className={styles.roomAdminCancelBtn}
+              onClick={(e) => {
+                e.stopPropagation();
+                cancelEditingAdmin();
+              }}
+            >
+              Cancel
+            </button>
+            <button
+              type="button"
+              className={styles.roomAdminSaveBtn}
+              onClick={(e) => {
+                e.stopPropagation();
+                saveRoomAdmin(location.id);
+              }}
+            >
+              Save admin
+            </button>
+          </div>
+        </div>
+      );
+    }
+
     if (!location.adminName && !location.adminEmail && !location.adminPhone) {
       return (
-        <p className={styles.roomAdminMissing}>
-          Room administrator contact not available yet.
-        </p>
+        <div className={styles.roomAdminPanel}>
+          <p className={styles.roomAdminMissing}>
+            Room administrator contact not available yet.
+          </p>
+          {editable && (
+            <button
+              type="button"
+              className={styles.roomAdminEditBtn}
+              onClick={(e) => {
+                e.stopPropagation();
+                startEditingAdmin(location);
+              }}
+            >
+              Add administrator
+            </button>
+          )}
+        </div>
       );
     }
 
@@ -148,6 +282,18 @@ export default function RoomBooking() {
             </span>
           )}
         </div>
+        {editable && (
+          <button
+            type="button"
+            className={styles.roomAdminEditBtn}
+            onClick={(e) => {
+              e.stopPropagation();
+              startEditingAdmin(location);
+            }}
+          >
+            Edit administrator
+          </button>
+        )}
       </div>
     );
   };
@@ -178,13 +324,134 @@ export default function RoomBooking() {
     );
   };
 
+  const resetNewRoomDraft = () => {
+    setNewRoomDraft({
+      name: '',
+      building: '',
+      capacity: '',
+      adminName: '',
+      adminEmail: '',
+      adminPhone: '',
+    });
+  };
+
+  const getNextLocationId = () => {
+    const highestNumericId = tournament.locations.reduce((maxId, location) => {
+      const match = /^l(\d+)$/.exec(location.id);
+      return match ? Math.max(maxId, Number(match[1])) : maxId;
+    }, 0);
+    return `l${highestNumericId + 1}`;
+  };
+
+  const handleAddRoom = () => {
+    const name = newRoomDraft.name.trim();
+    const building = newRoomDraft.building.trim();
+    const capacity = Number(newRoomDraft.capacity);
+
+    if (!name || !building || !Number.isFinite(capacity) || capacity <= 0) {
+      toast('Add a room name, building, and valid capacity', 'error');
+      return;
+    }
+
+    const newLocation: Location = {
+      id: getNextLocationId(),
+      name,
+      building,
+      capacity,
+      available: true,
+      adminName: newRoomDraft.adminName.trim() || undefined,
+      adminEmail: newRoomDraft.adminEmail.trim() || undefined,
+      adminPhone: newRoomDraft.adminPhone.trim() || undefined,
+    };
+
+    updateTournament(tournament.id, {
+      locations: [...tournament.locations, newLocation],
+    });
+    setAdminRoomId(newLocation.id);
+    setShowAddRoomForm(false);
+    resetNewRoomDraft();
+    toast('Room added');
+  };
+
+  const handleRemoveRoom = (location: Location) => {
+    const hasAssignedMatches = tournament.matches.some((match) => match.locationId === location.id);
+    if (hasAssignedMatches) {
+      toast('Unassign this room from matches before removing it', 'error');
+      return;
+    }
+
+    setConfirmRemoveRoom(location);
+  };
+
+  const confirmRoomRemoval = () => {
+    if (!confirmRemoveRoom) return;
+
+    const nextLocations = tournament.locations.filter((item) => item.id !== confirmRemoveRoom.id);
+    updateTournament(tournament.id, {
+      locations: nextLocations,
+      venueLocationId:
+        tournament.venueLocationId === confirmRemoveRoom.id
+          ? undefined
+          : tournament.venueLocationId,
+    });
+    setAdminRoomId(nextLocations[0]?.id ?? null);
+    cancelEditingAdmin();
+    setConfirmRemoveRoom(null);
+    toast('Room removed');
+  };
+
+  const renderRoomDetailSummary = (location: Location) => {
+    const bookedCount = occupancy[location.id]?.length ?? 0;
+
+    return (
+      <div className={styles.adminRoomDetails}>
+        <div className={styles.adminRoomDetailsHeader}>
+          <p className={styles.roomAdminLabel}>Room details</p>
+          <span
+            className={styles.adminRoomStatus}
+            data-available={location.available}
+          >
+            {location.available ? 'Available' : 'Unavailable'}
+          </span>
+        </div>
+        <p className={styles.adminRoomName}>{location.name}</p>
+        <div className={styles.adminRoomMeta}>
+          <span className={styles.adminRoomMetaItem}>
+            <MapPin size={12} />
+            {location.building}
+          </span>
+          <span className={styles.adminRoomMetaItem}>
+            <Users size={12} />
+            Capacity {location.capacity}
+          </span>
+          <span className={styles.adminRoomMetaItem}>
+            <Clock size={12} />
+            {bookedCount} active booking{bookedCount !== 1 ? 's' : ''}
+          </span>
+        </div>
+      </div>
+    );
+  };
+
+  const handleToggleAdminPanel = () => {
+    setShowAdminPanel((prev) => {
+      const next = !prev;
+      if (!next) {
+        cancelEditingAdmin();
+        setShowAddRoomForm(false);
+      }
+      return next;
+    });
+  };
+
   return (
     <div className={styles.page}>
       <div className={styles.header}>
         <div className={styles.headerIntro}>
           <h1 className={styles.title}>Room Booking</h1>
           <p className={styles.sub}>Assign locations to matches · Conflict detection enabled</p>
-          <div className={styles.viewSwitcher}>
+          <div className={styles.controlRow}>
+            <div className={styles.viewSwitcher}>
             {viewButtons.map(({ key, label, Icon }, index) => (
               <button
                 ref={(node) => {
@@ -202,15 +469,158 @@ export default function RoomBooking() {
                 {label}
               </button>
             ))}
+            </div>
+            <button
+              type="button"
+              className={`${styles.viewBtn} ${showAdminPanel ? styles.viewBtnActive : ''}`}
+              onClick={handleToggleAdminPanel}
+              aria-expanded={showAdminPanel}
+              aria-controls="room-admin-panel"
+            >
+              <Shield size={13} />
+              Room Administrator
+            </button>
           </div>
         </div>
         <div className={styles.headerRight}>
-          <div className={styles.tournamentPill}>
-            <span className={styles.pillDot} />
-            {tournament.name}
-          </div>
         </div>
       </div>
+
+      {showAdminPanel && activeAdminLocation && (
+        <div id="room-admin-panel" className={styles.adminPanel}>
+          <div className={styles.adminPanelHeader}>
+            <div>
+              <p className={styles.panelTitle}>Room Administrator</p>
+              <p className={styles.adminPanelSub}>Manage contact details without leaving Room Booking.</p>
+            </div>
+            <label className={styles.adminRoomSelectLabel}>
+              <span>Room</span>
+              <select
+                className={styles.adminRoomSelect}
+                value={activeAdminLocation.id}
+                onChange={(e) => {
+                  setAdminRoomId(e.target.value);
+                  cancelEditingAdmin();
+                }}
+              >
+                {tournament.locations.map((location) => (
+                  <option key={location.id} value={location.id}>
+                    {location.name}
+                  </option>
+                ))}
+              </select>
+            </label>
+          </div>
+          <div className={styles.roomAdminSection}>
+            {renderRoomDetailSummary(activeAdminLocation)}
+            <div className={styles.roomAdminToolbar}>
+              <button
+                type="button"
+                className={styles.roomAdminToolbarBtn}
+                onClick={() => {
+                  cancelEditingAdmin();
+                  setShowAddRoomForm((prev) => !prev);
+                }}
+              >
+                <Plus size={13} />
+                {showAddRoomForm ? 'Close new room' : 'Add new room'}
+              </button>
+              <button
+                type="button"
+                className={`${styles.roomAdminToolbarBtn} ${styles.roomAdminRemoveBtn}`}
+                onClick={() => handleRemoveRoom(activeAdminLocation)}
+                disabled={tournament.locations.length <= 1}
+              >
+                <Trash2 size={13} />
+                Remove room
+              </button>
+            </div>
+            {showAddRoomForm && (
+              <div className={styles.roomAdminEditor}>
+                <p className={styles.roomAdminLabel}>Add room and administrator</p>
+                <label className={styles.roomAdminField}>
+                  <span>Room name</span>
+                  <input
+                    className={styles.roomAdminInput}
+                    value={newRoomDraft.name}
+                    onChange={(e) => setNewRoomDraft((prev) => ({ ...prev, name: e.target.value }))}
+                    placeholder="Esports Arena A"
+                  />
+                </label>
+                <label className={styles.roomAdminField}>
+                  <span>Building</span>
+                  <input
+                    className={styles.roomAdminInput}
+                    value={newRoomDraft.building}
+                    onChange={(e) => setNewRoomDraft((prev) => ({ ...prev, building: e.target.value }))}
+                    placeholder="Student Union"
+                  />
+                </label>
+                <label className={styles.roomAdminField}>
+                  <span>Capacity</span>
+                  <input
+                    className={styles.roomAdminInput}
+                    type="number"
+                    min="1"
+                    value={newRoomDraft.capacity}
+                    onChange={(e) => setNewRoomDraft((prev) => ({ ...prev, capacity: e.target.value }))}
+                    placeholder="24"
+                  />
+                </label>
+                <label className={styles.roomAdminField}>
+                  <span>Admin name</span>
+                  <input
+                    className={styles.roomAdminInput}
+                    value={newRoomDraft.adminName}
+                    onChange={(e) => setNewRoomDraft((prev) => ({ ...prev, adminName: e.target.value }))}
+                    placeholder="Administrator name"
+                  />
+                </label>
+                <label className={styles.roomAdminField}>
+                  <span>Admin email</span>
+                  <input
+                    className={styles.roomAdminInput}
+                    type="email"
+                    value={newRoomDraft.adminEmail}
+                    onChange={(e) => setNewRoomDraft((prev) => ({ ...prev, adminEmail: e.target.value }))}
+                    placeholder="roomadmin@example.com"
+                  />
+                </label>
+                <label className={styles.roomAdminField}>
+                  <span>Admin phone</span>
+                  <input
+                    className={styles.roomAdminInput}
+                    value={newRoomDraft.adminPhone}
+                    onChange={(e) => setNewRoomDraft((prev) => ({ ...prev, adminPhone: e.target.value }))}
+                    placeholder="(555) 123-4567"
+                  />
+                </label>
+                <div className={styles.roomAdminEditorActions}>
+                  <button
+                    type="button"
+                    className={styles.roomAdminCancelBtn}
+                    onClick={() => {
+                      setShowAddRoomForm(false);
+                      resetNewRoomDraft();
+                    }}
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="button"
+                    className={styles.roomAdminSaveBtn}
+                    onClick={handleAddRoom}
+                  >
+                    Save room
+                  </button>
+                </div>
+              </div>
+            )}
+            {renderRoomAdminDetails(activeAdminLocation, true)}
+            {renderRoomAdminActions(activeAdminLocation)}
+          </div>
+        </div>
+      )}
 
       {justBooked && (
         <div className={styles.successBanner}>
@@ -329,12 +739,14 @@ export default function RoomBooking() {
                                 onClick={() => {
                                   if (!selectedMatchData || selectedMatchData.timeBlockId !== timeBlock.id || !loc.available || hasConflict) return;
                                   setSelectedRoom(loc.id);
+                                  setAdminRoomId(loc.id);
                                   setConfirmOpen(true);
                                 }}
                                 onKeyDown={(e) =>
                                   handleSelectableCardKeyDown(e, () => {
                                     if (!selectedMatchData || selectedMatchData.timeBlockId !== timeBlock.id || !loc.available || hasConflict) return;
                                     setSelectedRoom(loc.id);
+                                    setAdminRoomId(loc.id);
                                     setConfirmOpen(true);
                                   })}
                                 tabIndex={!selectedMatchData || selectedMatchData.timeBlockId !== timeBlock.id || !loc.available || hasConflict ? -1 : 0}
@@ -358,7 +770,6 @@ export default function RoomBooking() {
                                   <span className={styles.roomCap}><Users size={12} />Cap. {loc.capacity}</span>
                                   <span className={styles.roomUsage}>{usedBy.length} match{usedBy.length !== 1 ? 'es' : ''} booked</span>
                                 </div>
-                                {renderRoomAdminDetails(loc)}
                                 {hasConflict && (
                                   <div className={styles.conflictWarning}>
                                     <AlertTriangle size={11} />
@@ -413,8 +824,6 @@ export default function RoomBooking() {
                       </span>
                     </div>
                     <p className={styles.summaryRoomMeta}>{loc.building} · Cap. {loc.capacity}</p>
-                    {renderRoomAdminDetails(loc)}
-                    {renderRoomAdminActions(loc)}
                     <p className={styles.summaryMatchTime}>
                       {loc.available ? <CheckCircle2 size={11} /> : <XCircle size={11} />}
                       {loc.available ? 'No current assignments' : 'Room currently unavailable'}
@@ -444,13 +853,11 @@ export default function RoomBooking() {
                         <div>
                           <p className={styles.summaryRoom}><MapPin size={12} />{loc.name}</p>
                           <p className={styles.summaryRoomMeta}>{loc.building} · Cap. {loc.capacity}</p>
-                          {renderRoomAdminDetails(loc)}
                         </div>
                         <span className={styles.summaryRoomCount}>
                           {booked.length} match{booked.length !== 1 ? 'es' : ''}
                         </span>
                       </div>
-                      {renderRoomAdminActions(loc)}
                       <div className={styles.summaryMatchesList}>
                         {booked.map(m => {
                           const tb = tournament.timeBlocks.find(t => t.id === m.timeBlockId);
@@ -503,8 +910,10 @@ export default function RoomBooking() {
                     <div className={styles.confirmRow}><span>Room</span><strong>{loc.name}, {loc.building}</strong></div>
                     <div className={styles.confirmRow}><span>Capacity</span><strong>{loc.capacity} people</strong></div>
                   </div>
-                  {renderRoomAdminDetails(loc)}
-                  {renderRoomAdminActions(loc)}
+                  <div className={styles.roomAdminSection}>
+                    {renderRoomAdminDetails(loc, true)}
+                    {renderRoomAdminActions(loc)}
+                  </div>
                   <p className={styles.confirmNote}>All participants will be notified within 30 seconds of this assignment.</p>
                   <div className={styles.modalActions}>
                     <button className={styles.cancelBtn} onClick={() => setConfirmOpen(false)}>Cancel</button>
@@ -513,6 +922,35 @@ export default function RoomBooking() {
                 </>
               );
             })()}
+          </div>
+        </div>
+      )}
+
+      {confirmRemoveRoom && (
+        <div className={styles.overlay} onClick={() => setConfirmRemoveRoom(null)}>
+          <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
+            <h2 className={styles.modalTitle}>Remove Room</h2>
+            <div className={styles.confirmDetails}>
+              <div className={styles.confirmRow}>
+                <span>Room</span>
+                <strong>{confirmRemoveRoom.name}</strong>
+              </div>
+              <div className={styles.confirmRow}>
+                <span>Building</span>
+                <strong>{confirmRemoveRoom.building}</strong>
+              </div>
+            </div>
+            <p className={styles.confirmNote}>
+              Are you sure you want to remove this room? This action cannot be undone.
+            </p>
+            <div className={styles.modalActions}>
+              <button className={styles.cancelBtn} onClick={() => setConfirmRemoveRoom(null)}>
+                Cancel
+              </button>
+              <button className={styles.bookBtn} onClick={confirmRoomRemoval}>
+                Remove room
+              </button>
+            </div>
           </div>
         </div>
       )}

@@ -199,14 +199,12 @@ export default function Dashboard() {
     notifications,
     timePrefs,
   });
-
-  useEffect(() => {
-    if (!showSearchResults || searchResults.length === 0) {
-      setFocusedSearchResultIndex(-1);
-      return;
-    }
-    setFocusedSearchResultIndex(0);
-  }, [showSearchResults, searchResults.length]);
+  const effectiveFocusedSearchResultIndex =
+    !showSearchResults || searchResults.length === 0
+      ? -1
+      : focusedSearchResultIndex < 0
+        ? 0
+        : Math.min(focusedSearchResultIndex, searchResults.length - 1);
 
   const handleSelectSearchResult = (path: string) => {
     navigate(path);
@@ -220,14 +218,16 @@ export default function Dashboard() {
     if (!showSearchResults || searchResults.length === 0) return;
     if (e.key === 'ArrowDown') {
       e.preventDefault();
-      setFocusedSearchResultIndex((i) => Math.min(i + 1, searchResults.length - 1));
+      setFocusedSearchResultIndex((i) =>
+        Math.min(i < 0 ? 0 : i + 1, searchResults.length - 1)
+      );
     } else if (e.key === 'ArrowUp') {
       e.preventDefault();
-      setFocusedSearchResultIndex((i) => Math.max(i - 1, 0));
+      setFocusedSearchResultIndex((i) => Math.max((i < 0 ? 0 : i) - 1, 0));
     } else if (e.key === 'Enter') {
-      if (focusedSearchResultIndex < 0) return;
+      if (effectiveFocusedSearchResultIndex < 0) return;
       e.preventDefault();
-      handleSelectSearchResult(searchResults[focusedSearchResultIndex].path);
+      handleSelectSearchResult(searchResults[effectiveFocusedSearchResultIndex].path);
     } else if (e.key === 'Escape') {
       e.preventDefault();
       setShowSearchResults(false);
@@ -299,7 +299,7 @@ export default function Dashboard() {
                     <button
                       key={`${r.path}-${r.label}-${i}`}
                       type="button"
-                      className={`flex w-full items-center gap-3 border-b border-arena-border px-4 py-3 text-left transition-colors last:border-0 ${i === focusedSearchResultIndex ? 'bg-arena-surface-hover' : 'hover:bg-arena-surface-hover'}`}
+                      className={`flex w-full items-center gap-3 border-b border-arena-border px-4 py-3 text-left transition-colors last:border-0 ${i === effectiveFocusedSearchResultIndex ? 'bg-arena-surface-hover' : 'hover:bg-arena-surface-hover'}`}
                       onClick={() => handleSelectSearchResult(r.path)}
                       onMouseEnter={() => setFocusedSearchResultIndex(i)}
                     >
@@ -366,39 +366,56 @@ export default function Dashboard() {
             role="tab"
             aria-selected={categoryFilter === label}
             tabIndex={categoryFilter === label ? 0 : -1}
-            className={`flex items-center gap-1.5 px-4 py-1.5 rounded-full text-sm font-semibold border transition-all active:scale-95 ${
+            className={`inline-flex items-center gap-1.5 px-3.5 py-1.25 rounded-full text-[0.78rem] font-semibold border transition-all active:scale-95 ${
               categoryFilter === label
                 ? 'bg-arena-accent text-arena-bg border-arena-accent shadow-[0_0_12px_rgba(232,255,71,0.25)]'
                 : 'bg-arena-surface border-arena-border text-arena-text-muted hover:border-arena-accent/40 hover:text-arena-text'
             }`}
           >
-            <Icon size={13} /><span>{label}</span>
+            <Icon size={13} />
+            <span>{label}</span>
           </button>
         ))}
       </div>
 
-      {active.length > 0 && (
-        <section className="mb-12 data-[density=compact]:mb-6">
-          <h2 className="text-xl font-bold text-arena-text flex items-center gap-2 mb-6 data-[density=compact]:mb-3">
-            <div className="w-2 h-6 bg-arena-accent rounded-full" />
-            {active.length === 1 ? 'Active Tournament' : 'Active Tournaments'}
-          </h2>
-          <motion.div variants={staggerContainer} initial="hidden" animate="show" className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 data-[density=compact]:gap-3">
-            {active.map((t: Tournament) => <TournamentCard key={t.id} t={t} />)}
-          </motion.div>
-        </section>
-      )}
+      {(active.length > 0 || upcoming.length > 0 || other.length > 0) && (
+        <div className="mb-12 grid grid-cols-1 gap-8 xl:grid-cols-2 2xl:grid-cols-3 xl:items-start data-[density=compact]:mb-6 data-[density=compact]:gap-4">
+          {active.length > 0 && (
+            <section className="min-w-0">
+              <h2 className="text-xl font-bold text-arena-text flex items-center gap-2 mb-6 data-[density=compact]:mb-3">
+                <div className="w-2 h-6 bg-arena-accent rounded-full" />
+                {active.length === 1 ? 'Active Tournament' : 'Active Tournaments'}
+              </h2>
+              <motion.div variants={staggerContainer} initial="hidden" animate="show" className="flex flex-col gap-6 data-[density=compact]:gap-3">
+                {active.map((t: Tournament) => <TournamentCard key={t.id} t={t} />)}
+              </motion.div>
+            </section>
+          )}
 
-      {upcoming.length > 0 && (
-        <section className="mb-12 data-[density=compact]:mb-6">
-          <h2 className="text-xl font-bold text-arena-text flex items-center gap-2 mb-6 data-[density=compact]:mb-3">
-            <div className="w-2 h-6 bg-blue-500 rounded-full" />
-            {upcoming.length === 1 ? 'Open Registration' : 'Open Registrations'}
-          </h2>
-          <motion.div variants={staggerContainer} initial="hidden" animate="show" className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 data-[density=compact]:gap-3">
-            {upcoming.map((t: Tournament) => <TournamentCard key={t.id} t={t} />)}
-          </motion.div>
-        </section>
+          {upcoming.length > 0 && (
+            <section className="min-w-0">
+              <h2 className="text-xl font-bold text-arena-text flex items-center gap-2 mb-6 data-[density=compact]:mb-3">
+                <div className="w-2 h-6 bg-blue-500 rounded-full" />
+                {upcoming.length === 1 ? 'Open Registration' : 'Open Registrations'}
+              </h2>
+              <motion.div variants={staggerContainer} initial="hidden" animate="show" className="flex flex-col gap-6 data-[density=compact]:gap-3">
+                {upcoming.map((t: Tournament) => <TournamentCard key={t.id} t={t} />)}
+              </motion.div>
+            </section>
+          )}
+
+          {other.length > 0 && (
+            <section className="min-w-0">
+              <h2 className="text-xl font-bold text-arena-text flex items-center gap-2 mb-6 data-[density=compact]:mb-3">
+                <div className="w-2 h-6 bg-gray-600 rounded-full" />
+                {other.length === 1 ? 'Completed Tournament' : 'Completed Tournaments'}
+              </h2>
+              <motion.div variants={staggerContainer} initial="hidden" animate="show" className="flex flex-col gap-6 data-[density=compact]:gap-3">
+                {other.map((t: Tournament) => <TournamentCard key={t.id} t={t} />)}
+              </motion.div>
+            </section>
+          )}
+        </div>
       )}
 
       {drafts.length > 0 && (
@@ -407,20 +424,8 @@ export default function Dashboard() {
             <div className="w-2 h-6 bg-gray-500 rounded-full" />
             {drafts.length === 1 ? 'Draft Tournament' : 'Draft Tournaments'}
           </h2>
-          <motion.div variants={staggerContainer} initial="hidden" animate="show" className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 data-[density=compact]:gap-3">
+          <motion.div variants={staggerContainer} initial="hidden" animate="show" className="flex flex-col gap-6 data-[density=compact]:gap-3">
             {drafts.map((t: Tournament) => <TournamentCard key={t.id} t={t} />)}
-          </motion.div>
-        </section>
-      )}
-
-      {other.length > 0 && (
-        <section className="mb-12 data-[density=compact]:mb-6">
-          <h2 className="text-xl font-bold text-arena-text flex items-center gap-2 mb-6 data-[density=compact]:mb-3">
-            <div className="w-2 h-6 bg-gray-600 rounded-full" />
-            {other.length === 1 ? 'Completed Tournament' : 'Completed Tournaments'}
-          </h2>
-          <motion.div variants={staggerContainer} initial="hidden" animate="show" className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 data-[density=compact]:gap-3">
-            {other.map((t: Tournament) => <TournamentCard key={t.id} t={t} />)}
           </motion.div>
         </section>
       )}
