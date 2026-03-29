@@ -131,6 +131,7 @@
   flex-wrap: wrap;
   gap: 8px;
   margin-top: 10px;
+  margin-bottom: 14px;
 }
 .contactAction {
   display: inline-flex;
@@ -298,7 +299,7 @@
 .confirmRow { display: flex; justify-content: space-between; font-size: 0.85rem; }
 .confirmRow span { color: var(--text-3); }
 .confirmRow strong { color: var(--text); }
-.confirmNote { font-size: 0.78rem; color: var(--text-3); background: var(--bg-3); padding: 10px 12px; border-radius: var(--radius-sm); margin-bottom: 16px; }
+.confirmNote { font-size: 0.78rem; color: var(--text-3); background: var(--bg-3); padding: 10px 12px; border-radius: var(--radius-sm); margin-top: 4px; margin-bottom: 16px; }
 .modalActions { display: flex; gap: 10px; }
 .cancelBtn { flex: 1; background: var(--surface); border: 1px solid var(--border-2); color: var(--text-2); font-size: 0.85rem; padding: 10px; border-radius: var(--radius); cursor: pointer; }
 .cancelBtn:hover { background: var(--surface-2); }
