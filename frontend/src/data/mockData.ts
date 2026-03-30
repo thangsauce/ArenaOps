@@ -1,4 +1,45 @@
-import type { Tournament } from "../types";
+import type { Location, TimeBlock, Tournament } from "../types";
+
+export const defaultLocations: Location[] = [
+  {
+    id: "dl1",
+    name: "Gaming Lab A",
+    building: "Student Union",
+    capacity: 20,
+    available: true,
+    adminName: "Maya Patel",
+    adminEmail: "gaminglab@ucf.edu",
+    adminPhone: "(407) 555-0141",
+  },
+  {
+    id: "dl2",
+    name: "Room 204",
+    building: "Classroom Bldg",
+    capacity: 30,
+    available: true,
+    adminName: "Jordan Brooks",
+    adminEmail: "room204@ucf.edu",
+    adminPhone: "(407) 555-0187",
+  },
+  {
+    id: "dl3",
+    name: "Rec Center Hall",
+    building: "Recreation Center",
+    capacity: 50,
+    available: true,
+    adminName: "Elena Cruz",
+    adminEmail: "reccenter@ucf.edu",
+    adminPhone: "(407) 555-0129",
+  },
+];
+
+export function makeDefaultTimeBlocks(date: string): TimeBlock[] {
+  return [
+    { id: `tb-${date}-am`, label: "Morning", start: "09:00", end: "12:00", date },
+    { id: `tb-${date}-pm`, label: "Afternoon", start: "13:00", end: "17:00", date },
+    { id: `tb-${date}-eve`, label: "Evening", start: "18:00", end: "21:00", date },
+  ];
+}
 
 export const mockTournaments: Tournament[] = [
   {

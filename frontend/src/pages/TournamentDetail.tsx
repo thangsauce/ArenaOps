@@ -24,8 +24,8 @@ import { useApp } from "../store/store";
 import type { Match, Participant, TournamentFormat } from "../types";
 import styles from "./TournamentDetail.module.css";
 import { formatDate, formatTimeRange } from "../utils/time";
-import { useToast } from '../components/useToast';
-import ConfirmDialog from '../components/ConfirmDialog';
+import { useToast } from "../components/useToast";
+import ConfirmDialog from "../components/ConfirmDialog";
 
 const ShareModal = lazy(() => import("../components/ShareModal"));
 
@@ -131,6 +131,22 @@ function slugify(value: string) {
     .replace(/^-+|-+$/g, "");
 }
 
+function appendIndexSuffix(value: string, index: number) {
+  return index === 0 ? value : `${value} ${index + 1}`;
+}
+
+function createIndexedEmail(email: string, index: number) {
+  if (index === 0) return email;
+  const trimmedEmail = email.trim();
+  const atIndex = trimmedEmail.indexOf("@");
+  if (atIndex === -1) {
+    return `${trimmedEmail}+${index + 1}`;
+  }
+  const localPart = trimmedEmail.slice(0, atIndex);
+  const domain = trimmedEmail.slice(atIndex);
+  return `${localPart}+${index + 1}${domain}`;
+}
+
 function createMatchId(round: number, matchNumber: number) {
   return `m-r${round}-n${matchNumber}`;
 }
@@ -153,7 +169,10 @@ function shuffleEntries<T>(items: T[]) {
   const shuffled = [...items];
   for (let index = shuffled.length - 1; index > 0; index -= 1) {
     const swapIndex = Math.floor(Math.random() * (index + 1));
-    [shuffled[index], shuffled[swapIndex]] = [shuffled[swapIndex], shuffled[index]];
+    [shuffled[index], shuffled[swapIndex]] = [
+      shuffled[swapIndex],
+      shuffled[index],
+    ];
   }
   return shuffled;
 }
@@ -212,7 +231,8 @@ function buildGeneratedMatches(
     return buildRoundRobinMatches(randomizedEntryIds);
   }
 
-  const totalSlots = 2 ** Math.ceil(Math.log2(Math.max(2, randomizedEntryIds.length)));
+  const totalSlots =
+    2 ** Math.ceil(Math.log2(Math.max(2, randomizedEntryIds.length)));
   const rounds = Math.log2(totalSlots);
   const matches: Match[] = [];
   let matchNumber = 1;
@@ -225,8 +245,12 @@ function buildGeneratedMatches(
         id: createMatchId(round, matchNumber),
         round,
         matchNumber: index + 1,
-        participant1Id: isFirstRound ? randomizedEntryIds[index * 2] ?? null : null,
-        participant2Id: isFirstRound ? randomizedEntryIds[index * 2 + 1] ?? null : null,
+        participant1Id: isFirstRound
+          ? (randomizedEntryIds[index * 2] ?? null)
+          : null,
+        participant2Id: isFirstRound
+          ? (randomizedEntryIds[index * 2 + 1] ?? null)
+          : null,
         winnerId: null,
         score1: 0,
         score2: 0,
@@ -292,7 +316,11 @@ function Avatar({
         fontWeight: 700,
       }}
     >
-      {p ? initials : <ThumbsUp size={Math.round(size * 0.46)} strokeWidth={2.2} />}
+      {p ? (
+        initials
+      ) : (
+        <ThumbsUp size={Math.round(size * 0.46)} strokeWidth={2.2} />
+      )}
     </div>
   );
 }
@@ -442,8 +470,10 @@ function MatchCard({
                 +
               </button>
             </div>
-          ) : showScore && (
-            <span className={styles.score}>{match.score1 ?? 0}</span>
+          ) : (
+            showScore && (
+              <span className={styles.score}>{match.score1 ?? 0}</span>
+            )
           )}
         </div>
         <div className={styles.vs}>VS</div>
@@ -493,8 +523,10 @@ function MatchCard({
                 +
               </button>
             </div>
-          ) : showScore && (
-            <span className={styles.score}>{match.score2 ?? 0}</span>
+          ) : (
+            showScore && (
+              <span className={styles.score}>{match.score2 ?? 0}</span>
+            )
           )}
         </div>
       </div>
@@ -630,7 +662,9 @@ function FlowView({
     <div className={styles.bracket}>
       {rounds.map((round) => (
         <div key={round} className={styles.round}>
-          <p className={styles.roundLabel}>{getRoundLabel(round, maxRound, format)}</p>
+          <p className={styles.roundLabel}>
+            {getRoundLabel(round, maxRound, format)}
+          </p>
           <div className={styles.roundMatches}>
             {matches
               .filter((m) => m.round === round)
@@ -834,7 +868,8 @@ function ListView({
                 const showScore =
                   match.status !== "scheduled" && match.status !== "cancelled";
                 const canStartMatch =
-                  match.participant1Id !== null && match.participant2Id !== null;
+                  match.participant1Id !== null &&
+                  match.participant2Id !== null;
                 const p1Label = getEntryLabel(p1, teamMode);
                 const p2Label = getEntryLabel(p2, teamMode);
                 const currentScores = getLiveScores?.(match) ?? {
@@ -922,10 +957,12 @@ function ListView({
                             +
                           </button>
                         </div>
-                      ) : showScore && (
-                        <span className={styles.listScore}>
-                          {match.score1 ?? 0}
-                        </span>
+                      ) : (
+                        showScore && (
+                          <span className={styles.listScore}>
+                            {match.score1 ?? 0}
+                          </span>
+                        )
                       )}
                     </div>
 
@@ -977,10 +1014,12 @@ function ListView({
                             +
                           </button>
                         </div>
-                      ) : showScore && (
-                        <span className={styles.listScore}>
-                          {match.score2 ?? 0}
-                        </span>
+                      ) : (
+                        showScore && (
+                          <span className={styles.listScore}>
+                            {match.score2 ?? 0}
+                          </span>
+                        )
                       )}
                     </div>
 
@@ -997,7 +1036,8 @@ function ListView({
                       )}
                       {st.label}
                     </span>
-                    {(match.status === "scheduled" || match.status === "live") && (
+                    {(match.status === "scheduled" ||
+                      match.status === "live") && (
                       <div className={styles.listRowActions}>
                         {match.status === "scheduled" && canStartMatches ? (
                           <button
@@ -1104,7 +1144,11 @@ function ParticipantRow({
         {participant.availability.length > 1 ? "s" : ""}
       </span>
       {onRemove && (
-        <button type="button" className={styles.removeRosterBtn} onClick={onRemove}>
+        <button
+          type="button"
+          className={styles.removeRosterBtn}
+          onClick={onRemove}
+        >
           <Trash2 size={13} /> Remove Player
         </button>
       )}
@@ -1173,12 +1217,20 @@ function TeamRow({
         <div className={styles.teamMembers}>
           <div className={styles.teamMembersHeader}>
             {onAddMember && (
-              <button type="button" className={styles.addRosterBtn} onClick={onAddMember}>
+              <button
+                type="button"
+                className={styles.addRosterBtn}
+                onClick={onAddMember}
+              >
                 <Plus size={13} /> Add Player
               </button>
             )}
             {onRemoveTeam && (
-              <button type="button" className={styles.removeRosterBtn} onClick={onRemoveTeam}>
+              <button
+                type="button"
+                className={styles.removeRosterBtn}
+                onClick={onRemoveTeam}
+              >
                 <Trash2 size={13} /> Remove Team
               </button>
             )}
@@ -1191,7 +1243,9 @@ function TeamRow({
               onLogoUpload={(file) => onLogoUpload(member.id, file)}
               teamMode={false}
               memberIndex={index + 1}
-              onRemove={onRemoveMember ? () => onRemoveMember(member) : undefined}
+              onRemove={
+                onRemoveMember ? () => onRemoveMember(member) : undefined
+              }
             />
           ))}
         </div>
@@ -1232,24 +1286,27 @@ export default function TournamentDetail() {
   const [confirmDelete, setConfirmDelete] = useState(false);
   const [confirmTournamentStatusChange, setConfirmTournamentStatusChange] =
     useState<"draft" | "registration" | "active" | null>(null);
-  const [pendingSelection, setPendingSelection] = useState<PendingSelection | null>(
-    null,
-  );
+  const [pendingSelection, setPendingSelection] =
+    useState<PendingSelection | null>(null);
   const [confirmGenerateBracket, setConfirmGenerateBracket] = useState(false);
   const [assignEntryTarget, setAssignEntryTarget] = useState<{
     matchId: string;
     side: MatchSlotSide;
   } | null>(null);
-  const [selectedAssignEntryId, setSelectedAssignEntryId] = useState<string | null>(
-    null,
-  );
+  const [selectedAssignEntryId, setSelectedAssignEntryId] = useState<
+    string | null
+  >(null);
   const [showAddRosterModal, setShowAddRosterModal] = useState(false);
-  const [addRosterTarget, setAddRosterTarget] = useState<AddRosterTarget>("player");
-  const [addMemberTeamName, setAddMemberTeamName] = useState<string | null>(null);
-  const [selectedExistingRosterId, setSelectedExistingRosterId] = useState<string | null>(
+  const [addRosterTarget, setAddRosterTarget] =
+    useState<AddRosterTarget>("player");
+  const [addMemberTeamName, setAddMemberTeamName] = useState<string | null>(
     null,
   );
+  const [selectedExistingRosterIds, setSelectedExistingRosterIds] = useState<
+    string[]
+  >([]);
   const [addRosterMode, setAddRosterMode] = useState<AddRosterMode>("existing");
+  const [manualAddCount, setManualAddCount] = useState("1");
   const [newPlayerName, setNewPlayerName] = useState("");
   const [newPlayerEmail, setNewPlayerEmail] = useState("");
   const [newTeamName, setNewTeamName] = useState("");
@@ -1262,7 +1319,9 @@ export default function TournamentDetail() {
   const [liveScores, setLiveScores] = useState<
     Record<string, { score1: number; score2: number }>
   >({});
-  const [confirmStartMatch, setConfirmStartMatch] = useState<Match | null>(null);
+  const [confirmStartMatch, setConfirmStartMatch] = useState<Match | null>(
+    null,
+  );
   const [confirmCompleteMatch, setConfirmCompleteMatch] = useState<{
     matchId: string;
     score1: number;
@@ -1299,10 +1358,14 @@ export default function TournamentDetail() {
   const timeBlocks = tournament.timeBlocks ?? [];
   const locations = tournament.locations ?? [];
   const selectedVenueLocation =
-    locations.find((location) => location.id === tournament.venueLocationId) ?? null;
-  const selectedTimeBlock =
-    timeBlocks.find((timeBlock) => timeBlock.id === tournament.selectedTimeBlockId) ??
+    locations.find((location) => location.id === tournament.venueLocationId) ??
     null;
+  const selectedTimeBlock =
+    timeBlocks.find(
+      (timeBlock) => timeBlock.id === tournament.selectedTimeBlockId,
+    ) ?? null;
+  const isScheduleLockedTournament =
+    tournament.status === "completed" || tournament.status === "active";
   const rounds = [...new Set(matches.map((m) => m.round))].sort(
     (a, b) => a - b,
   );
@@ -1325,7 +1388,9 @@ export default function TournamentDetail() {
         return groups;
       }, [])
     : [];
-  const rosterEntryCount = isIndividualGame ? participants.length : teamGroups.length;
+  const rosterEntryCount = isIndividualGame
+    ? participants.length
+    : teamGroups.length;
   const rosterCapacityReached = rosterEntryCount >= tournament.maxParticipants;
   const canOpenRegistration = rosterEntryCount >= 1;
   const canActivateTournament =
@@ -1336,7 +1401,9 @@ export default function TournamentDetail() {
   const getActivateNowRequirementMessage = () => {
     const missing: string[] = [];
     if (rosterEntryCount < 2) {
-      missing.push(`add at least two ${isIndividualGame ? "players" : "teams"}`);
+      missing.push(
+        `add at least two ${isIndividualGame ? "players" : "teams"}`,
+      );
     }
     if (!tournament.selectedTimeBlockId) {
       missing.push("select a time slot");
@@ -1360,9 +1427,10 @@ export default function TournamentDetail() {
     { key: "list", label: "List", Icon: List },
   ];
 
-  const viewButtons = tournament.format === "round-robin"
-    ? allViewButtons.filter((view) => view.key !== "tree")
-    : allViewButtons;
+  const viewButtons =
+    tournament.format === "round-robin"
+      ? allViewButtons.filter((view) => view.key !== "tree")
+      : allViewButtons;
   const effectiveBracketView =
     tournament.format === "round-robin" && bracketView === "tree"
       ? "flow"
@@ -1447,7 +1515,9 @@ export default function TournamentDetail() {
         participantId: team.members[0]?.id ?? `team-${index}`,
         sortSeed:
           Math.min(
-            ...team.members.map((member, memberIndex) => member.seed ?? index + memberIndex + 1),
+            ...team.members.map(
+              (member, memberIndex) => member.seed ?? index + memberIndex + 1,
+            ),
           ) || index + 1,
       }));
 
@@ -1464,7 +1534,7 @@ export default function TournamentDetail() {
       }));
 
   const assignTargetMatch = assignEntryTarget
-    ? matches.find((match) => match.id === assignEntryTarget.matchId) ?? null
+    ? (matches.find((match) => match.id === assignEntryTarget.matchId) ?? null)
     : null;
 
   const availableEntries = assignTargetMatch
@@ -1506,7 +1576,9 @@ export default function TournamentDetail() {
         Array<{ name: string; members: Participant[] }>
       >((acc, participant) => {
         if (!participant.team) return acc;
-        const existingGroup = acc.find((group) => group.name === participant.team);
+        const existingGroup = acc.find(
+          (group) => group.name === participant.team,
+        );
         if (existingGroup) {
           existingGroup.members.push(participant);
         } else {
@@ -1522,7 +1594,8 @@ export default function TournamentDetail() {
       }));
     })
     .filter(
-      (team, index, list) => list.findIndex((entry) => entry.label === team.label) === index,
+      (team, index, list) =>
+        list.findIndex((entry) => entry.label === team.label) === index,
     )
     .filter((team) => !teamGroups.some((group) => group.name === team.label));
 
@@ -1532,15 +1605,18 @@ export default function TournamentDetail() {
     Boolean(newTeamName.trim()) &&
     Boolean(newCaptainName.trim()) &&
     Boolean(newCaptainEmail.trim());
-  const canApplyAddRoster = selectedExistingRosterId
-    ? true
-    : isIndividualGame || addRosterTarget === "player" || addMemberTeamName
-      ? canApplyManualPlayer
-      : canApplyManualTeam;
+  const manualRosterCount = Math.max(1, Number(manualAddCount) || 1);
+  const canApplyAddRoster =
+    selectedExistingRosterIds.length > 0
+      ? true
+      : isIndividualGame || addRosterTarget === "player" || addMemberTeamName
+        ? canApplyManualPlayer
+        : canApplyManualTeam;
 
   const resetRosterForm = () => {
     setAddRosterMode("existing");
-    setSelectedExistingRosterId(null);
+    setSelectedExistingRosterIds([]);
+    setManualAddCount("1");
     setNewPlayerName("");
     setNewPlayerEmail("");
     setNewTeamName("");
@@ -1558,7 +1634,9 @@ export default function TournamentDetail() {
 
   const handleGenerateBracket = () => {
     if (!canGenerateBracket) {
-      toast(`Add at least two ${isIndividualGame ? "players" : "teams"} before generating a bracket`);
+      toast(
+        `Add at least two ${isIndividualGame ? "players" : "teams"} before generating a bracket`,
+      );
       setConfirmGenerateBracket(false);
       return;
     }
@@ -1581,8 +1659,12 @@ export default function TournamentDetail() {
       [assignEntryTarget.side]: selectedAssignEntryId,
       winnerId: null,
     });
-    const assignedEntry = assignableEntries.find((entry) => entry.id === selectedAssignEntryId);
-    toast(`${assignedEntry?.label ?? (isIndividualGame ? "Player" : "Team")} added to bracket`);
+    const assignedEntry = assignableEntries.find(
+      (entry) => entry.id === selectedAssignEntryId,
+    );
+    toast(
+      `${assignedEntry?.label ?? (isIndividualGame ? "Player" : "Team")} added to bracket`,
+    );
     setAssignEntryTarget(null);
     setSelectedAssignEntryId(null);
   };
@@ -1593,80 +1675,117 @@ export default function TournamentDetail() {
       return;
     }
     if (!match.participant1Id || !match.participant2Id) {
-      toast(`Add both ${isIndividualGame ? "players" : "teams"} before starting the match`);
+      toast(
+        `Add both ${isIndividualGame ? "players" : "teams"} before starting the match`,
+      );
       return;
     }
     setConfirmStartMatch(match);
   };
 
   const handleAddRoster = () => {
-    const nextParticipantId = createParticipantIdFactory(tournament.participants);
+    const nextParticipantId = createParticipantIdFactory(
+      tournament.participants,
+    );
     if (isIndividualGame || addRosterTarget === "player" || addMemberTeamName) {
-      if (selectedExistingRosterId) {
-        const selectedPlayer = existingPlayerOptions.find(
-          (option) => option.id === selectedExistingRosterId,
-        )?.participant;
-        if (!selectedPlayer) return;
+      if (selectedExistingRosterIds.length > 0) {
+        const selectedPlayers = existingPlayerOptions
+          .filter((option) => selectedExistingRosterIds.includes(option.id))
+          .map((option) => option.participant);
+        if (selectedPlayers.length === 0) return;
         addParticipants(tournament.id, [
-          {
+          ...selectedPlayers.map((selectedPlayer) => ({
             ...selectedPlayer,
             id: nextParticipantId(),
             team: addMemberTeamName ?? selectedPlayer.team,
-          },
+          })),
         ]);
-        toast(addMemberTeamName ? "Existing player added to team" : "Existing player added");
+        toast(
+          addMemberTeamName
+            ? `${selectedPlayers.length} existing player${selectedPlayers.length === 1 ? "" : "s"} added to team`
+            : `${selectedPlayers.length} existing player${selectedPlayers.length === 1 ? "" : "s"} added`,
+        );
       } else {
         if (!newPlayerName.trim() || !newPlayerEmail.trim()) return;
         addParticipants(tournament.id, [
-          {
+          ...Array.from({ length: manualRosterCount }, (_, index) => ({
             id: nextParticipantId(),
-            name: newPlayerName.trim(),
-            email: newPlayerEmail.trim(),
+            name: appendIndexSuffix(newPlayerName.trim(), index),
+            email: createIndexedEmail(newPlayerEmail.trim(), index),
             team: addMemberTeamName ?? undefined,
-            status: "confirmed",
+            status: "confirmed" as const,
             availability: [],
-          },
+          })),
         ]);
-        toast(addMemberTeamName ? "Player added to team" : "Player added");
+        toast(
+          addMemberTeamName
+            ? `${manualRosterCount} player${manualRosterCount === 1 ? "" : "s"} added to team`
+            : `${manualRosterCount} player${manualRosterCount === 1 ? "" : "s"} added`,
+        );
       }
     } else {
-      if (selectedExistingRosterId) {
-        const selectedTeam = existingTeamOptions.find(
-          (option) => option.id === selectedExistingRosterId,
+      if (selectedExistingRosterIds.length > 0) {
+        const selectedTeams = existingTeamOptions.filter((option) =>
+          selectedExistingRosterIds.includes(option.id),
         );
-        if (!selectedTeam) return;
+        if (selectedTeams.length === 0) return;
         addParticipants(
           tournament.id,
-          selectedTeam.members.map((member) => ({
-            ...member,
-            id: nextParticipantId(),
-            team: selectedTeam.label,
-          })),
+          selectedTeams.flatMap((selectedTeam) =>
+            selectedTeam.members.map((member) => ({
+              ...member,
+              id: nextParticipantId(),
+              team: selectedTeam.label,
+            })),
+          ),
         );
-        toast("Existing team added");
+        toast(
+          `${selectedTeams.length} existing team${selectedTeams.length === 1 ? "" : "s"} added`,
+        );
       } else {
-        if (!newTeamName.trim() || !newCaptainName.trim() || !newCaptainEmail.trim()) {
+        if (
+          !newTeamName.trim() ||
+          !newCaptainName.trim() ||
+          !newCaptainEmail.trim()
+        ) {
           return;
         }
-        const teamName = newTeamName.trim();
-        const captainId = nextParticipantId();
-        const teamSlug = slugify(teamName) || `team-${captainId}`;
+        const baseTeamName = newTeamName.trim();
         const memberCount = Math.max(1, Number(newTeamMemberCount) || 1);
         addParticipants(
           tournament.id,
-          Array.from({ length: memberCount }, (_, index) => ({
-            id: index === 0 ? captainId : nextParticipantId(),
-            name: index === 0 ? newCaptainName.trim() : `${teamName} Player ${index + 1}`,
-            email:
-              index === 0
-                ? newCaptainEmail.trim()
-                : `${teamSlug}-${index + 1}@team.local`,
-            team: teamName,
-            status: "confirmed",
-            availability: [],
-          })),
+          Array.from({ length: manualRosterCount }, (_, teamIndex) => {
+            const captainId = nextParticipantId();
+            const teamName = appendIndexSuffix(baseTeamName, teamIndex);
+            const captainName = appendIndexSuffix(
+              newCaptainName.trim(),
+              teamIndex,
+            );
+            const captainEmail = createIndexedEmail(
+              newCaptainEmail.trim(),
+              teamIndex,
+            );
+            const teamSlug = slugify(teamName) || `team-${captainId}`;
+
+            return Array.from({ length: memberCount }, (_, memberIndex) => ({
+              id: memberIndex === 0 ? captainId : nextParticipantId(),
+              name:
+                memberIndex === 0
+                  ? captainName
+                  : `${teamName} Player ${memberIndex + 1}`,
+              email:
+                memberIndex === 0
+                  ? captainEmail
+                  : `${teamSlug}-${memberIndex + 1}@team.local`,
+              team: teamName,
+              status: "confirmed" as const,
+              availability: [],
+            }));
+          }).flat(),
         );
-        toast("Team added");
+        toast(
+          `${manualRosterCount} team${manualRosterCount === 1 ? "" : "s"} added`,
+        );
       }
     }
     setShowAddRosterModal(false);
@@ -1677,11 +1796,16 @@ export default function TournamentDetail() {
   const handleRemoveRoster = () => {
     if (!confirmRemoveRoster) return;
     removeParticipants(tournament.id, confirmRemoveRoster.ids);
-    toast(confirmRemoveRoster.kind === "team" ? "Team removed" : "Player removed");
+    toast(
+      confirmRemoveRoster.kind === "team" ? "Team removed" : "Player removed",
+    );
     setConfirmRemoveRoster(null);
   };
 
-  const hasRoomConflictInTimeBlock = (locationId: string, timeBlockId: string) =>
+  const hasRoomConflictInTimeBlock = (
+    locationId: string,
+    timeBlockId: string,
+  ) =>
     matches.some(
       (match) =>
         match.locationId === locationId &&
@@ -1698,6 +1822,7 @@ export default function TournamentDetail() {
     ).length;
 
   const isTimeBlockSelectable = (timeBlockId: string) => {
+    if (isScheduleLockedTournament) return false;
     if (selectedVenueLocation) {
       return (
         selectedVenueLocation.available &&
@@ -1708,6 +1833,7 @@ export default function TournamentDetail() {
   };
 
   const isLocationSelectable = (locationId: string) => {
+    if (isScheduleLockedTournament) return false;
     const location = locations.find((item) => item.id === locationId);
     if (!location?.available) return false;
     if (!selectedTimeBlock) return true;
@@ -1715,19 +1841,32 @@ export default function TournamentDetail() {
   };
 
   const handleRequestLocationSelection = (locationId: string) => {
+    if (isScheduleLockedTournament) {
+      toast("Active or completed tournaments cannot change locations");
+      return;
+    }
     if (!isLocationSelectable(locationId)) return;
     setPendingSelection({ kind: "location", id: locationId });
   };
 
   const handleRequestTimeBlockSelection = (timeBlockId: string) => {
+    if (isScheduleLockedTournament) {
+      toast("Active or completed tournaments cannot change time slots");
+      return;
+    }
     if (!isTimeBlockSelectable(timeBlockId)) return;
     setPendingSelection({ kind: "timeBlock", id: timeBlockId });
   };
 
   const handleConfirmSelection = () => {
-    if (!pendingSelection) return;
+    if (!pendingSelection || isScheduleLockedTournament) {
+      setPendingSelection(null);
+      return;
+    }
     if (pendingSelection.kind === "location") {
-      const location = locations.find((item) => item.id === pendingSelection.id);
+      const location = locations.find(
+        (item) => item.id === pendingSelection.id,
+      );
       if (!location?.available) {
         setPendingSelection(null);
         return;
@@ -1735,12 +1874,16 @@ export default function TournamentDetail() {
       updateTournament(tournament.id, { venueLocationId: pendingSelection.id });
       toast(`${location.name} selected`);
     } else {
-      const timeBlock = timeBlocks.find((item) => item.id === pendingSelection.id);
+      const timeBlock = timeBlocks.find(
+        (item) => item.id === pendingSelection.id,
+      );
       if (!timeBlock) {
         setPendingSelection(null);
         return;
       }
-      updateTournament(tournament.id, { selectedTimeBlockId: pendingSelection.id });
+      updateTournament(tournament.id, {
+        selectedTimeBlockId: pendingSelection.id,
+      });
       toast(`${timeBlock.label} selected`);
     }
     setPendingSelection(null);
@@ -1748,7 +1891,10 @@ export default function TournamentDetail() {
 
   const handleConfirmStatusChange = () => {
     if (!confirmTournamentStatusChange) return;
-    if (confirmTournamentStatusChange === "registration" && !canOpenRegistration) {
+    if (
+      confirmTournamentStatusChange === "registration" &&
+      !canOpenRegistration
+    ) {
       toast(`Add at least one ${isIndividualGame ? "player" : "team"} first`);
       return;
     }
@@ -1815,7 +1961,11 @@ export default function TournamentDetail() {
             )}
             {liveMatches.length > 0 && (
               <div className={styles.metaItem} style={{ color: "var(--red)" }}>
-                <Radio size={14} className="animate-pulse" style={{ animationDuration: "2.2s" }} />
+                <Radio
+                  size={14}
+                  className="animate-pulse"
+                  style={{ animationDuration: "2.2s" }}
+                />
                 {liveMatches.length} match{liveMatches.length > 1 ? "es" : ""}{" "}
                 live
               </div>
@@ -1824,7 +1974,11 @@ export default function TournamentDetail() {
           <div className={styles.headerActions}>
             <button
               className={styles.shareBtn}
-              style={{ color: 'var(--red)', borderColor: 'rgba(239,68,68,0.3)', background: 'rgba(239,68,68,0.08)' }}
+              style={{
+                color: "var(--red)",
+                borderColor: "rgba(239,68,68,0.3)",
+                background: "rgba(239,68,68,0.08)",
+              }}
               onClick={() => setConfirmDelete(true)}
               aria-label="Delete tournament"
             >
@@ -2012,7 +2166,9 @@ export default function TournamentDetail() {
                 type="button"
                 className={styles.addRosterBtn}
                 disabled={rosterCapacityReached}
-                onClick={() => openAddRoster(isIndividualGame ? "player" : "team")}
+                onClick={() =>
+                  openAddRoster(isIndividualGame ? "player" : "team")
+                }
                 title={
                   rosterCapacityReached
                     ? `${tournament.maxParticipants} ${countLabel} reached`
@@ -2084,16 +2240,23 @@ export default function TournamentDetail() {
             <h2 className={styles.sectionTitle}>Time Slots</h2>
             <div className={styles.locationGrid}>
               {timeBlocks.map((timeBlock) => {
-                const availableRoomCount = getAvailableRoomCountForTimeBlock(timeBlock.id);
+                const availableRoomCount = getAvailableRoomCountForTimeBlock(
+                  timeBlock.id,
+                );
                 const selectable = isTimeBlockSelectable(timeBlock.id);
-                const isSelected = tournament.selectedTimeBlockId === timeBlock.id;
+                const isSelected =
+                  tournament.selectedTimeBlockId === timeBlock.id;
                 return (
                   <button
                     type="button"
                     key={timeBlock.id}
                     className={`${styles.locationCard} ${!selectable && !isSelected ? styles.unavailable : ""} ${isSelected ? styles.locationSelected : ""}`}
-                    disabled={!selectable && !isSelected}
-                    onClick={() => handleRequestTimeBlockSelection(timeBlock.id)}
+                    disabled={
+                      isScheduleLockedTournament || (!selectable && !isSelected)
+                    }
+                    onClick={() =>
+                      handleRequestTimeBlockSelection(timeBlock.id)
+                    }
                   >
                     <Clock size={14} />
                     <div>
@@ -2126,9 +2289,11 @@ export default function TournamentDetail() {
                     >
                       {isSelected
                         ? "Selected"
-                        : selectable
-                          ? `${availableRoomCount} room${availableRoomCount === 1 ? "" : "s"} available`
-                          : "No rooms available"}
+                        : isScheduleLockedTournament
+                          ? "Locked after start"
+                          : selectable
+                            ? `${availableRoomCount} room${availableRoomCount === 1 ? "" : "s"} available`
+                            : "No rooms available"}
                     </span>
                   </button>
                 );
@@ -2149,7 +2314,9 @@ export default function TournamentDetail() {
                     type="button"
                     key={l.id}
                     className={`${styles.locationCard} ${(!selectable && !isSelected) || !l.available ? styles.unavailable : ""} ${isSelected ? styles.locationSelected : ""}`}
-                    disabled={!selectable && !isSelected}
+                    disabled={
+                      isScheduleLockedTournament || (!selectable && !isSelected)
+                    }
                     onClick={() => handleRequestLocationSelection(l.id)}
                   >
                     <MapPin size={14} />
@@ -2171,13 +2338,15 @@ export default function TournamentDetail() {
                     >
                       {isSelected
                         ? "Selected"
-                        : selectable
-                          ? selectedTimeBlock
-                            ? "Available in slot"
-                            : "Available"
-                          : selectedTimeBlock
-                            ? "Booked in slot"
-                            : "Booked"}
+                        : isScheduleLockedTournament
+                          ? "Locked after start"
+                          : selectable
+                            ? selectedTimeBlock
+                              ? "Available in slot"
+                              : "Available"
+                            : selectedTimeBlock
+                              ? "Booked in slot"
+                              : "Booked"}
                     </span>
                   </button>
                 );
@@ -2216,7 +2385,9 @@ export default function TournamentDetail() {
         confirmLabel="Mark Done"
         onConfirm={() => {
           if (!confirmCompleteMatch) return;
-          const match = matches.find((item) => item.id === confirmCompleteMatch.matchId);
+          const match = matches.find(
+            (item) => item.id === confirmCompleteMatch.matchId,
+          );
           if (!match) return;
           const winnerId =
             confirmCompleteMatch.score1 === confirmCompleteMatch.score2
@@ -2258,7 +2429,9 @@ export default function TournamentDetail() {
                   onClick={() => setSelectedAssignEntryId(entry.id)}
                 >
                   <span className={styles.assignEntryLabel}>{entry.label}</span>
-                  <span className={styles.assignEntryMeta}>{entry.secondaryLabel}</span>
+                  <span className={styles.assignEntryMeta}>
+                    {entry.secondaryLabel}
+                  </span>
                 </button>
               ))
             )}
@@ -2286,7 +2459,9 @@ export default function TournamentDetail() {
         confirmVariant="success"
         confirmDisabled={!canApplyAddRoster}
         customContent={
-          isIndividualGame || addRosterTarget === "player" || addMemberTeamName ? (
+          isIndividualGame ||
+          addRosterTarget === "player" ||
+          addMemberTeamName ? (
             <div style={{ display: "grid", gap: 10 }}>
               <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
                 <button
@@ -2301,7 +2476,7 @@ export default function TournamentDetail() {
                   className={`${styles.viewBtn} ${addRosterMode === "new" ? styles.viewBtnActive : ""}`}
                   onClick={() => {
                     setAddRosterMode("new");
-                    setSelectedExistingRosterId(null);
+                    setSelectedExistingRosterIds([]);
                   }}
                 >
                   Create new
@@ -2318,15 +2493,21 @@ export default function TournamentDetail() {
                       <button
                         key={entry.id}
                         type="button"
-                        className={`${styles.assignEntryOption} ${selectedExistingRosterId === entry.id ? styles.assignEntryOptionSelected : ""}`}
+                        className={`${styles.assignEntryOption} ${selectedExistingRosterIds.includes(entry.id) ? styles.assignEntryOptionSelected : ""}`}
                         onClick={() =>
-                          setSelectedExistingRosterId((current) =>
-                            current === entry.id ? null : entry.id,
+                          setSelectedExistingRosterIds((current) =>
+                            current.includes(entry.id)
+                              ? current.filter((id) => id !== entry.id)
+                              : [...current, entry.id],
                           )
                         }
                       >
-                        <span className={styles.assignEntryLabel}>{entry.label}</span>
-                        <span className={styles.assignEntryMeta}>{entry.secondaryLabel}</span>
+                        <span className={styles.assignEntryLabel}>
+                          {entry.label}
+                        </span>
+                        <span className={styles.assignEntryMeta}>
+                          {entry.secondaryLabel}
+                        </span>
                       </button>
                     ))
                   )}
@@ -2336,14 +2517,42 @@ export default function TournamentDetail() {
                   <input
                     value={newPlayerName}
                     onChange={(e) => setNewPlayerName(e.target.value)}
-                    placeholder="Name"
-                    style={{ width: "100%", padding: "10px 12px", borderRadius: 12, border: "1px solid var(--border-2)", background: "var(--surface)", color: "var(--text)" }}
+                    placeholder="Base name"
+                    style={{
+                      width: "100%",
+                      padding: "10px 12px",
+                      borderRadius: 12,
+                      border: "1px solid var(--border-2)",
+                      background: "var(--surface)",
+                      color: "var(--text)",
+                    }}
                   />
                   <input
                     value={newPlayerEmail}
                     onChange={(e) => setNewPlayerEmail(e.target.value)}
-                    placeholder="Email"
-                    style={{ width: "100%", padding: "10px 12px", borderRadius: 12, border: "1px solid var(--border-2)", background: "var(--surface)", color: "var(--text)" }}
+                    placeholder="Base email"
+                    style={{
+                      width: "100%",
+                      padding: "10px 12px",
+                      borderRadius: 12,
+                      border: "1px solid var(--border-2)",
+                      background: "var(--surface)",
+                      color: "var(--text)",
+                    }}
+                  />
+                  <input
+                    value={manualAddCount}
+                    onChange={(e) => setManualAddCount(e.target.value)}
+                    placeholder="How many"
+                    inputMode="numeric"
+                    style={{
+                      width: "100%",
+                      padding: "10px 12px",
+                      borderRadius: 12,
+                      border: "1px solid var(--border-2)",
+                      background: "var(--surface)",
+                      color: "var(--text)",
+                    }}
                   />
                 </>
               )}
@@ -2363,7 +2572,7 @@ export default function TournamentDetail() {
                   className={`${styles.viewBtn} ${addRosterMode === "new" ? styles.viewBtnActive : ""}`}
                   onClick={() => {
                     setAddRosterMode("new");
-                    setSelectedExistingRosterId(null);
+                    setSelectedExistingRosterIds([]);
                   }}
                 >
                   Create new
@@ -2380,15 +2589,21 @@ export default function TournamentDetail() {
                       <button
                         key={entry.id}
                         type="button"
-                        className={`${styles.assignEntryOption} ${selectedExistingRosterId === entry.id ? styles.assignEntryOptionSelected : ""}`}
+                        className={`${styles.assignEntryOption} ${selectedExistingRosterIds.includes(entry.id) ? styles.assignEntryOptionSelected : ""}`}
                         onClick={() =>
-                          setSelectedExistingRosterId((current) =>
-                            current === entry.id ? null : entry.id,
+                          setSelectedExistingRosterIds((current) =>
+                            current.includes(entry.id)
+                              ? current.filter((id) => id !== entry.id)
+                              : [...current, entry.id],
                           )
                         }
                       >
-                        <span className={styles.assignEntryLabel}>{entry.label}</span>
-                        <span className={styles.assignEntryMeta}>{entry.secondaryLabel}</span>
+                        <span className={styles.assignEntryLabel}>
+                          {entry.label}
+                        </span>
+                        <span className={styles.assignEntryMeta}>
+                          {entry.secondaryLabel}
+                        </span>
                       </button>
                     ))
                   )}
@@ -2398,27 +2613,69 @@ export default function TournamentDetail() {
                   <input
                     value={newTeamName}
                     onChange={(e) => setNewTeamName(e.target.value)}
-                    placeholder="Team name"
-                    style={{ width: "100%", padding: "10px 12px", borderRadius: 12, border: "1px solid var(--border-2)", background: "var(--surface)", color: "var(--text)" }}
+                    placeholder="Base team name"
+                    style={{
+                      width: "100%",
+                      padding: "10px 12px",
+                      borderRadius: 12,
+                      border: "1px solid var(--border-2)",
+                      background: "var(--surface)",
+                      color: "var(--text)",
+                    }}
                   />
                   <input
                     value={newCaptainName}
                     onChange={(e) => setNewCaptainName(e.target.value)}
-                    placeholder="Captain name"
-                    style={{ width: "100%", padding: "10px 12px", borderRadius: 12, border: "1px solid var(--border-2)", background: "var(--surface)", color: "var(--text)" }}
+                    placeholder="Base captain name"
+                    style={{
+                      width: "100%",
+                      padding: "10px 12px",
+                      borderRadius: 12,
+                      border: "1px solid var(--border-2)",
+                      background: "var(--surface)",
+                      color: "var(--text)",
+                    }}
                   />
                   <input
                     value={newCaptainEmail}
                     onChange={(e) => setNewCaptainEmail(e.target.value)}
-                    placeholder="Captain email"
-                    style={{ width: "100%", padding: "10px 12px", borderRadius: 12, border: "1px solid var(--border-2)", background: "var(--surface)", color: "var(--text)" }}
+                    placeholder="Base captain email"
+                    style={{
+                      width: "100%",
+                      padding: "10px 12px",
+                      borderRadius: 12,
+                      border: "1px solid var(--border-2)",
+                      background: "var(--surface)",
+                      color: "var(--text)",
+                    }}
+                  />
+                  <input
+                    value={manualAddCount}
+                    onChange={(e) => setManualAddCount(e.target.value)}
+                    placeholder="How many teams"
+                    inputMode="numeric"
+                    style={{
+                      width: "100%",
+                      padding: "10px 12px",
+                      borderRadius: 12,
+                      border: "1px solid var(--border-2)",
+                      background: "var(--surface)",
+                      color: "var(--text)",
+                    }}
                   />
                   <input
                     value={newTeamMemberCount}
                     onChange={(e) => setNewTeamMemberCount(e.target.value)}
                     placeholder="Team size"
                     inputMode="numeric"
-                    style={{ width: "100%", padding: "10px 12px", borderRadius: 12, border: "1px solid var(--border-2)", background: "var(--surface)", color: "var(--text)" }}
+                    style={{
+                      width: "100%",
+                      padding: "10px 12px",
+                      borderRadius: 12,
+                      border: "1px solid var(--border-2)",
+                      background: "var(--surface)",
+                      color: "var(--text)",
+                    }}
                   />
                 </>
               )}
@@ -2434,13 +2691,19 @@ export default function TournamentDetail() {
       />
       <ConfirmDialog
         open={confirmRemoveRoster !== null}
-        title={confirmRemoveRoster?.kind === "team" ? "Remove team?" : "Remove player?"}
+        title={
+          confirmRemoveRoster?.kind === "team"
+            ? "Remove team?"
+            : "Remove player?"
+        }
         description={
           confirmRemoveRoster?.kind === "team"
             ? `This will remove ${confirmRemoveRoster?.name ?? "this team"} and clear it from the bracket.`
             : `This will remove ${confirmRemoveRoster?.name ?? "this player"} and clear them from the bracket.`
         }
-        confirmLabel={confirmRemoveRoster?.kind === "team" ? "Remove Team" : "Remove Player"}
+        confirmLabel={
+          confirmRemoveRoster?.kind === "team" ? "Remove Team" : "Remove Player"
+        }
         onConfirm={handleRemoveRoster}
         onCancel={() => setConfirmRemoveRoster(null)}
       />
@@ -2468,8 +2731,8 @@ export default function TournamentDetail() {
         confirmLabel="Delete"
         onConfirm={() => {
           deleteTournament(tournament.id);
-          toast('Tournament deleted');
-          navigate('/dashboard');
+          toast("Tournament deleted");
+          navigate("/dashboard");
         }}
         onCancel={() => setConfirmDelete(false)}
       />

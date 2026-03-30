@@ -2,6 +2,7 @@ import { useState, useRef, useEffect, type ComponentType, type CSSProperties, ty
 import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, CheckCircle2, CalendarDays, ChevronLeft, ChevronRight, Gamepad2, Dumbbell, Brain, Diamond, FileText, Rocket, Users } from 'lucide-react';
 import type { TournamentFormat, TournamentStatus } from '../types';
+import { defaultLocations, makeDefaultTimeBlocks } from '../data/mockData';
 import { useApp } from '../store/store';
 import { useToast } from '../components/useToast';
 import styles from './CreateTournament.module.css';
@@ -636,8 +637,8 @@ export default function CreateTournament() {
       status,
       participants: [],
       matches: [],
-      locations: [],
-      timeBlocks: [],
+      locations: defaultLocations.map(l => ({ ...l, id: `${l.id}-${Date.now()}` })),
+      timeBlocks: makeDefaultTimeBlocks(form.startDate),
     });
     toast(message);
     navigate('/dashboard');
