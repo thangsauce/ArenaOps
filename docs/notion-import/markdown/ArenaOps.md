@@ -49,22 +49,12 @@ ArenaOps/
 ### Frontend
 
 ```bash
-cd "/Users/thangle/School Projects/ArenaOps/frontend"
-npm install
-npm run dev
+cd "ArenaOps/frontend"
+pnpm install
+pnpm run dev
 ```
 
 Frontend URL: `http://localhost:5173`
-
-### Backend
-
-```bash
-cd "/Users/thangle/School Projects/ArenaOps/backend"
-npm install
-npm run dev
-```
-
-Backend URL: `http://localhost:4000`
 
 ## Live Demo
 

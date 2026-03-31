@@ -2,6 +2,7 @@
   "name": "arenaops-server",
   "version": "1.0.0",
   "type": "module",
+  "packageManager": "pnpm@10.33.0",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",

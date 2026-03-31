@@ -43,18 +43,18 @@ ArenaOps/
 
 ```bash
 cd frontend
-npm install
-npm run dev          # http://localhost:5173
+pnpm install
+pnpm run dev          # http://localhost:5173
 ```
 
 ## Scripts
 
 | Command           | Description                   |
 |-------------------|-------------------------------|
-| `npm run dev`     | Start local dev server        |
-| `npm run build`   | Type-check + production build |
-| `npm run lint`    | Run ESLint                    |
-| `npm run deploy`  | Build + push to GitHub Pages  |
+| `pnpm run dev`     | Start local dev server        |
+| `pnpm run build`   | Type-check + production build |
+| `pnpm run lint`    | Run ESLint                    |
+| `pnpm run deploy`  | Build + push to GitHub Pages  |
 
 ## Author
 

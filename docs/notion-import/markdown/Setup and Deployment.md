@@ -6,8 +6,8 @@
 
 ```bash
 cd "/Users/thangle/School Projects/ArenaOps/frontend"
-npm install
-npm run dev
+pnpm install
+pnpm run dev
 ```
 
 Open: <http://localhost:5173>
@@ -16,8 +16,8 @@ Open: <http://localhost:5173>
 
 ```bash
 cd "/Users/thangle/School Projects/ArenaOps/backend"
-npm install
-npm run dev
+pnpm install
+pnpm run dev
 ```
 
 Backend default URL: <http://localhost:4000>
@@ -37,7 +37,7 @@ The backend exits on startup if `MONGO_URI` is missing.
 
 ```bash
 cd "/Users/thangle/School Projects/ArenaOps/frontend"
-npm run build
+pnpm run build
 ```
 
 Output goes to `frontend/dist/`.
@@ -46,7 +46,7 @@ Output goes to `frontend/dist/`.
 
 ```bash
 cd "/Users/thangle/School Projects/ArenaOps/frontend"
-npm run lint
+pnpm run lint
 ```
 
 ## Frontend Deployment

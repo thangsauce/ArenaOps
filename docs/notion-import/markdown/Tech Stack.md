@@ -37,7 +37,7 @@
 
 - ESLint
 - TypeScript compiler (`tsc -b`)
-- npm
+- pnpm
 - GitHub Actions
 
 ## Deployment

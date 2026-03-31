@@ -115,19 +115,19 @@ A full-featured tournament management SPA built for clubs and organizers running
 ### Prerequisites
 
 - Node.js 20+
-- npm
+- pnpm
 
 ### Installation
 
 ```bash
 cd frontend
-npm install
+pnpm install
 ```
 
 ### Development
 
 ```bash
-npm run dev
+pnpm run dev
 ```
 
 Open [http://localhost:5173](http://localhost:5173) in your browser.
@@ -135,19 +135,19 @@ Open [http://localhost:5173](http://localhost:5173) in your browser.
 ### Build
 
 ```bash
-npm run build
+pnpm run build
 ```
 
 ### Lint
 
 ```bash
-npm run lint
+pnpm run lint
 ```
 
 ### Deploy
 
 ```bash
-npm run deploy    # Builds and pushes to GitHub Pages
+pnpm run deploy    # Builds and pushes to GitHub Pages
 ```
 
 ---
