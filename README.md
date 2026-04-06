@@ -4,6 +4,8 @@ Tournament management platform for every sport and game — from E-Sports and at
 
 **Live demo:** [https://thangsauce.github.io/ArenaOps/](https://thangsauce.github.io/ArenaOps/)
 
+![ArenaOpsThumnailRecordingGif](https://github.com/user-attachments/assets/6be9f7b0-202b-4d08-b436-1ace75065734)
+
 ## Features
 
 - **Multi-category support** — E-Sports, Sports, Board, and Card game tournaments with 25+ games
